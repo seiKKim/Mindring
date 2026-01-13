@@ -23,6 +23,7 @@ type CallbackParams = { code: string; state: string };
 
 const SECRET = process.env.SESSION_SECRET!;
 const TEMP_COOKIE = "dn.oauth.tmp"; // state/PKCE 임시 저장 (httpOnly)
+const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN; // 예: ".mindring.com"
 
 /** ===== PKCE/유틸 ===== */
 function base64url(input: Buffer | string) {
@@ -65,6 +66,7 @@ async function setTemp(provider: Provider, state: string, codeVerifier: string) 
     sameSite: "lax",
     path: "/",
     expires: new Date(Date.now() + 10 * 60 * 1000), // 10분
+    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
   });
 }
 
@@ -73,7 +75,13 @@ async function getAndClearTemp(): Promise<{ provider: Provider; state: string; c
   const raw = jar.get(TEMP_COOKIE)?.value;
   const val = unsign(raw);
   // 항상 소거
-  jar.set({ name: TEMP_COOKIE, value: "", path: "/", expires: new Date(0) });
+  jar.set({ 
+    name: TEMP_COOKIE, 
+    value: "", 
+    path: "/", 
+    expires: new Date(0),
+    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
+  });
   if (!val) return null;
   try {
     const obj = JSON.parse(val);

@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 const COOKIE = "dn.sid";
 const SECRET = process.env.SESSION_SECRET;
 const IS_PROD = process.env.NODE_ENV === "production";
+const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN; // 예: ".mindring.com"
 
 // 빌드 시에만 기본값 허용, 프로덕션에서는 반드시 환경 변수 필요
 if (!SECRET) {
@@ -73,6 +74,7 @@ export async function issueSession(
     sameSite: "lax",
     path: "/",
     expires: expiresAt,
+    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
   });
 }
 
@@ -119,6 +121,7 @@ export async function extendSession(hours = 24) {
     sameSite: "lax",
     path: "/",
     expires: newExp,
+    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
   });
   return true;
 }
@@ -129,12 +132,24 @@ export async function revokeSession() {
   const raw = jar.get(COOKIE)?.value;
   if (!raw) {
     // 쿠키만 제거 후 종료
-    jar.set({ name: COOKIE, value: "", path: "/", expires: new Date(0) });
+    jar.set({ 
+      name: COOKIE, 
+      value: "", 
+      path: "/", 
+      expires: new Date(0),
+      ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
+    });
     return;
   }
   const sid = unsign(raw);
   // 쿠키는 항상 제거
-  jar.set({ name: COOKIE, value: "", path: "/", expires: new Date(0) });
+  jar.set({ 
+    name: COOKIE, 
+    value: "", 
+    path: "/", 
+    expires: new Date(0),
+    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
+  });
   if (!sid) return;
 
   try {
