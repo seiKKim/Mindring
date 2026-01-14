@@ -1,63 +1,36 @@
 // app/(public)/login/LoginForm.tsx
 "use client";
 
-import { ArrowRight, Eye, EyeOff, Home, Lock, Mail } from "lucide-react";
-import { useEffect, useMemo, useState, useTransition } from "react";
-
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 type Props = { initialError?: string };
 
 export default function LoginForm({ initialError = "" }: Props) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
 
   // 폼 상태
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPw, setShowPw] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [err, setErr] = useState<string>(initialError);
-  const [emailErr, setEmailErr] = useState<string>("");
-  const [pwErr, setPwErr] = useState<string>("");
-
-  // ⬇️ 화면 높이 기반 "컴팩트 모드" (작은 화면에서 자동 축소)
-  const [compact, setCompact] = useState(false);
-  useEffect(() => {
-    const apply = () => {
-      // 임계값은 실제 UI에 맞춰 조정 가능 (작으면 true)
-      const h = window.innerHeight;
-      setCompact(h < 720); // 720px 미만이면 컴팩트 모드
-    };
-    apply();
-    window.addEventListener("resize", apply);
-    return () => window.removeEventListener("resize", apply);
-  }, []);
-
-  // 검증
-  const emailRe = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i, []);
-  const pwRe = useMemo(() => /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\S]{8,}$/u, []);
-  const validateEmail = (v: string) =>
-    !v ? "이메일을 입력해주세요." : !emailRe.test(v) ? "이메일 형식이 올바르지 않습니다." : "";
-  const validatePw = (v: string) =>
-    !v ? "비밀번호를 입력해주세요." : !pwRe.test(v) ? "8자 이상, 영문/숫자를 포함해야 합니다." : "";
 
   useEffect(() => {
     if (initialError) setErr(initialError);
   }, [initialError]);
 
-  const formValid = !validateEmail(email) && !validatePw(password) && !isPending;
+  const formValid = email && password && !isPending;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
 
-    const eErr = validateEmail(email);
-    const pErr = validatePw(password);
-    setEmailErr(eErr);
-    setPwErr(pErr);
-    if (eErr || pErr) return;
+    if (!email || !password) {
+      setErr("이메일과 비밀번호를 입력해주세요.");
+      return;
+    }
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -71,216 +44,171 @@ export default function LoginForm({ initialError = "" }: Props) {
         setErr(humanizeError(j?.error ?? "로그인에 실패했어요. 다시 시도해주세요."));
         return;
       }
-      // returnUrl이 있으면 해당 페이지로, 없으면 홈으로 이동
       const returnUrl = searchParams.get("returnUrl");
       const redirectPath = returnUrl ? decodeURIComponent(returnUrl) : "/";
-      startTransition(() => router.replace(redirectPath));
+      
+      // Force hard refresh to update server components with new cookie
+      window.location.href = redirectPath;
     } catch {
       setErr("네트워크 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
     }
   }
 
-  function onFormKeyDown(e: React.KeyboardEvent<HTMLFormElement>) {
-    if (e.key === "Enter") {
-      const tag = (e.target as HTMLElement).tagName.toLowerCase();
-      if (tag === "input" || tag === "textarea" || tag === "select") e.preventDefault();
-    }
-  }
-
   return (
-    <div className="w-full max-w-sm mx-auto">
-      {/* 로그인 카드 - 메인 페이지 스타일 적용 */}
-      <div
-        className={[
-          "bg-white rounded-3xl shadow-lg border border-gray-200 overflow-hidden",
-          "flex flex-col",
-          "max-h-[92vh]",
-          "hover:shadow-xl transition-all duration-300",
-        ].join(" ")}
-      >
-        {/* 본문: 컴팩트 모드에 따라 여백/폰트/요소 크기 축소 */}
-        <div className={(compact ? "px-5 py-4" : "px-6 py-6") + " flex-1"}>
-          {/* 로고 + 카피 */}
-          <div className={"text-center " + (compact ? "mb-3" : "mb-5")}>
-            {/* 화면이 낮으면 설명은 더 작게 또는 숨김 */}
-            {!compact ? (
-              <p className="text-gray-600 text-xs leading-relaxed">
-                디지털 자서전과 인생그래프로 당신의 이야기를 기록하세요
-              </p>
-            ) : (
-              <p className="text-gray-600 text-[11px] leading-snug">당신의 이야기를 기록하세요</p>
-            )}
-          </div>
+    <div className="w-full flex flex-col items-center justify-center min-h-screen px-4 py-8">
+      {/* 제목 - 박스 밖 */}
+      <div className="text-center mb-6">
+        <h1 className="text-4xl font-bold text-gray-900 mb-3">로그인</h1>
+        <p className="text-sm text-gray-600">
+          마인드링 스마트인지지구 솔루션에 오신것을 환영합니다.
+        </p>
+      </div>
 
-          {/* 에러 */}
-          {err && (
-            <div
-              role="alert"
-              className={[
-                "rounded-lg border text-red-700",
-                compact ? "mb-2 p-2 text-[11px] bg-red-50 border-red-100" : "mb-3 p-3 text-xs bg-red-50 border-red-100",
-              ].join(" ")}
-            >
-              {err}
-            </div>
-          )}
-
-          {/* 폼 */}
-          <form
-            className={compact ? "space-y-3" : "space-y-3.5"}
-            onSubmit={onSubmit}
-            onKeyDown={onFormKeyDown}
-            noValidate
+      {/* 로그인 카드 - 정사각형 */}
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 w-full max-w-[700px] min-h-[700px] flex flex-col px-10 py-8 sm:px-16 sm:py-12">
+        {/* 에러 메시지 */}
+        {err && (
+          <div
+            role="alert"
+            className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700"
           >
-            {/* 이메일 */}
-            <div>
-              <label className={"block font-medium text-gray-700 " + (compact ? "text-[11px] mb-1" : "text-xs mb-1.5")}>
-                이메일 주소
-              </label>
-              <div className="relative">
-                <Mail className={"absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 " + (compact ? "w-4 h-4" : "w-4 h-4")} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => {
-                    const v = e.currentTarget.value;
-                    setEmail(v);
-                    if (emailErr) setEmailErr(validateEmail(v));
-                  }}
-                  onBlur={() => setEmailErr(validateEmail(email))}
-                  className={[
-                    "w-full rounded-full border-2 transition-all duration-200 bg-white focus:bg-white focus:outline-none focus:ring-2",
-                    compact ? "pl-10 pr-3 py-2.5 text-sm" : "pl-10 pr-3 py-3 text-sm",
-                    emailErr ? "border-red-300 focus:ring-red-100" : "border-gray-300 focus:border-teal-400 focus:ring-teal-100",
-                  ].join(" ")}
-                  placeholder="your@email.com"
-                  autoComplete="email"
-                  required
-                />
-              </div>
-              {emailErr && <p className={compact ? "mt-1 text-[11px] text-red-600" : "mt-1 text-[11px] text-red-600"}>{emailErr}</p>}
-            </div>
+            {err}
+          </div>
+        )}
 
-            {/* 비밀번호 */}
-            <div>
-              <label className={"block font-medium text-gray-700 " + (compact ? "text-[11px] mb-1" : "text-xs mb-1.5")}>
-                비밀번호
-              </label>
-              <div className="relative">
-                <Lock className={"absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 " + (compact ? "w-4 h-4" : "w-4 h-4")} />
-                <input
-                  type={showPw ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => {
-                    const v = e.currentTarget.value;
-                    setPassword(v);
-                    if (pwErr) setPwErr(validatePw(v));
-                  }}
-                  onBlur={() => setPwErr(validatePw(password))}
-                  className={[
-                    "w-full rounded-full border-2 transition-all duration-200 bg-white focus:bg-white focus:outline-none focus:ring-2",
-                    compact ? "pl-10 pr-10 py-2.5 text-sm" : "pl-10 pr-10 py-3 text-sm",
-                    pwErr ? "border-red-300 focus:ring-red-100" : "border-gray-300 focus:border-teal-400 focus:ring-teal-100",
-                  ].join(" ")}
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPw((v) => !v)}
-                  className={"absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors " + (compact ? "" : "")}
-                >
-                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {pwErr ? (
-                <p className="mt-1 text-[11px] text-red-600">{pwErr}</p>
-              ) : (
-                <p className="mt-1 text-[11px] text-gray-500">8자 이상, 영문/숫자 각각 1자 이상 포함</p>
-              )}
-            </div>
-
-            {/* 제출 */}
-            <div className={compact ? "pt-1" : "pt-1.5"}>
-              <button
-                type="submit"
-                disabled={!formValid}
-                className={[
-                  "w-full text-white text-sm font-medium rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200",
-                  "bg-gradient-to-r from-teal-400 to-teal-600",
-                  compact ? "py-2.5 px-4" : "py-3 px-5",
-                  "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-lg",
-                  "flex items-center justify-center group",
-                ].join(" ")}
-              >
-                {isPending ? (
-                  <>
-                    <div className={compact ? "w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" : "w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"} />
-                    로그인 중...
-                  </>
-                ) : (
-                  <>
-                    로그인
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* 회원가입 */}
-            <Link
-              href="/signup"
-              className={[
-                "block w-full text-center border-2 border-gray-300 text-gray-700 rounded-full hover:border-teal-400 hover:bg-teal-50 transition-all duration-200",
-                compact ? "py-2.5 px-4 text-sm" : "py-3 px-5 text-sm",
-              ].join(" ")}
-            >
-              아직 계정이 없으신가요? 회원가입하기
-            </Link>
-          </form>
-
-          {/* 구분선: 컴팩트 시 간격 축소/텍스트 소형 */}
-          <div className={compact ? "relative my-3" : "relative my-5"}>
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center">
-              <span className={compact ? "px-2 bg-white text-[11px] text-gray-500" : "px-2 bg-white text-[11px] text-gray-500"}>
-                또는
-              </span>
-            </div>
+        {/* 폼 */}
+        <form className="mt-8 space-y-5" onSubmit={onSubmit} noValidate>
+          {/* 이메일주소 */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              이메일주소
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              placeholder="이메일을 입력해주세요."
+              autoComplete="email"
+            />
           </div>
 
-          {/* 간편 로그인: 유지. 컴팩트에서는 텍스트 축소/숨김 */}
-          <div className="space-y-2">
-            <p className={compact ? "text-center text-[11px] font-medium text-gray-700 mb-1" : "text-center text-xs font-medium text-gray-700 mb-1.5"}>
-              간편 로그인
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <a href="/api/auth/kakao/start" aria-label="카카오로 로그인" className="flex items-center justify-center py-2 px-2 border-2 border-gray-300 rounded-full hover:border-yellow-400 hover:bg-yellow-50 transition-all duration-200 text-sm">
-                <span className="w-4 h-4 bg-yellow-400 rounded-full" />
-                {!compact && <span className="ml-1">카카오</span>}
-              </a>
-              <a href="/api/auth/naver/start" aria-label="네이버로 로그인" className="flex items-center justify-center py-2 px-2 border-2 border-gray-300 rounded-full hover:border-green-400 hover:bg-green-50 transition-all duration-200 text-sm">
-                <span className="w-4 h-4 bg-green-500 rounded-full" />
-                {!compact && <span className="ml-1">네이버</span>}
-              </a>
-              <a href="/api/auth/google/start" aria-label="구글로 로그인" className="flex items-center justify-center py-2 px-2 border-2 border-gray-300 rounded-full hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 text-sm">
-                <span className="w-4 h-4 bg-gradient-to-r from-red-500 via-yellow-500 to-blue-500 rounded-full" />
-                {!compact && <span className="ml-1">구글</span>}
-              </a>
-            </div>
+          {/* 비밀번호 */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              비밀번호
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+              placeholder="비밀번호를 입력해주세요."
+              autoComplete="current-password"
+            />
+          </div>
+
+          {/* 아이디 저장 체크박스 */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+            />
+            <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-700">
+              아이디 저장
+            </label>
+          </div>
+
+          {/* 로그인 버튼 */}
+          <button
+            type="submit"
+            disabled={!formValid}
+            className="w-full bg-black text-white py-3.5 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isPending ? "로그인 중..." : "로그인"}
+          </button>
+
+          {/* 헬퍼 링크 */}
+          <div className="flex items-center justify-center gap-3 text-sm text-gray-600">
+            <Link href="/find-id" className="hover:text-gray-900">
+              아이디 찾기
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link href="/reset-password" className="hover:text-gray-900">
+              비밀번호 재설정
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link href="/signup" className="hover:text-gray-900">
+              회원가입
+            </Link>
+          </div>
+        </form>
+
+        {/* 구분선 */}
+        <div className="relative my-8">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-200" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="px-4 bg-white text-sm text-gray-600 font-medium">
+              다른 방법으로 로그인
+            </span>
           </div>
         </div>
 
-        {/* 푸터 (항상 카드 하단에 고정) */}
-        <div className={(compact ? "px-5 py-3" : "px-6 py-4") + " bg-gray-50 border-t border-gray-100"}>
-          <div className="flex items-center justify-between text-xs">
-            <Link href="/" className="flex items-center text-gray-500 hover:text-gray-700 transition-colors group">
-              <Home className="w-3.5 h-3.5 mr-1 group-hover:-translate-x-0.5 transition-transform" />
-              홈으로
-            </Link>
+        {/* 소셜 로그인 */}
+        <div className="flex items-center justify-center gap-4">
+          <a
+            href="/api/auth/kakao/start"
+            aria-label="카카오로 로그인"
+            className="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center hover:bg-yellow-500 transition-colors"
+          >
+            <span className="sr-only">카카오</span>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#000000">
+              <path d="M12 3C6.5 3 2 6.58 2 11c0 2.95 2.05 5.5 5.05 6.95L5.5 21.5l4.5-2.95c.65.1 1.3.15 2 .15 5.5 0 10-3.58 10-8S17.5 3 12 3z"/>
+            </svg>
+          </a>
+          <a
+            href="/api/auth/naver/start"
+            aria-label="네이버로 로그인"
+            className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center hover:bg-green-600 transition-colors"
+          >
+            <span className="sr-only">네이버</span>
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#FFFFFF">
+              <path d="M16.273 12.845 7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z"/>
+            </svg>
+          </a>
+          <a
+            href="/api/auth/google/start"
+            aria-label="구글로 로그인"
+            className="w-12 h-12 rounded-full bg-white border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors"
+          >
+            <span className="sr-only">구글</span>
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+          </a>
+        </div>
+
+        {/* 안내 메시지 */}
+        <div className="mt-8 bg-gray-50 rounded-lg px-4 py-4 space-y-2">
+          <div className="flex items-start gap-2 text-sm text-gray-600">
+            <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>로그인 시 이메일 주소를 업데이트하세요.</span>
+          </div>
+          <div className="flex items-start gap-2 text-sm text-gray-600">
+            <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span>이메일 확인은 이메일 찾기를 이용해주세요.</span>
           </div>
         </div>
       </div>

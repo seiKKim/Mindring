@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mindring</title>
+    <link rel="stylesheet" href="./css/common.css" />
+    <link rel="stylesheet" href="./css/header.css" />
+    <link rel="stylesheet" href="./css/footer.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <div class="topH">
+          <div class="row_f font_goormsans">
+            <a href="#">로그인</a>
+            <a href="#">회원가입</a>
+            <div class="screenSet row_f">
+              <p>화면크기</p>
+              <div>+</div>
+              <div>-</div>
+            </div>
+          </div>
+        </div>
+        <div class="botH row_f">
+          <div class="logoBox">
+            <img src="./img/mindring_logo_h.png" alt="Mindring logo" />
+          </div>
+          <nav>
+            <ul class="depth01 row_f">
+              <li>
+                <p>AI기억퍼즐</p>
+              </li>
+              <li>
+                <p>인지게임</p>
+              </li>
+              <li>
+                <p>인지콘텐츠</p>
+              </li>
+              <li>
+                <p>스마트워크북</p>
+              </li>
+              <li>
+                <p>스마트교육</p>
+                <ul class="depth02">
+                  <li>
+                    <p>인지 커리큘럼</p>
+                  </li>
+                  <li>
+                    <p>인지교육 영상</p>
+                  </li>
+                  <li>
+                    <p>교육현장</p>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <p>스마트인지관리</p>
+              </li>
+            </ul>
+          </nav>
+          <div class="userMenu row_f">
+            <div class="login row_f">
+              <img src="./img/icon_login.png" alt="login icon" />
+              <a href="#">로그인</a>
+            </div>
+            <div class="signup">
+              <a href="#">회원가입</a>
+            </div>
+            <!-- 로그인 시 -->
+            <!-- <div class="user row_f">
+                <div class="imgBox">
+                    <img src="/img/icon_user_defalut.png" alt="user profile photo" >
+                </div>
+                <p><span>그레이스</span>님 안녕하세요.</p>
+            </div>
+            <a href="#" class="myCourse row_f">
+                <img src="/img/graph_disk.png" alt="course icon">
+                <p>학습현황</p>
+            </a> -->
+          </div>
+        </div>
+      </header>
+      <main>
+        <section class="sec01">
+          <div class="content">
+            <div class="top row_f font_clipart">
+              <div class="row_f">
+                <p class="titleT">오늘의 추천 인지 콘텐츠</p>
+                <div class="naviBtn row_f">
+                  <div class="button-prev row_f">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path
+                        d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="button-next row_f">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path
+                        d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="row_f" id="play-pause-btn">
+                    <!-- <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M400-280v-400l200 200-200 200Z"/></svg> -->
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="24px"
+                      viewBox="0 -960 960 960"
+                      width="24px"
+                      fill="#000000"
+                    >
+                      <path
+                        d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="moreBtn row_f">
+                <p>더보기</p>
+                <div class="row_f">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#820FB4"
+                  >
+                    <path
+                      d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-container">
+              <div class="swiper">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                  <!-- Slides -->
+                  <div class="swiper-slide col_f c_yellow">
+                    <span class="card_keyword font_goormsans">주의력</span>
+                    <p class="card_title font_clipart">낱말 연결 게임</p>
+                    <div class="status">
+                      <div class="learnBtn row_f font_clipart">
+                        <p>학습하기</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="swiper-slide col_f c_violet">
+                    <span class="card_keyword font_goormsans">언어능력</span>
+                    <p class="card_title font_clipart">속담 완성하기</p>
+                    <div class="status">
+                      <div class="progress-wrapper" data-progress="90">
+                        <div class="progress-ring"></div>
+                        <p class="progress-text font_clipart">학습중</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="swiper-slide col_f c_purple">
+                    <span class="card_keyword font_goormsans">시공간능력</span>
+                    <p class="card_title font_clipart">다른 그림 찾기</p>
+                    <div class="status">
+                      <div class="progress-wrapper" data-progress="20">
+                        <div class="progress-ring"></div>
+                        <p class="progress-text font_clipart">학습중</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="swiper-slide col_f c_blue">
+                    <span class="card_keyword font_goormsans">기억력</span>
+                    <p class="card_title font_clipart">단어 짝 맞추기</p>
+                    <div class="status">
+                      <div class="progress-wrapper" data-progress="100">
+                        <div class="progress-ring"></div>
+                        <p class="progress-text font_clipart">학습완료</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="swiper-slide col_f c_teal">
+                    <span class="card_keyword font_goormsans">지남력</span>
+                    <p class="card_title font_clipart">인물 맞추기</p>
+                    <div class="status">
+                      <div class="progress-wrapper" data-progress="60">
+                        <div class="progress-ring"></div>
+                        <p class="progress-text font_clipart">학습중</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- If we need navigation buttons -->
+                <!-- <div class="swiper-button-prev">뒤</div>
+              <div class="swiper-button-next">앞</div> -->
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="sec02">
+          <div class="content">
+            <div class="box col_f">
+              <p class="titleT font_clipart">AI 기억퍼즐</p>
+              <p class="subT">맞춤 퍼즐로 <br />쉬운 기억력 훈련</p>
+              <img src="./img/content_img01.png" alt="" class="abs" />
+            </div>
+            <div class="box col_f">
+              <p class="titleT font_clipart">인지게임</p>
+              <p class="subT">인지 능력 향상을 <br />위한 게임</p>
+              <img src="./img/content_img02.png" alt="" class="abs" />
+            </div>
+            <div class="box col_f">
+              <p class="titleT font_clipart">인지 콘텐츠</p>
+              <p class="subT">즐겁게 두뇌를 깨우는 <br />다양한 인지 활동</p>
+              <img src="./img/content_img03.png" alt="" class="abs" />
+            </div>
+            <div class="box col_f">
+              <p class="titleT font_clipart">스마트 인지관리</p>
+              <p class="subT">스스로 체크하는 <br />뇌건강정서 건강 관리</p>
+              <img src="./img/content_img04.png" alt="" class="abs" />
+            </div>
+            <div class="box col_f">
+              <p class="titleT font_clipart">스마트 워크북</p>
+              <p class="subT">
+                누구나 쉽게 등록하고 <br />공유하는 맞춤 워크북
+              </p>
+              <img src="./img/content_img05.png" alt="" class="abs" />
+            </div>
+            <div class="box col_f">
+              <p class="titleT font_clipart">스마트 교육</p>
+              <p class="subT">인지 커리큘럼부터 <br />영상현장 교육까지</p>
+              <img src="./img/content_img06.png" alt="" class="abs" />
+            </div>
+            <div class="box col_f big">
+              <p class="titleT font_clipart">사회공헌</p>
+              <p class="subT">그레이트 시니어 네트워크를 <br />소개합니다</p>
+              <img src="./img/content_img07.png" alt="" class="abs" />
+            </div>
+          </div>
+        </section>
+      </main>
+      <footer>
+        <div class="content row_f">
+          <div class="logoBox">
+            <img src="./img/mindring_logo_f.png" alt="" />
+          </div>
+          <div class="textBox row_f">
+            <div class="col_f">
+              <ul class="terms row_f">
+                <li><a href="#">개인정보처리방침</a></li>
+                <li><a href="#">이용약관</a></li>
+                <li><a href="#">제휴문의</a></li>
+              </ul>
+              <div class="info">
+                <p>
+                  경기도 고양시 일산동구 중앙로 1036 4층
+                  (고양중장년기술창업센터, 1-1층)
+                </p>
+                <p>
+                  대표자 : 서현숙 | 사업자등록번호 : 255-37-01508 |
+                  통신판매신고번호 : 제2025-고양일산동-0921호
+                </p>
+              </div>
+              <p class="copyright">
+                Copyright ⓒ 2025.MINDRA INC. All rights reserved.
+              </p>
+            </div>
+            <div class="sns row_f">
+              <a href="#" class="imgBox row_f">
+                <img src="./img/icon_instagram.png" alt="" />
+              </a>
+              <a href="#" class="imgBox row_f">
+                <img src="./img/icon_blog.png" alt="" />
+              </a>
+              <a href="#" class="imgBox row_f">
+                <img src="./img/icon_youtube.png" alt="" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+  <script src="./script/swiper.js"></script>
+  <script src="./script/cards.js"></script>
+</html>

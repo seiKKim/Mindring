@@ -65,16 +65,20 @@ export async function issueSession(
     },
   });
 
-  const jar = await cookies(); // await 추가
+  // 개발 환경(localhost)에서는 domain 설정을 명시적으로 제외하거나 undefined로 처리해야 함
+  const isLocal = !IS_PROD; 
+  const jar = await cookies();
+  
   jar.set({
     name: COOKIE,
     value: sign(sessionId),
     httpOnly: true,
-    secure: IS_PROD, // prod에서만 Secure 강제
+    secure: IS_PROD, // 프로덕션에서만 true
     sameSite: "lax",
     path: "/",
     expires: expiresAt,
-    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
+    // 로컬이 아닐 때만 도메인 설정 적용 (COOKIE_DOMAIN이 있어도 로컬이면 무시)
+    ...((COOKIE_DOMAIN && !isLocal) ? { domain: COOKIE_DOMAIN } : {}),
   });
 }
 
@@ -121,7 +125,8 @@ export async function extendSession(hours = 24) {
     sameSite: "lax",
     path: "/",
     expires: newExp,
-    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
+    // 로컬이 아닐 때만 도메인 설정 적용
+    ...((COOKIE_DOMAIN && IS_PROD) ? { domain: COOKIE_DOMAIN } : {}),
   });
   return true;
 }
@@ -137,7 +142,7 @@ export async function revokeSession() {
       value: "", 
       path: "/", 
       expires: new Date(0),
-      ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
+      ...((COOKIE_DOMAIN && IS_PROD) ? { domain: COOKIE_DOMAIN } : {}),
     });
     return;
   }
@@ -148,7 +153,7 @@ export async function revokeSession() {
     value: "", 
     path: "/", 
     expires: new Date(0),
-    ...(COOKIE_DOMAIN && { domain: COOKIE_DOMAIN }),
+    ...((COOKIE_DOMAIN && IS_PROD) ? { domain: COOKIE_DOMAIN } : {}),
   });
   if (!sid) return;
 

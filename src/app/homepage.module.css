@@ -8,8 +8,9 @@
 }
 
 .headerContainer {
+  width: 100%;
   margin: 0 auto;
-  max-width: 80rem;
+  max-width: 1380px;
   padding: 1rem;
 }
 
@@ -101,8 +102,9 @@
 }
 
 .heroContainer {
+  width: 100%;
   margin: 0 auto;
-  max-width: 80rem;
+  max-width: 1380px;
   padding: 4rem 1rem;
 }
 
@@ -161,8 +163,9 @@
 }
 
 .recommendedContainer {
+  width: 100%;
   margin: 0 auto;
-  max-width: 80rem;
+  max-width: 1380px;
   padding: 0 1rem;
 }
 
@@ -400,8 +403,9 @@
 }
 
 .filtersContainer {
+  width: 100%;
   margin: 0 auto;
-  max-width: 80rem;
+  max-width: 1380px;
   padding: 0 1rem;
 }
 
@@ -520,8 +524,9 @@
 }
 
 .galleryContainer {
+  width: 100%;
   margin: 0 auto;
-  max-width: 80rem;
+  max-width: 1380px;
   padding: 0 1rem;
 }
 

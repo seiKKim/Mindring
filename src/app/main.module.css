@@ -1,0 +1,379 @@
+/* app/main.module.css */
+
+/* Recommended Section */
+.recommended-section {
+  background: transparent;
+  padding: 6rem 0;
+}
+
+.recommended-content {
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.recommended-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.section-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.swiper-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swiper-button-prev-custom,
+.swiper-button-next-custom,
+.play-pause-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.swiper-button-prev-custom:hover,
+.swiper-button-next-custom:hover,
+.play-pause-btn:hover {
+  border-color: #820fb4;
+  background: #f9fafb;
+}
+
+.more-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #820fb4;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.more-btn:hover {
+  opacity: 0.8;
+}
+
+/* Swiper Customization */
+.recommended-swiper {
+  padding: 1rem 0;
+}
+
+/* Content Cards */
+.content-card {
+  padding: 2rem;
+  border-radius: 1rem;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.content-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-keyword {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 1rem 0;
+}
+
+.card-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+}
+
+.learn-btn {
+  padding: 0.75rem 2rem;
+  background: white;
+  border: 2px solid #1f2937;
+  border-radius: 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.learn-btn:hover {
+  background: #1f2937;
+  color: white;
+}
+
+.progress-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-text {
+  position: absolute;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* Services Section */
+.services-section {
+  width: 100%;
+  max-width: 1380px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.service-box {
+  position: relative;
+  padding: 2.5rem 2rem;
+  border-radius: 1rem;
+  min-height: 280px;
+  background: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.service-box:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.service-box.large {
+  grid-column: span 2;
+}
+
+.service-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #820fb4;
+  margin-bottom: 1rem;
+  z-index: 10;
+}
+
+.service-subtitle {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4b5563;
+  z-index: 10;
+}
+
+.service-image {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  max-width: 60%;
+  max-height: 70%;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .section-title {
+    font-size: 1.5rem;
+  }
+
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .service-box.large {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .recommended-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+  }
+
+  .swiper-button-prev-custom,
+  .swiper-button-next-custom,
+  .play-pause-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section 02 - Grid Boxes (from provided CSS) */
+.sec02Content {
+  width: 100%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 100px 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 40px 20px;
+}
+
+.sec02Content .box {
+  border-radius: 20px;
+  background-color: #f3f3f3;
+  padding: 30px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 20px;
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.sec02Content .box .titleT {
+  font-size: 24px;
+}
+
+.sec02Content .box .subT {
+  color: #707070;
+  font-size: 18px;
+  line-height: 1.5rem;
+}
+
+.sec02Content .box .abs {
+  position: absolute;
+  bottom: -5%;
+  right: 5%;
+  height: 50%;
+  width: auto;
+}
+
+.sec02Content .box.big {
+  grid-column: span 2;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  background-color: #fff8d0;
+}
+
+.sec02Content .box.big .abs {
+  bottom: 0%;
+  right: 5%;
+  height: 60%;
+}
+
+/* Additional responsive for sec02 */
+@media (max-width: 1280px) {
+  .sec02Content {
+    width: 90%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .sec02Content .box.big {
+    grid-column: span 3;
+    aspect-ratio: 3 / 1;
+  }
+  .sec02Content .box.big .abs {
+    height: 80%;
+  }
+}
+
+@media (max-width: 768px) {
+  .sec02Content {
+    width: 90%;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 10px;
+  }
+  .sec02Content .box {
+    padding: 20px;
+  }
+  .sec02Content .box .titleT {
+    font-size: 20px;
+  }
+  .sec02Content .box .subT {
+    font-size: 14px;
+  }
+  .sec02Content .box.big {
+    grid-column: span 2;
+    aspect-ratio: 2 / 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .sec02Content {
+    width: 95%;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .sec02Content .box {
+    padding: 25px 20px;
+    min-height: 180px;
+  }
+  .sec02Content .box .titleT {
+    font-size: 18px;
+  }
+  .sec02Content .box .subT {
+    font-size: 14px;
+    line-height: 1.4rem;
+  }
+  .sec02Content .box .abs {
+    height: 45%;
+    right: 5%;
+  }
+  .sec02Content .box.big {
+    grid-column: span 1;
+    aspect-ratio: 1.5 / 1;
+  }
+  .sec02Content .box.big .abs {
+    height: 55%;
+  }
+}
+

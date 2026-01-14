@@ -1,5 +1,5 @@
 // 홈페이지 컴포넌트 - CSS 모듈 적용
-// src/app/page.tsx
+// puzzle-home/page.tsx
 
 'use client'
 
@@ -8,6 +8,18 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import styles from '../homepage.module.css'
 import { useUser } from '@/contexts/UserContext'
+import { 
+  Sparkles, 
+  User, 
+  Trophy, 
+  Target, 
+  Search, 
+  RefreshCw, 
+  Palette, 
+  Puzzle,
+  AlertTriangle,
+  Play
+} from 'lucide-react'
 
 /** ---------------- Types ---------------- */
 interface PuzzleImage {
@@ -25,6 +37,18 @@ interface ApiResponse {
     category: string | null
     difficulty: number | null
   }
+}
+
+interface RankingItem {
+  userId: string
+  userName: string
+  score: number
+  rank: number
+}
+
+interface RankingsApiResponse {
+  success: boolean
+  rankings: RankingItem[]
 }
 
 /** ---------------- Constants ---------------- */
@@ -69,11 +93,7 @@ export default function HomePage() {
   } | null>(null)
   const [rankingLoading, setRankingLoading] = useState(false)
 
-  // 디버깅: 사용자 정보 확인
-  useEffect(() => {
-    console.log('User state:', user)
-    console.log('User loading:', userLoading)
-  }, [user, userLoading])
+  // 디버깅: 사용자 정보 확인 (제거됨)
 
   /** API에서 퍼즐 데이터 가져오기 */
   const fetchPuzzles = async (signal?: AbortSignal) => {
@@ -164,16 +184,16 @@ export default function HomePage() {
         })
         
         if (rankingsResponse.ok) {
-          const rankingsData = await rankingsResponse.json()
+          const rankingsData = await rankingsResponse.json() as RankingsApiResponse
           if (rankingsData.success && rankingsData.rankings) {
             // 사용자의 최고 순위 찾기
             const userRankings = rankingsData.rankings.filter(
-              (r: any) => r.userId === user.userId
+              (r) => r.userId === user.userId
             )
             
             if (userRankings.length > 0) {
-              const bestRank = Math.min(...userRankings.map((r: any) => r.rank))
-              const bestScore = Math.max(...userRankings.map((r: any) => r.score))
+              const bestRank = Math.min(...userRankings.map((r) => r.rank))
+              const bestScore = Math.max(...userRankings.map((r) => r.score))
               setUserRanking({
                 bestRank,
                 bestScore,
@@ -223,16 +243,6 @@ export default function HomePage() {
       <header className={styles.header}>
         <div className={styles.headerContainer}>
           <div className={styles.headerContent}>
-            <div className={styles.headerLogo}>
-              <div className={styles.headerLogoIcon}>
-                <img 
-                  src="/icons/logo_mindring.png" 
-                  alt="Puzzle Master Logo" 
-                  className={styles.headerLogoImage}
-                />
-              </div>
-              <div className={styles.headerSubtitle}>스마트 인지자극 솔루션 </div>
-            </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
               {userLoading ? (
                 <div style={{ 
@@ -260,7 +270,7 @@ export default function HomePage() {
                   fontSize: '14px',
                   fontWeight: '500'
                 }}>
-                  <span>👤</span>
+                  <User className="w-4 h-4 text-gray-700" />
                   <span style={{ color: '#1f2937' }}>{user.name || user.email || '사용자'}</span>
                 </div>
               ) : null}
@@ -306,7 +316,7 @@ export default function HomePage() {
                     e.currentTarget.style.transform = 'scale(1)'
                   }}
                 >
-                  <span>🏆</span>
+                  <Trophy className="w-4 h-4 text-yellow-600" />
                   <span style={{ color: '#1f2937' }}>
                     {userRanking.bestRank}위
                   </span>
@@ -333,7 +343,7 @@ export default function HomePage() {
                   fontSize: '12px',
                   fontWeight: '500'
                 }}>
-                  <span>🎯</span>
+                  <Target className="w-4 h-4 text-blue-500" />
                   <span style={{ color: '#1f2937' }}>
                     완료: {userRanking.totalCompleted}개
                   </span>
@@ -350,7 +360,10 @@ export default function HomePage() {
                   fontSize: '14px',
                   fontWeight: '600',
                   transition: 'all 0.2s',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#fff'
@@ -361,7 +374,7 @@ export default function HomePage() {
                   e.currentTarget.style.transform = 'scale(1)'
                 }}
               >
-                🏆 랭킹
+                <Trophy className="w-4 h-4 text-yellow-500" /> 랭킹
               </Link>
               <Link 
                 href="/"
@@ -416,7 +429,7 @@ export default function HomePage() {
           <div className={styles.recommendedHeader}>
             <div className={styles.recommendedHeaderLeft}>
               <div className={styles.recommendedHeaderTitle}>
-                <div className="text-2xl">✨</div>
+                <Sparkles className="w-8 h-8 text-yellow-500" />
                 <h3 className={styles.recommendedHeaderTitleText}>오늘의 추천 퍼즐</h3>
               </div>
               <div className={styles.recommendedBadge}>
@@ -429,7 +442,7 @@ export default function HomePage() {
               className={styles.recommendedRefreshButton}
               title="새로운 추천 퍼즐 보기"
             >
-              🔄 새로운 추천
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> 새로운 추천
             </button>
           </div>
 
@@ -466,7 +479,7 @@ export default function HomePage() {
                     />
                     {/* 추천 배지 */}
                     <div className={styles.recommendedBadgeContainer}>
-                      ⭐ 추천
+                      <Sparkles className="w-3 h-3 text-yellow-500 mr-1" /> 추천
                     </div>
                     {/* 순위 배지 */}
                     <div className={styles.rankBadge}>
@@ -478,7 +491,7 @@ export default function HomePage() {
                         href={`/puzzle?image=${encodeURIComponent(puzzle.url)}&id=${puzzle.id}&difficulty=16`}
                         className={styles.hoverButton}
                       >
-                        🧩 플레이
+                        <Play className="w-5 h-5 mr-1" /> 플레이
                       </Link>
                     </div>
                   </div>
@@ -522,7 +535,7 @@ export default function HomePage() {
               <div className={styles.filterButtons}>
                 <button
                   onClick={() => handleCategoryChange('color')}
-                  aria-pressed={categoryType === 'color'}
+                  aria-pressed={categoryType === 'color' ? true : false}
                   className={`${styles.categoryButton} ${
                     categoryType === 'color' 
                       ? `${styles.categoryButtonActive} ${styles.categoryButtonColor}` 
@@ -538,7 +551,7 @@ export default function HomePage() {
                 </button>
                 <button
                   onClick={() => handleCategoryChange('gray')}
-                  aria-pressed={categoryType === 'gray'}
+                  aria-pressed={categoryType === 'gray' ? true : false}
                   className={`${styles.categoryButton} ${
                     categoryType === 'gray' 
                       ? `${styles.categoryButtonActive} ${styles.categoryButtonGray}` 
@@ -552,6 +565,7 @@ export default function HomePage() {
                   </div>
                   흑백 퍼즐
                 </button>
+                
               </div>
             </div>
 
@@ -563,7 +577,7 @@ export default function HomePage() {
                   <button
                     key={diff.pieces}
                     onClick={() => setSelectedDifficulty(diff.pieces)}
-                    aria-pressed={selectedDifficulty === diff.pieces}
+                    aria-pressed={selectedDifficulty === diff.pieces ? true : false}
                     className={`${styles.difficultyButton} ${
                       selectedDifficulty === diff.pieces
                         ? categoryType === 'color'
@@ -582,12 +596,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Puzzle Gallery */}
+          {/* Puzzle Gallery */}
       <section className={styles.gallerySection}>
         <div className={styles.galleryContainer}>
           <div className={styles.galleryHeader}>
             <h3 className={styles.galleryTitle}>
-              {categoryType === 'color' ? '🎨' : '⚫'} {categoryType === 'color' ? '컬러' : '흑백'} 퍼즐 갤러리
+              {categoryType === 'color' 
+                ? <Palette className="w-6 h-6 text-orange-500 mr-2" /> 
+                : <div className="w-6 h-6 rounded-full bg-gray-800 mr-2" />
+              } 
+              {categoryType === 'color' ? '컬러' : '흑백'} 퍼즐 갤러리
               {!loading && ` (${puzzleImages.length}개)`}
             </h3>
             <div className={styles.galleryFilter}>
@@ -607,7 +625,9 @@ export default function HomePage() {
           {/* 오류 */}
           {error && (
             <div className={styles.errorState}>
-              <div className={styles.errorIcon}>⚠️</div>
+              <div className={styles.errorIcon}>
+                <AlertTriangle className="w-12 h-12 text-red-500" />
+              </div>
               <h4 className={styles.errorTitle}>오류가 발생했습니다</h4>
               <p className={styles.errorMessage}>{error}</p>
               <button
@@ -672,7 +692,7 @@ export default function HomePage() {
                           : styles.galleryPlayButtonGray
                       }`}
                     >
-                      🧩 퍼즐 시작하기
+                      <Puzzle className="w-4 h-4 mr-2" /> 퍼즐 시작하기
                     </Link>
                   </div>
                 </div>
@@ -683,83 +703,15 @@ export default function HomePage() {
           {/* 검색 결과 없음 */}
           {!loading && !error && puzzleImages.length === 0 && (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>🔍</div>
+              <div className={styles.emptyIcon}>
+                <Search className="w-12 h-12 text-gray-300" />
+              </div>
               <h4 className={styles.emptyTitle}>해당 조건의 퍼즐이 없습니다</h4>
               <p className={styles.emptyMessage}>다른 난이도를 선택하거나 퍼즐 타입을 변경해보세요.</p>
             </div>
           )}
         </div>
       </section>
-
-      {/* Stats Section */}
-      <section className={styles.statsSection}>
-        <div className={styles.statsContainer}>
-          <h3 className={styles.statsTitle}>📊 퍼즐 통계</h3>
-          <div className={styles.statsGrid}>
-            <div className={styles.statItem}>
-              <div className={`${styles.statNumber} ${styles.statNumberOrange}`}>10</div>
-              <div className={styles.statLabel}>컬러 퍼즐</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={`${styles.statNumber} ${styles.statNumberGray}`}>8</div>
-              <div className={styles.statLabel}>흑백 퍼즐</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={`${styles.statNumber} ${styles.statNumberPurple}`}>4</div>
-              <div className={styles.statLabel}>난이도 단계</div>
-            </div>
-            <div className={styles.statItem}>
-              <div className={`${styles.statNumber} ${styles.statNumberYellow}`}>6</div>
-              <div className={styles.statLabel}>매일 추천</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-<footer className={styles.siteFooter}>
-  <div className={styles.siteFooterContainer}>
-    <div className={styles.siteFooterRow}>
-      {/* 좌측: 회사 정보 */}
-      <div className={styles.siteFooterLeft}>
-        <div className={styles.brandLine}>
-          <span className={styles.brandPrimary}>Great Senior</span>
-          <span className={styles.brandSecondary}>network</span>
-          <span className={styles.legalLinks}>제휴문의 | 이메일 무단 수집 거부</span>
-        </div>
-
-        <div className={styles.addressBlock}>
-          <p className={styles.addressLine}>
-            <span className={styles.strong}>마인드라</span> 대표자 서현숙
-            <span className={`${styles.strong} ${styles.labelGap}`}>사업자등록번호:</span> 255-37-01508
-          </p>
-          <p>경기도 고양시 일산동구 중앙로 1036 4층(고양중장년기술창업센터, 1-1층)</p>
-          <p><span className={styles.strong}>통신판매신고번호:</span> 제2025-고양일산동-0921호</p>
-          <p className={styles.notice}>Copyright 2025. MINDRA INC. All rights reserved.</p>
-        </div>
-      </div>
-
-      {/* 우측: 패밀리 사이트 */}
-      <div className={styles.siteFooterRight}>
-        <p className={styles.familyLabel}>FAMILY SITE</p>
-        <div className={styles.familyRow}>
-          <span className={styles.familyBrand}>
-            Mind<span className={styles.familyBrandAccent}>ra</span>
-          </span>
-          <button
-            type="button"
-            aria-label="패밀리 사이트 메뉴 열기"
-            className={styles.familyButton}
-          >
-            <svg className={styles.caretIcon} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
     </div>
   )
 }

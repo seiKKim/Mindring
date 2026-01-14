@@ -1,0 +1,286 @@
+/* main css */
+main section {
+  margin: 30px auto;
+}
+main .sec01 .content {
+  width: 100%;
+  margin: 0 auto;
+  padding: 50px 0;
+}
+main .sec01 .content .top {
+  width: 80%;
+  max-width: 1380px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: space-between;
+}
+main .sec01 .content .top .titleT {
+  font-size: 32px;
+}
+main .sec01 .content .top .naviBtn {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-left: 10px;
+}
+main .sec01 .content .top .naviBtn > div {
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #bdbdbd;
+  border-radius: 100px;
+  background-color: #ffffff;
+  width: 30px;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+}
+main .sec01 .content .top .naviBtn > div:hover {
+  border: 1px solid #a90076;
+}
+main .sec01 .content .top .moreBtn {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 50px;
+  padding: 12px 20px;
+  width: 150px;
+  color: #ffffff;
+  font-size: 14px;
+  background: linear-gradient(to right, #da5073, #820fb4);
+  cursor: pointer;
+}
+main .sec01 .content .top .moreBtn > div {
+  border-radius: 100px;
+  background-color: #fff;
+  aspect-ratio: 1 / 1;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: auto;
+}
+main .sec01 .content .top .moreBtn > div > svg {
+  width: 14px;
+  height: 14px;
+}
+main .sec01 .content .swiper-container {
+  width: 80%;
+  margin: 0 auto;
+  overflow: visible;
+}
+main .sec01 .content .swiper {
+  width: 100%;
+  margin: 0 auto;
+  overflow: visible;
+  margin-top: 30px;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide {
+  padding: 30px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  aspect-ratio: 4 / 3;
+  color: #ffffff;
+  position: relative;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_yellow {
+  background: url(../img/card_yellow.png) no-repeat center;
+  background-size: contain;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_violet {
+  background: url(../img/card_violet.png) no-repeat center;
+  background-size: contain;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_purple {
+  background: url(../img/card_purple.png) no-repeat center;
+  background-size: contain;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_blue {
+  background: url(../img/card_blue.png) no-repeat center;
+  background-size: contain;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_teal {
+  background: url(../img/card_teal.png) no-repeat center;
+  background-size: contain;
+}
+
+main .sec01 .content .swiper-wrapper .swiper-slide .card_keyword {
+  border-radius: 50px;
+  padding: 8px 18px;
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_yellow .card_keyword {
+  background-color: #e08909;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_violet .card_keyword {
+  background-color: #a5227c;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_purple .card_keyword {
+  background-color: #4d4bb6;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_blue .card_keyword {
+  background-color: #3f95e2;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide.c_teal .card_keyword {
+  background-color: #008683;
+}
+
+main .sec01 .content .swiper-wrapper .swiper-slide .card_title {
+  font-size: 28px;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide .status {
+  position: absolute;
+  bottom: 0%;
+  right: 0%;
+  width: 24%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide .learnBtn {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  background-color: #000000;
+  border-radius: 100px;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+main .sec01 .content .swiper-wrapper .swiper-slide .progress-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  position: relative;
+  border-radius: 50%;
+  background: #e5e5e5;
+}
+main
+  .sec01
+  .content
+  .swiper-wrapper
+  .swiper-slide
+  .progress-wrapper
+  .progress-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(to right, #da5073, #820fb4);
+  -webkit-mask: conic-gradient(
+    #000 0deg,
+    #000 var(--progress),
+    transparent var(--progress),
+    transparent 360deg
+  );
+  mask: conic-gradient(
+    #000 0deg,
+    #000 var(--progress),
+    transparent var(--progress),
+    transparent 360deg
+  );
+}
+
+main
+  .sec01
+  .content
+  .swiper-wrapper
+  .swiper-slide
+  .progress-wrapper
+  .progress-text {
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  background-color: #fff;
+  width: 85%;
+  aspect-ratio: 1 / 1;
+  border-radius: 100px;
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+main .sec02 .content {
+  width: 80%;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 50px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 40px 20px;
+}
+main .sec02 .content .box {
+  border-radius: 20px;
+  background-color: #f3f3f3;
+  padding: 30px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 20px;
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+main .sec02 .content .box .titleT {
+  font-size: 24px;
+}
+main .sec02 .content .box .subT {
+  color: #707070;
+  font-size: 18px;
+  line-height: 1.5rem;
+}
+main .sec02 .content .box .abs {
+  position: absolute;
+  bottom: -5%;
+  right: 5%;
+  height: 50%;
+  width: auto;
+}
+main .sec02 .content .box.big {
+  grid-column: span 2;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  background-color: #fff8d0;
+}
+main .sec02 .content .box.big .abs {
+  bottom: 0%;
+  right: 5%;
+  height: 60%;
+}
+@media screen and (max-width: 1280px) {
+  main .sec01 .content .top,
+  main .sec01 .content .swiper-container,
+  main .sec02 .content {
+    width: 90%;
+  }
+  main .sec01 .content .swiper-wrapper .swiper-slide .card_keyword {
+    font-size: 16px;
+    padding: 7px 14px;
+    margin-bottom: 10px;
+  }
+  main .sec01 .content .swiper-wrapper .swiper-slide .card_title {
+    font-size: 24px;
+  }
+  main .sec01 .content .swiper-wrapper .swiper-slide .learnBtn,
+  main
+    .sec01
+    .content
+    .swiper-wrapper
+    .swiper-slide
+    .progress-wrapper
+    .progress-text {
+    font-size: 12px;
+  }
+  main .sec02 .content {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  main .sec02 .content .box.big {
+    grid-column: span 3;
+    aspect-ratio: 3 / 1;
+  }
+  main .sec02 .content .box.big .abs {
+    height: 80%;
+  }
+}

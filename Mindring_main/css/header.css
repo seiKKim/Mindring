@@ -1,0 +1,178 @@
+/* 헤더 css */
+header {
+  background-color: #ffffff;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 0 10px 1px #00000010;
+}
+header .topH {
+  width: 100%;
+  background-color: #f7f7f7;
+}
+header .topH > div {
+  width: 80%;
+  margin: 0 auto;
+  max-width: 1380px;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: right;
+  gap: 10px;
+  font-size: 14px;
+  padding: 6px 0;
+  color: #333333;
+}
+header .topH > div > a {
+  padding-right: 10px;
+  border-right: 1px solid #c0c0c0;
+}
+header .topH > div .screenSet {
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-right: 0;
+}
+header .topH > div .screenSet div {
+  border: 1px solid #333333;
+  text-align: center;
+  width: 20px;
+  aspect-ratio: 1 / 1;
+  background-color: #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+header .botH {
+  width: 80%;
+  margin: 0 auto;
+  max-width: 1380px;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 0;
+}
+header .botH .logoBox img {
+  width: 120px;
+  height: auto;
+}
+header .botH nav .depth01 {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+header .botH nav .depth01 > li {
+  cursor: pointer;
+  padding: 8px 12px;
+  position: relative;
+  font-size: 18px;
+  font-weight: 500;
+}
+header .botH nav .depth01 > li::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  border-radius: 0px;
+  background-color: #a90076;
+  transition: all 0.3s ease-out;
+}
+header .botH nav .depth01 > li:hover::before {
+  width: 100%;
+}
+header .botH nav .depth02 {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: max-content;
+  border-radius: 10px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  background-color: #f7f7f7;
+  padding: 0px 8px;
+}
+.depth01 > li:hover > .depth02 {
+  max-height: 300px;
+  opacity: 1;
+  padding: 4px 8px;
+}
+header .botH nav .depth02 li {
+  padding: 4px 2px;
+  font-size: 14px;
+  font-weight: 400;
+}
+header .botH nav .depth02 li:hover {
+  font-weight: 600;
+  color: #a90076;
+}
+header .botH .userMenu {
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 500;
+}
+header .botH .userMenu .login {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+header .botH .userMenu .login > img {
+  width: 24px;
+}
+header .botH .userMenu .signup {
+  border-left: 1px solid #b3b3b3;
+  padding-left: 10px;
+}
+header .botH .userMenu .user {
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+}
+header .botH .userMenu .user .imgBox {
+  border-radius: 50px;
+  width: 24px;
+  height: auto;
+  aspect-ratio: 1 /1;
+  overflow: hidden;
+}
+header .botH .userMenu .user .imgBox img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+header .botH .userMenu .myCourse {
+  border-radius: 50px;
+  border: 3px solid #edcee3;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+  padding: 4px 10px;
+  color: #a90076;
+}
+header .botH .userMenu .myCourse > img {
+  width: 18px;
+  height: auto;
+}
+@media screen and (max-width: 1280px) {
+  header .topH > div,
+  header .botH {
+    width: 90%;
+  }
+  header .botH nav .depth01 > li {
+    cursor: pointer;
+    padding: 8px 12px;
+    position: relative;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}

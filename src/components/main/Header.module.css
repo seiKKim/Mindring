@@ -1,0 +1,291 @@
+/* Header Component Styles */
+
+/* Top Header */
+.topH {
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.topH > div {
+  width: 100%;
+  padding: 6px 20px;
+  margin: 0 auto;
+  max-width: 1380px;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: right;
+  gap: 10px;
+  font-size: 14px;
+  padding: 6px 0;
+  color: #333333;
+}
+
+.topH > div > a {
+  padding-right: 10px;
+  border-right: 1px solid #c0c0c0;
+}
+
+.topH > div .screenSet {
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-right: 0;
+}
+
+.topH > div .screenSet div {
+  border: 1px solid #333333;
+  text-align: center;
+  width: 20px;
+  aspect-ratio: 1 / 1;
+  background-color: #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Bottom Header */
+.botH {
+  width: 100%;
+  padding: 16px 20px;
+  margin: 0 auto;
+  max-width: 1380px;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 0;
+}
+
+.botH .logoBox img {
+  width: 120px;
+  height: auto;
+}
+
+/* Navigation */
+.botH nav .depth01 {
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.botH nav .depth01 > li {
+  cursor: pointer;
+  padding: 8px 12px;
+  position: relative;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.botH nav .depth01 > li::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  border-radius: 0px;
+  background-color: #a90076;
+  transition: all 0.3s ease-out;
+}
+
+.botH nav .depth01 > li:hover::before {
+  width: 100%;
+}
+
+.botH nav .depth02 {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: max-content;
+  border-radius: 10px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  background-color: transparent;
+  padding: 0px 8px;
+}
+
+.depth01 > li:hover > .depth02 {
+  max-height: 300px;
+  opacity: 1;
+  padding: 4px 8px;
+}
+
+.botH nav .depth02 li {
+  padding: 4px 2px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.botH nav .depth02 li:hover {
+  font-weight: 600;
+  color: #a90076;
+}
+
+/* User Menu */
+.botH .userMenu {
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.botH .userMenu .login {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.botH .userMenu .login > img {
+  width: 24px;
+}
+
+.botH .userMenu .signup {
+  border-left: 1px solid #b3b3b3;
+  padding-left: 10px;
+}
+
+.botH .userMenu .user {
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+.botH .userMenu .user .imgBox {
+  border-radius: 50px;
+  width: 24px;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.botH .userMenu .user .imgBox img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.botH .userMenu .myCourse {
+  border-radius: 50px;
+  border: 3px solid #edcee3;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+  padding: 4px 10px;
+  color: #a90076;
+}
+
+.botH .userMenu .myCourse > img {
+  width: 18px;
+  height: auto;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 1280px) {
+  .topH > div,
+  .botH {
+    width: 90%;
+  }
+  .botH nav .depth01 > li {
+    cursor: pointer;
+    padding: 8px 12px;
+    position: relative;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .topH > div,
+  .botH {
+    width: 95%;
+  }
+  .topH > div {
+    font-size: 12px;
+  }
+  .topH > div > a {
+    padding-right: 8px;
+  }
+  .botH {
+    padding: 12px 0;
+  }
+  .botH .logoBox img {
+    width: 100px;
+  }
+  .botH nav .depth01 {
+    gap: 5px;
+  }
+  .botH nav .depth01 > li {
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+  .botH .userMenu {
+    gap: 8px;
+    font-size: 14px;
+  }
+  .botH .userMenu .login > img {
+    width: 20px;
+  }
+  .botH .userMenu .user .imgBox {
+    width: 20px;
+  }
+  .botH .userMenu .myCourse {
+    padding: 3px 8px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .topH > div {
+    gap: 6px;
+    font-size: 11px;
+  }
+  .topH > div .screenSet {
+    gap: 3px;
+  }
+  .topH > div .screenSet div {
+    width: 18px;
+    font-size: 14px;
+  }
+  .botH {
+    flex-wrap: wrap;
+  }
+  .botH .logoBox img {
+    width: 90px;
+  }
+  .botH nav .depth01 {
+    flex-wrap: wrap;
+  }
+  .botH nav .depth01 > li {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+  .botH .userMenu {
+    gap: 6px;
+    font-size: 12px;
+  }
+  .botH .userMenu .signup {
+    padding-left: 6px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .topH > div {
+    font-size: 10px;
+    padding: 4px 0;
+  }
+  .botH nav .depth01 > li {
+    font-size: 11px;
+    padding: 4px 5px;
+  }
+  /* Hide secondary nav items on very small screens */
+  .botH nav .depth02 {
+    display: none;
+  }
+}

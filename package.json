@@ -13,6 +13,7 @@
     "notion:update-cognitive": "node scripts/notion-update-cognitive.js"
   },
   "dependencies": {
+    "@notionhq/client": "^2.2.15",
     "@prisma/client": "6.14.0",
     "@radix-ui/react-radio-group": "^1.3.8",
     "bcryptjs": "^3.0.2",
@@ -29,7 +30,7 @@
     "recharts": "^3.1.2",
     "sharp": "^0.33.4",
     "sonner": "^2.0.7",
-    "@notionhq/client": "^2.2.15"
+    "swiper": "^12.0.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

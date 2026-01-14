@@ -1,0 +1,80 @@
+/* footer css */
+footer {
+  background-color: #292f36;
+  border-radius: 0 100px 0 0;
+  padding: 50px 0;
+}
+footer .content {
+  width: 80%;
+  max-width: 1380px;
+  margin: 0 auto;
+  gap: 10px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+footer .content .logoBox {
+  flex: 1;
+}
+footer .content .logoBox > img {
+  width: 140px;
+  height: auto;
+}
+footer .content .textBox {
+  flex: 3;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+footer .content .textBox > .col_f {
+  gap: 30px;
+}
+footer .content .textBox .terms {
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  color: #ffffff;
+  font-weight: 400;
+  font-size: 16px;
+}
+footer .content .textBox .terms > li {
+  cursor: pointer;
+}
+footer .content .textBox .terms > li:first-child {
+  font-weight: 600;
+}
+footer .content .textBox .info {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 14px;
+}
+footer .content .textBox .copyright {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 12px;
+}
+footer .content .textBox .sns {
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+footer .content .textBox .sns > a {
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 100px;
+  width: 40px;
+  aspect-ratio: 1 / 1;
+}
+footer .content .textBox .sns > a > img {
+  height: 20px;
+  width: auto;
+}
+footer .content .textBox .sns > a:hover {
+  border: 2px solid #a90076;
+}
+@media screen and (max-width: 1280px) {
+  footer .content {
+    width: 90%;
+  }
+  footer .content .textBox {
+    flex: 3.5;
+  }
+}
