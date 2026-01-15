@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Palette,
+  Book,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -25,6 +26,7 @@ const adminMenuItems = [
   { href: "/admin/users", label: "사용자 관리", icon: Users },
   { href: "/admin/cognitive", label: "인지 콘텐츠", icon: Brain },
   { href: "/admin/coloring", label: "마음색칠 도안", icon: Palette },
+  { href: "/admin/workbook", label: "워크북 카테고리", icon: Book },
   { href: "/admin/assessments", label: "검사 결과", icon: FileText },
   { href: "/admin/statistics", label: "통계 분석", icon: BarChart3 },
   { href: "/admin/activities", label: "활동자료", icon: Settings },
@@ -92,7 +94,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="lg:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100"
               >
-                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
               </button>
               <Link href="/admin" className="text-xl font-bold text-gray-900">
                 관리자 패널
@@ -122,7 +128,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <ul className="space-y-2">
               {adminMenuItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(item.href));
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/admin" && pathname?.startsWith(item.href));
                 return (
                   <li key={item.href}>
                     <Link
@@ -162,4 +170,3 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     </div>
   );
 }
-
