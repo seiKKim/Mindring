@@ -232,6 +232,7 @@ export default function SupportPage() {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-4 py-3 border-2 border-gray-300 rounded-full focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-colors bg-white"
+              aria-label="FAQ 카테고리 선택"
             >
               {categories.map(category => (
                 <option key={category} value={category}>{category}</option>
@@ -321,6 +322,7 @@ export default function SupportPage() {
                   value={contactForm.category}
                   onChange={(e) => setContactForm(prev => ({ ...prev, category: e.target.value }))}
                   className="w-full px-4 py-3 border-2 border-gray-300 rounded-full focus:border-teal-400 focus:ring-2 focus:ring-teal-100 transition-colors bg-white"
+                  aria-label="문의 유형"
                 >
                   <option value="일반문의">일반문의</option>
                   <option value="기능문의">기능문의</option>

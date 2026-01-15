@@ -243,7 +243,7 @@ export default function ActivitiesPage() {
                           ? "bg-teal-600 border-teal-600 text-white shadow-sm" 
                           : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
                       }`}
-                      aria-pressed={active}
+                      aria-pressed={active ? "true" : "false"}
                     >
                       {t}
                     </button>

@@ -92,62 +92,6 @@ export default function NewWorkSetupPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      {/* Header - Main page style */}
-      <header className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-gray-200">
-        <div className="mx-auto max-w-7xl px-4 py-3">
-          <div className="flex items-center justify-end mb-2">
-            <nav className="flex items-center gap-6 text-sm text-gray-600">
-              <button
-                onClick={() => router.back()}
-                className="hover:text-gray-900 transition-colors flex items-center gap-2"
-              >
-                <ChevronLeft className="h-4 w-4" />
-                뒤로
-              </button>
-              <a className="hover:text-gray-900 transition-colors" href="/dashboard">대시보드</a>
-              <a className="hover:text-gray-900 transition-colors" href="/dashboard/life-graph">인생그래프</a>
-              <a className="hover:text-gray-900 transition-colors" href="/dashboard/workspace">작업실</a>
-              <a className="hover:text-gray-900 transition-colors" href="/dashboard/books">라이브러리</a>
-              <a className="hover:text-gray-900 transition-colors" href="/api/auth/logout">로그아웃</a>
-            </nav>
-          </div>
-          <div className="flex items-center justify-between gap-8">
-            <div className="flex flex-col items-center gap-2 flex-shrink-0 -mt-8">
-              <div className="h-12 w-12 flex items-center justify-center">
-                <svg width="48" height="48" viewBox="0 0 48 48" className="text-teal-400">
-                  <g transform="translate(24,24)">
-                    <circle cx="0" cy="0" r="3" fill="currentColor" />
-                    <ellipse cx="0" cy="0" rx="16" ry="6" fill="none" stroke="currentColor" strokeWidth="2" transform="rotate(0)"/>
-                    <circle cx="16" cy="0" r="2" fill="currentColor"/>
-                    <ellipse cx="0" cy="0" rx="16" ry="6" fill="none" stroke="currentColor" strokeWidth="2" transform="rotate(60)"/>
-                    <circle cx="8" cy="13.86" r="2" fill="currentColor"/>
-                    <ellipse cx="0" cy="0" rx="16" ry="6" fill="none" stroke="currentColor" strokeWidth="2" transform="rotate(120)"/>
-                    <circle cx="-8" cy="13.86" r="2" fill="currentColor"/>
-                  </g>
-                </svg>
-              </div>
-              <div className="text-center">
-                <h1 className="text-lg font-bold text-gray-900">그레이트 시니어</h1>
-                <p className="text-sm text-gray-600">네트워크</p>
-              </div>
-            </div>
-            <div className="flex-1 text-center">
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-3">
-                <Sparkles className="h-6 w-6 text-teal-500" />
-                작품 만들기
-              </h2>
-              <p className="text-gray-600 mt-1">템플릿: {template ?? "blank"}</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center bg-gray-50 px-3 py-2 rounded-full border border-gray-200">
-                <Sparkles className="mr-2 h-4 w-4 text-teal-500" />
-                <span className="text-sm font-medium text-gray-700">새 작품</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="mx-auto max-w-7xl px-4 py-12">
 
         {/* Title */}
