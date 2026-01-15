@@ -14,6 +14,7 @@ export async function GET() {
         userId: user.userId,
         email: user.email,
         name: user.name,
+        isAdmin: user.isAdmin,
       }
     });
   } catch (error) {

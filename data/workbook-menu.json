@@ -1,0 +1,135 @@
+[
+  {
+    "id": "all",
+    "name": "전체",
+    "slug": "all",
+    "order": 0,
+    "visible": true
+  },
+  {
+    "id": "cat-1",
+    "name": "언어/한글",
+    "slug": "cat-1",
+    "order": 1,
+    "visible": true
+  },
+  {
+    "id": "cat-2",
+    "name": "숫자/수학",
+    "slug": "cat-2",
+    "order": 2,
+    "visible": true
+  },
+  {
+    "id": "cat-3",
+    "name": "계절",
+    "slug": "cat-3",
+    "order": 3,
+    "visible": true
+  },
+  {
+    "id": "cat-4",
+    "name": "동식물",
+    "slug": "cat-4",
+    "order": 4,
+    "visible": true
+  },
+  {
+    "id": "cat-5",
+    "name": "생활",
+    "slug": "cat-5",
+    "order": 5,
+    "visible": true
+  },
+  {
+    "id": "cat-6",
+    "name": "사고력",
+    "slug": "cat-6",
+    "order": 6,
+    "visible": true
+  },
+  {
+    "id": "cat-7",
+    "name": "음식",
+    "slug": "cat-7",
+    "order": 7,
+    "visible": true
+  },
+  {
+    "id": "cat-8",
+    "name": "안전",
+    "slug": "cat-8",
+    "order": 8,
+    "visible": true
+  },
+  {
+    "id": "cat-9",
+    "name": "가족",
+    "slug": "cat-9",
+    "order": 9,
+    "visible": true
+  },
+  {
+    "id": "cat-10",
+    "name": "미술",
+    "slug": "cat-10",
+    "order": 10,
+    "visible": true
+  },
+  {
+    "id": "cat-11",
+    "name": "색칠하기",
+    "slug": "cat-11",
+    "order": 11,
+    "visible": true
+  },
+  {
+    "id": "cat-12",
+    "name": "한자/천자문",
+    "slug": "cat-12",
+    "order": 12,
+    "visible": true
+  },
+  {
+    "id": "cat-13",
+    "name": "영어",
+    "slug": "cat-13",
+    "order": 13,
+    "visible": true
+  },
+  {
+    "id": "cat-14",
+    "name": "사자성어/속담",
+    "slug": "cat-14",
+    "order": 14,
+    "visible": true
+  },
+  {
+    "id": "cat-15",
+    "name": "기억력",
+    "slug": "cat-15",
+    "order": 15,
+    "visible": true
+  },
+  {
+    "id": "cat-16",
+    "name": "절기",
+    "slug": "cat-16",
+    "order": 16,
+    "visible": false
+  },
+  {
+    "id": "cat-17",
+    "name": "세계문화",
+    "slug": "cat-17",
+    "order": 17,
+    "visible": true
+  },
+  {
+    "id": "cat-18",
+    "name": "한국/역사/전통",
+    "slug": "cat-18",
+    "order": 18,
+    "visible": true
+  }
+]

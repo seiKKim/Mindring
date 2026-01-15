@@ -47,10 +47,19 @@ const DEMO_CATEGORIES = [
 // demo 데이터 (API 연동 전)
 const DEMO_RESOURCES: Resource[] = Array.from({ length: 24 }).map((_, i) => ({
   id: `r-${i + 1}`,
-  title: i % 3 === 0 ? "김치 담그기" : i % 3 === 1 ? "가을 그림 색칠" : "전통 음식 알아보기",
+  title:
+    i % 3 === 0
+      ? "김치 담그기"
+      : i % 3 === 1
+      ? "가을 그림 색칠"
+      : "전통 음식 알아보기",
   subtitle: "PDF 활동지 • 컬러 프린트",
   thumbnail: "/img/cover-fallback.png",
-  tags: ["PDF", i % 2 ? "컬러" : "흑백", TOPIC_PRESETS[i % TOPIC_PRESETS.length]],
+  tags: [
+    "PDF",
+    i % 2 ? "컬러" : "흑백",
+    TOPIC_PRESETS[i % TOPIC_PRESETS.length],
+  ],
   category: DEMO_CATEGORIES[i % DEMO_CATEGORIES.length],
   createdAt: new Date(Date.now() - i * 86400000).toISOString(),
   popularScore: 100 - i,
@@ -74,39 +83,62 @@ export default function ActivitiesPage() {
           fetch("/api/admin/activities-menu"),
           fetch("/api/admin/activities-resources?visible=true"),
         ]);
-        
+
         // 카테고리 메뉴 처리
         if (menuRes.ok) {
-          const menuData = await menuRes.json() as Array<{ visible: boolean; order: number; name: string }>;
-          const visible = menuData.filter((d) => d.visible).sort((a, b) => a.order - b.order);
+          const menuData = (await menuRes.json()) as Array<{
+            visible: boolean;
+            order: number;
+            name: string;
+          }>;
+          const visible = menuData
+            .filter((d) => d.visible)
+            .sort((a, b) => a.order - b.order);
           // "전체" 중복 제거 후 맨 앞에 추가
-          const categoryNames = visible.map((v) => v.name).filter((name) => name !== "전체");
+          const categoryNames = visible
+            .map((v) => v.name)
+            .filter((name) => name !== "전체");
           const names = ["전체", ...categoryNames];
           // 중복 제거 (Set 사용)
           const uniqueNames = Array.from(new Set(names));
           setCategories(uniqueNames);
         }
-        
+
         // 활동자료 데이터 처리
         if (resourcesRes.ok) {
           const resourcesData = await resourcesRes.json();
           const resourcesList = resourcesData.resources || [];
-          
+
           console.log("활동자료 데이터:", resourcesList); // 디버깅용
-          
+
           // Resource 타입에 맞게 변환
-          const convertedResources: Resource[] = resourcesList.map((r: any) => ({
-            id: r.id || r.resourceId, // API에서 id 또는 resourceId로 올 수 있음
-            title: r.title || "",
-            subtitle: r.subtitle || undefined,
-            thumbnail: r.thumbnail || undefined,
-            tags: Array.isArray(r.tags) ? r.tags : [],
-            category: r.category || "",
-            createdAt: r.createdAt || new Date().toISOString(),
-            popularScore: r.popularScore || 0,
-            fileUrl: r.fileUrl || undefined,
-          }));
-          
+          type ApiResource = {
+            id?: string;
+            resourceId?: string;
+            title?: string;
+            subtitle?: string;
+            thumbnail?: string;
+            tags?: string | string[];
+            category?: string;
+            createdAt?: string;
+            popularScore?: number;
+            fileUrl?: string;
+          };
+
+          const convertedResources: Resource[] = resourcesList.map(
+            (r: ApiResource) => ({
+              id: r.id || r.resourceId || "", // API에서 id 또는 resourceId로 올 수 있음
+              title: r.title || "",
+              subtitle: r.subtitle || undefined,
+              thumbnail: r.thumbnail || undefined,
+              tags: Array.isArray(r.tags) ? r.tags : [],
+              category: r.category || "",
+              createdAt: r.createdAt || new Date().toISOString(),
+              popularScore: r.popularScore || 0,
+              fileUrl: r.fileUrl || undefined,
+            })
+          );
+
           setResources(convertedResources);
           console.log("변환된 활동자료:", convertedResources.length, "개"); // 디버깅용
         } else {
@@ -125,13 +157,22 @@ export default function ActivitiesPage() {
 
   const filtered = useMemo(() => {
     // 실제 데이터베이스 데이터만 사용 (데모 데이터 제거)
-    const base = resources.filter((r) =>
-      category === "전체" ? true : r.category === category
-    ).filter((r) =>
-      query.trim() ? r.title.toLowerCase().includes(query.trim().toLowerCase()) || (r.tags && r.tags.some((t: string) => t.toLowerCase().includes(query.trim().toLowerCase()))) : true
-    ).filter((r) =>
-      selectedTopics.length ? selectedTopics.every(t => r.tags && r.tags.includes(t)) : true
-    );
+    const base = resources
+      .filter((r) => (category === "전체" ? true : r.category === category))
+      .filter((r) =>
+        query.trim()
+          ? r.title.toLowerCase().includes(query.trim().toLowerCase()) ||
+            (r.tags &&
+              r.tags.some((t: string) =>
+                t.toLowerCase().includes(query.trim().toLowerCase())
+              ))
+          : true
+      )
+      .filter((r) =>
+        selectedTopics.length
+          ? selectedTopics.every((t) => r.tags && r.tags.includes(t))
+          : true
+      );
 
     const sorted = [...base].sort((a, b) => {
       if (sortBy === "popular") return b.popularScore - a.popularScore;
@@ -144,7 +185,10 @@ export default function ActivitiesPage() {
 
   const PAGE_SIZE = 12;
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const pageItems = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
+  const pageItems = useMemo(
+    () => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [filtered, page]
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
@@ -157,12 +201,16 @@ export default function ActivitiesPage() {
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">활동자료</h1>
-                <p className="text-sm text-gray-600 mt-0.5">다양한 활동 자료를 다운로드하세요</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                  활동자료
+                </h1>
+                <p className="text-sm text-gray-600 mt-0.5">
+                  다양한 활동 자료를 다운로드하세요
+                </p>
               </div>
             </div>
-            <Link 
-              href="/dashboard" 
+            <Link
+              href="/dashboard"
               className="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-base font-medium transition-colors whitespace-nowrap"
             >
               대시보드
@@ -181,10 +229,13 @@ export default function ActivitiesPage() {
               {categories.map((c, index) => (
                 <button
                   key={`category-${index}-${c}`}
-                  onClick={() => { setCategory(c); setPage(1); }}
+                  onClick={() => {
+                    setCategory(c);
+                    setPage(1);
+                  }}
                   className={`w-full text-left px-4 py-2.5 rounded-lg text-base font-medium transition-colors ${
-                    category === c 
-                      ? "bg-teal-600 text-white shadow-sm" 
+                    category === c
+                      ? "bg-teal-600 text-white shadow-sm"
                       : "hover:bg-gray-50 text-gray-700 border border-transparent hover:border-gray-200"
                   }`}
                 >
@@ -203,18 +254,29 @@ export default function ActivitiesPage() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
                     value={query}
-                    onChange={(e) => { setQuery(e.target.value); setPage(1); }}
+                    onChange={(e) => {
+                      setQuery(e.target.value);
+                      setPage(1);
+                    }}
                     placeholder="어떤 주제를 찾아볼까요?"
                     className="w-full rounded-lg border-2 border-gray-300 bg-white pl-10 pr-4 py-2.5 text-base outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
                     aria-label="활동자료 검색"
                   />
                 </div>
                 <div className="flex items-center gap-3">
-                  <label htmlFor="sort" className="text-base text-gray-700 whitespace-nowrap font-medium">정렬</label>
+                  <label
+                    htmlFor="sort"
+                    className="text-base text-gray-700 whitespace-nowrap font-medium"
+                  >
+                    정렬
+                  </label>
                   <select
                     id="sort"
                     value={sortBy}
-                    onChange={(e) => { setSortBy(e.target.value as "new" | "popular" | "title"); setPage(1); }}
+                    onChange={(e) => {
+                      setSortBy(e.target.value as "new" | "popular" | "title");
+                      setPage(1);
+                    }}
                     className="rounded-lg border-2 border-gray-300 bg-white px-3 py-2 text-base focus:border-teal-400 focus:ring-2 focus:ring-teal-100 font-medium"
                     aria-label="정렬 기준 선택"
                   >
@@ -222,7 +284,9 @@ export default function ActivitiesPage() {
                     <option value="popular">인기순</option>
                     <option value="title">제목순</option>
                   </select>
-                  <span className="ml-2 text-base text-gray-600 font-medium">총 {filtered.length}개</span>
+                  <span className="ml-2 text-base text-gray-600 font-medium">
+                    총 {filtered.length}개
+                  </span>
                 </div>
               </div>
 
@@ -234,16 +298,17 @@ export default function ActivitiesPage() {
                       key={t}
                       onClick={() => {
                         setSelectedTopics((prev) =>
-                          prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
+                          prev.includes(t)
+                            ? prev.filter((x) => x !== t)
+                            : [...prev, t]
                         );
                         setPage(1);
                       }}
                       className={`px-4 py-2 rounded-full text-base font-medium border-2 transition-colors ${
-                        active 
-                          ? "bg-teal-600 border-teal-600 text-white shadow-sm" 
+                        active
+                          ? "bg-teal-600 border-teal-600 text-white shadow-sm"
                           : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
                       }`}
-                      aria-pressed={active ? "true" : "false"}
                     >
                       {t}
                     </button>
@@ -259,15 +324,21 @@ export default function ActivitiesPage() {
                   <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-4 animate-pulse">
                     <FileText className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-lg font-medium text-gray-600">로딩 중...</p>
+                  <p className="text-lg font-medium text-gray-600">
+                    로딩 중...
+                  </p>
                 </div>
               ) : pageItems.length === 0 ? (
                 <div className="py-16 text-center">
                   <div className="w-16 h-16 bg-gray-100 rounded-full mx-auto flex items-center justify-center mb-4">
                     <FileText className="h-8 w-8 text-gray-400" />
                   </div>
-                  <p className="text-lg font-medium text-gray-600">조건에 맞는 자료가 없습니다.</p>
-                  <p className="text-sm text-gray-500 mt-2">다른 검색어나 카테고리를 시도해보세요.</p>
+                  <p className="text-lg font-medium text-gray-600">
+                    조건에 맞는 자료가 없습니다.
+                  </p>
+                  <p className="text-sm text-gray-500 mt-2">
+                    다른 검색어나 카테고리를 시도해보세요.
+                  </p>
                 </div>
               ) : (
                 <ResourceGrid items={pageItems} />
@@ -309,9 +380,12 @@ function ResourceGrid({ items }: { items: Resource[] }) {
       {items.map((r) => {
         const fileUrl = r.fileUrl;
         const tags = Array.isArray(r.tags) ? r.tags : [];
-        
+
         return (
-          <article key={r.id} className="group relative border-2 border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-lg hover:border-teal-300 transition-all">
+          <article
+            key={r.id}
+            className="group relative border-2 border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-lg hover:border-teal-300 transition-all"
+          >
             <div className="relative aspect-[3/4] bg-gray-100">
               <Image
                 src={r.thumbnail || "/img/cover-fallback.png"}
@@ -323,7 +397,10 @@ function ResourceGrid({ items }: { items: Resource[] }) {
               {tags.length > 0 && (
                 <div className="absolute top-2 left-2 flex gap-1.5">
                   {tags.slice(0, 2).map((t, idx) => (
-                    <span key={`${r.id}-tag-${idx}`} className="px-2 py-0.5 bg-white/95 border border-gray-200 rounded text-xs font-semibold text-gray-700 shadow-sm">
+                    <span
+                      key={`${r.id}-tag-${idx}`}
+                      className="px-2 py-0.5 bg-white/95 border border-gray-200 rounded text-xs font-semibold text-gray-700 shadow-sm"
+                    >
                       {t}
                     </span>
                   ))}
@@ -331,13 +408,19 @@ function ResourceGrid({ items }: { items: Resource[] }) {
               )}
             </div>
             <div className="p-3">
-              <h3 className="text-sm font-bold text-gray-900 line-clamp-2 min-h-[2.75rem] mb-1">{r.title}</h3>
+              <h3 className="text-sm font-bold text-gray-900 line-clamp-2 min-h-[2.75rem] mb-1">
+                {r.title}
+              </h3>
               {r.subtitle && (
-                <p className="text-xs text-gray-500 line-clamp-1">{r.subtitle}</p>
+                <p className="text-xs text-gray-500 line-clamp-1">
+                  {r.subtitle}
+                </p>
               )}
             </div>
             <div className="px-3 pb-3 flex flex-col gap-2">
-              <span className="text-xs text-gray-600 font-medium">{r.category}</span>
+              <span className="text-xs text-gray-600 font-medium">
+                {r.category}
+              </span>
               <div className="flex items-center gap-2">
                 <button
                   className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -345,7 +428,7 @@ function ResourceGrid({ items }: { items: Resource[] }) {
                   disabled={!fileUrl}
                   onClick={() => {
                     if (fileUrl) {
-                      window.open(fileUrl, '_blank');
+                      window.open(fileUrl, "_blank");
                     }
                   }}
                 >
@@ -359,7 +442,7 @@ function ResourceGrid({ items }: { items: Resource[] }) {
                   onClick={() => {
                     if (fileUrl) {
                       // 다운로드를 위해 a 태그 생성
-                      const link = document.createElement('a');
+                      const link = document.createElement("a");
                       link.href = fileUrl;
                       link.download = `${r.title}.pdf`;
                       document.body.appendChild(link);
@@ -379,5 +462,3 @@ function ResourceGrid({ items }: { items: Resource[] }) {
     </div>
   );
 }
-
-

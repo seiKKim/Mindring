@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     // sanitize filename
     const orig = file.name || "upload.pdf";
-    const base = (id ?? orig).replace(/[^a-zA-Z0-9._-]/g, "-");
+    const base = (id ?? orig).replace(/[^a-zA-Z0-9._-\uAC00-\uD7A3]/g, "-");
     const targetName = base.endsWith(path.extname(orig)) ? base : `${base}${path.extname(orig)}`;
 
     // sanitize folder path

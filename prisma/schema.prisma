@@ -12,42 +12,42 @@ datasource db {
 
 /// 작품의 상태
 enum WorkStatus {
-  draft      /// 작업중 (임시저장)
-  completed  /// 완성됨
+  draft /// 작업중 (임시저장)
+  completed /// 완성됨
 }
 
 /// 페이지 콘텐츠 유형
 enum PageContentType {
-  text   /// 텍스트 페이지
-  image  /// 이미지 페이지
-  mixed  /// 텍스트+이미지 혼합
+  text /// 텍스트 페이지
+  image /// 이미지 페이지
+  mixed /// 텍스트+이미지 혼합
 }
 
 /// 용지 사이즈
 enum PaperSize {
-  A4    /// A4 (210×297mm)
-  SHIN  /// 신국판 (152×225mm)
+  A4 /// A4 (210×297mm)
+  SHIN /// 신국판 (152×225mm)
 }
 
 /// 커버 타입
 enum CoverType {
-  soft_matte  /// 소프트커버 무광 코팅
-  hard        /// 하드커버
-  none        /// 커버 없음 (디지털 전용)
+  soft_matte /// 소프트커버 무광 코팅
+  hard /// 하드커버
+  none /// 커버 없음 (디지털 전용)
 }
 
 /// 내지 종류
 enum InnerPaper {
-  plain  /// 일반지
-  none   /// 선택 안함
+  plain /// 일반지
+  none /// 선택 안함
 }
 
 /// 인쇄 상태
 enum PrintStatus {
-  pending    /// 인쇄 대기
+  pending /// 인쇄 대기
   processing /// 인쇄 진행중
-  completed  /// 인쇄 완료
-  cancelled  /// 인쇄 취소
+  completed /// 인쇄 완료
+  cancelled /// 인쇄 취소
 }
 
 /// 인생그래프 감정 아이콘 종류
@@ -62,35 +62,35 @@ enum Emotion {
 
 /// 그래프 공유 권한
 enum SharePermission {
-  read     /// 읽기만 가능
-  comment  /// 읽기 + 댓글
-  edit     /// 읽기 + 댓글 + 편집
+  read /// 읽기만 가능
+  comment /// 읽기 + 댓글
+  edit /// 읽기 + 댓글 + 편집
 }
 
 // -------- Models --------
 
 /// 사용자 계정
 model User {
-  userId            String          @id @default(cuid()) @db.Char(25) /// 내부 고유 ID
-  email             String?         @unique @db.VarChar(191)          /// 로그인 이메일 (선택적, 소셜만 사용하는 유저도 있음)
-  passwordHash      String?         @db.VarChar(191)                  /// 비밀번호 해시
-  name              String?         @db.VarChar(191)                  /// 사용자 이름/닉네임
-  avatarUrl         String?         @db.VarChar(512)                  /// 프로필 이미지
-  emailSavedFlag    Boolean         @default(false)                   /// "이메일 저장" 옵션 여부
-  passwordSavedFlag Boolean         @default(false)                   /// "비밀번호 저장" 옵션 여부
-  isAdmin           Boolean         @default(false)                   /// 관리자 여부
-  createdAt         DateTime        @default(now())                   /// 가입일시
-  updatedAt         DateTime        @updatedAt                        /// 최종 수정일시
+  userId            String   @id @default(cuid()) @db.Char(25) /// 내부 고유 ID
+  email             String?  @unique @db.VarChar(191) /// 로그인 이메일 (선택적, 소셜만 사용하는 유저도 있음)
+  passwordHash      String?  @db.VarChar(191) /// 비밀번호 해시
+  name              String?  @db.VarChar(191) /// 사용자 이름/닉네임
+  avatarUrl         String?  @db.VarChar(512) /// 프로필 이미지
+  emailSavedFlag    Boolean  @default(false) /// "이메일 저장" 옵션 여부
+  passwordSavedFlag Boolean  @default(false) /// "비밀번호 저장" 옵션 여부
+  isAdmin           Boolean  @default(false) /// 관리자 여부
+  createdAt         DateTime @default(now()) /// 가입일시
+  updatedAt         DateTime @updatedAt /// 최종 수정일시
 
-  socialAccounts    SocialAccount[] /// 연결된 소셜 계정들
-  sessions          Session[]       /// 로그인 세션들
-  works             Work[]          /// 만든 작품들
-  lifeGraphs        LifeGraph[]     /// 작성한 인생그래프
-  lifeGraphTags     LifeGraphTag[]  /// 생성한 태그들
-  printOrders       PrintOrder[]    /// 인쇄 주문 내역
+  socialAccounts       SocialAccount[] /// 연결된 소셜 계정들
+  sessions             Session[] /// 로그인 세션들
+  works                Work[] /// 만든 작품들
+  lifeGraphs           LifeGraph[] /// 작성한 인생그래프
+  lifeGraphTags        LifeGraphTag[] /// 생성한 태그들
+  printOrders          PrintOrder[] /// 인쇄 주문 내역
   cognitiveAssessments CognitiveAssessment[] /// 인지 검사 결과들
-  puzzleRecords     PuzzleRecord[]  /// 퍼즐 게임 기록들
-  gameScores        GameScore[]     /// 게임 스코어 기록들
+  puzzleRecords        PuzzleRecord[] /// 퍼즐 게임 기록들
+  gameScores           GameScore[] /// 게임 스코어 기록들
 
   @@index([email])
 }
@@ -98,16 +98,16 @@ model User {
 /// 소셜 로그인 계정 (카카오, 네이버, 구글, 애플 등)
 model SocialAccount {
   socialId        String   @id @default(cuid()) @db.Char(25) /// 내부 식별자
-  userId          String   @db.Char(25)                     /// 연결된 User ID
-  provider        String   @db.VarChar(32)                   /// 소셜 제공자명 ('kakao' | 'naver' | 'google' | 'apple')
-  providerUserId  String   @db.VarChar(191)                  /// 소셜 쪽 사용자 ID (subject)
-  email           String?  @db.VarChar(191)                  /// 소셜 계정 이메일 (있을 수도, 없을 수도 있음)
-  displayName     String?  @db.VarChar(191)                  /// 소셜 프로필 이름
-  avatarUrl       String?  @db.VarChar(512)                  /// 소셜 프로필 이미지
-  refreshTokenEnc String?  @db.Text                          /// (선택) refresh token 암호화 저장
-  linkedAt        DateTime @default(now())                   /// 연동된 시각
+  userId          String   @db.Char(25) /// 연결된 User ID
+  provider        String   @db.VarChar(32) /// 소셜 제공자명 ('kakao' | 'naver' | 'google' | 'apple')
+  providerUserId  String   @db.VarChar(191) /// 소셜 쪽 사용자 ID (subject)
+  email           String?  @db.VarChar(191) /// 소셜 계정 이메일 (있을 수도, 없을 수도 있음)
+  displayName     String?  @db.VarChar(191) /// 소셜 프로필 이름
+  avatarUrl       String?  @db.VarChar(512) /// 소셜 프로필 이미지
+  refreshTokenEnc String?  @db.Text /// (선택) refresh token 암호화 저장
+  linkedAt        DateTime @default(now()) /// 연동된 시각
 
-  user            User     @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([provider, providerUserId]) // 동일 소셜 계정 중복 방지
   @@index([userId, provider])
@@ -115,14 +115,14 @@ model SocialAccount {
 
 /// 로그인 세션
 model Session {
-  sessionId     String   @id @db.VarChar(32)              /// 세션 ID (쿠키와 매칭)
-  userId        String   @db.Char(25)                     /// 연결된 사용자
-  uaFingerprint String?  @db.VarChar(191)                 /// 브라우저/디바이스 식별 정보
-  expiresAt     DateTime                                /// 만료 시각
-  createdAt     DateTime @default(now())                 /// 생성 시각
-  revokedAt     DateTime?                               /// 강제 만료 시각
+  sessionId     String    @id @db.VarChar(32) /// 세션 ID (쿠키와 매칭)
+  userId        String    @db.Char(25) /// 연결된 사용자
+  uaFingerprint String?   @db.VarChar(191) /// 브라우저/디바이스 식별 정보
+  expiresAt     DateTime /// 만료 시각
+  createdAt     DateTime  @default(now()) /// 생성 시각
+  revokedAt     DateTime? /// 강제 만료 시각
 
-  user          User     @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId])
   @@index([expiresAt])
@@ -130,21 +130,21 @@ model Session {
 
 /// 작품 (책 단위)
 model Work {
-  workId     String     @id @default(cuid()) @db.Char(25)
-  userId     String     @db.Char(25)
-  title      String     @db.VarChar(191)
-  coverImage String?    @db.LongText
+  workId          String     @id @default(cuid()) @db.Char(25)
+  userId          String     @db.Char(25)
+  title           String     @db.VarChar(191)
+  coverImage      String?    @db.LongText
   coverTemplateId String?    @db.VarChar(191)
-  status     WorkStatus @default(draft)
-  shareToken String?    @unique @db.Char(32)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  status          WorkStatus @default(draft)
+  shareToken      String?    @unique @db.Char(32)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
-  user             User                  @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  pages            Page[]
-  exports          Export[]
-  printSpec        PrintSpecification?   /// 인쇄 사양 (1:1 관계)
-  printOrders      PrintOrder[]          /// 인쇄 주문 내역
+  user        User                @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  pages       Page[]
+  exports     Export[]
+  printSpec   PrintSpecification? /// 인쇄 사양 (1:1 관계)
+  printOrders PrintOrder[] /// 인쇄 주문 내역
 
   @@index([userId, status])
   @@index([updatedAt])
@@ -152,21 +152,21 @@ model Work {
 
 /// 인쇄 사양 정보
 model PrintSpecification {
-  specId       String      @id @default(cuid()) @db.Char(25)  /// 인쇄 사양 ID
-  workId       String      @unique @db.Char(25)               /// 연결된 작품 ID (1:1 관계)
-  paperSize    PaperSize   @default(A4)                       /// 용지 사이즈
-  coverType    CoverType   @default(soft_matte)               /// 커버 타입  
-  innerPaper   InnerPaper  @default(plain)                    /// 내지 종류
-  orientation  String?     @db.VarChar(20) @default("portrait") /// 방향 ("portrait" | "landscape")
-  
-  // 추가 옵션들 (JSON으로 확장 가능)
-  additionalOptions Json?                                     /// 추가 인쇄 옵션 (특수 코팅, 제본 방식 등)
-  
-  createdAt    DateTime    @default(now())                    /// 생성일시
-  updatedAt    DateTime    @updatedAt                         /// 수정일시
+  specId      String     @id @default(cuid()) @db.Char(25) /// 인쇄 사양 ID
+  workId      String     @unique @db.Char(25) /// 연결된 작품 ID (1:1 관계)
+  paperSize   PaperSize  @default(A4) /// 용지 사이즈
+  coverType   CoverType  @default(soft_matte) /// 커버 타입  
+  innerPaper  InnerPaper @default(plain) /// 내지 종류
+  orientation String?    @default("portrait") @db.VarChar(20) /// 방향 ("portrait" | "landscape")
 
-  work         Work        @relation(fields: [workId], references: [workId], onDelete: Cascade)
-  printOrders  PrintOrder[] /// 이 사양으로 주문된 인쇄 내역
+  // 추가 옵션들 (JSON으로 확장 가능)
+  additionalOptions Json? /// 추가 인쇄 옵션 (특수 코팅, 제본 방식 등)
+
+  createdAt DateTime @default(now()) /// 생성일시
+  updatedAt DateTime @updatedAt /// 수정일시
+
+  work        Work         @relation(fields: [workId], references: [workId], onDelete: Cascade)
+  printOrders PrintOrder[] /// 이 사양으로 주문된 인쇄 내역
 
   @@index([workId])
   @@index([paperSize, coverType])
@@ -174,24 +174,24 @@ model PrintSpecification {
 
 /// 인쇄 주문
 model PrintOrder {
-  orderId      String      @id @default(cuid()) @db.Char(25)  /// 주문 ID
-  userId       String      @db.Char(25)                       /// 주문자 ID
-  workId       String      @db.Char(25)                       /// 작품 ID
-  specId       String      @db.Char(25)                       /// 인쇄 사양 ID
-  quantity     Int         @default(1)                        /// 수량
-  totalPrice   Decimal     @db.Decimal(10,2)                  /// 총 가격
-  status       PrintStatus @default(pending)                  /// 인쇄 상태
-  
+  orderId    String      @id @default(cuid()) @db.Char(25) /// 주문 ID
+  userId     String      @db.Char(25) /// 주문자 ID
+  workId     String      @db.Char(25) /// 작품 ID
+  specId     String      @db.Char(25) /// 인쇄 사양 ID
+  quantity   Int         @default(1) /// 수량
+  totalPrice Decimal     @db.Decimal(10, 2) /// 총 가격
+  status     PrintStatus @default(pending) /// 인쇄 상태
+
   // 배송 정보
-  shippingAddress Json?                                       /// 배송 주소 정보
-  trackingNumber  String?   @db.VarChar(100)                  /// 택배 송장번호
-  
-  orderDate    DateTime    @default(now())                    /// 주문일시
-  completedAt  DateTime?                                      /// 완료일시
-  
-  user         User                 @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  work         Work                 @relation(fields: [workId], references: [workId], onDelete: Cascade)
-  printSpec    PrintSpecification   @relation(fields: [specId], references: [specId], onDelete: Cascade)
+  shippingAddress Json? /// 배송 주소 정보
+  trackingNumber  String? @db.VarChar(100) /// 택배 송장번호
+
+  orderDate   DateTime  @default(now()) /// 주문일시
+  completedAt DateTime? /// 완료일시
+
+  user      User               @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  work      Work               @relation(fields: [workId], references: [workId], onDelete: Cascade)
+  printSpec PrintSpecification @relation(fields: [specId], references: [specId], onDelete: Cascade)
 
   @@index([userId, orderDate])
   @@index([status, orderDate])
@@ -200,37 +200,37 @@ model PrintOrder {
 
 /// 작품 내 페이지
 model Page {
-  pageId       String           @id @default(cuid()) @db.Char(25) /// 페이지 ID
-  workId       String           @db.Char(25)                     /// 소속 작품
-  orderIndex   Int                                                /// 작품 내 순서
-  contentType  PageContentType                                    /// 텍스트/이미지/혼합
-  contentJson  Json                                               /// 페이지 데이터(JSON)
+  pageId      String          @id @default(cuid()) @db.Char(25) /// 페이지 ID
+  workId      String          @db.Char(25) /// 소속 작품
+  orderIndex  Int /// 작품 내 순서
+  contentType PageContentType /// 텍스트/이미지/혼합
+  contentJson Json /// 페이지 데이터(JSON)
 
-  work         Work             @relation(fields: [workId], references: [workId], onDelete: Cascade, onUpdate: Cascade)
+  work Work @relation(fields: [workId], references: [workId], onDelete: Cascade, onUpdate: Cascade)
 
-  @@index([workId, orderIndex])
   @@unique([workId, orderIndex]) // 작품 내 페이지 순서 유니크
+  @@index([workId, orderIndex])
 }
 
 /// 인생그래프 (전체 그래프 설정)
 model LifeGraph {
-  graphId     String   @id @default(cuid()) @db.Char(25)
-  userId      String   @db.Char(25)
-  title       String   @db.VarChar(191)                 /// 그래프 제목
-  description String?  @db.Text                         /// 그래프 설명
-  startDate   DateTime                                  /// 시작 시점
-  endDate     DateTime?                                 /// 종료 시점 (현재 진행형이면 null)
-  minScore    Int      @default(-5)                     /// 최소 점수
-  maxScore    Int      @default(5)                      /// 최대 점수
-  isPublic    Boolean  @default(false)                  /// 공개 여부
-  shareToken  String?  @unique @db.Char(32)            /// 공유 링크용 토큰
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  graphId     String    @id @default(cuid()) @db.Char(25)
+  userId      String    @db.Char(25)
+  title       String    @db.VarChar(191) /// 그래프 제목
+  description String?   @db.Text /// 그래프 설명
+  startDate   DateTime /// 시작 시점
+  endDate     DateTime? /// 종료 시점 (현재 진행형이면 null)
+  minScore    Int       @default(-5) /// 최소 점수
+  maxScore    Int       @default(5) /// 최대 점수
+  isPublic    Boolean   @default(false) /// 공개 여부
+  shareToken  String?   @unique @db.Char(32) /// 공유 링크용 토큰
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  user        User                 @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  points      LifeGraphPoint[]     /// 그래프의 점들
-  shares      LifeGraphShare[]     /// 공유 권한들
-  comments    LifeGraphComment[]   /// 댓글들
+  user     User               @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  points   LifeGraphPoint[] /// 그래프의 점들
+  shares   LifeGraphShare[] /// 공유 권한들
+  comments LifeGraphComment[] /// 댓글들
 
   @@index([userId])
   @@index([shareToken])
@@ -240,18 +240,18 @@ model LifeGraph {
 model LifeGraphPoint {
   pointId     String   @id @default(cuid()) @db.Char(25)
   graphId     String   @db.Char(25)
-  date        DateTime                                  /// 정확한 날짜 (년-월-일)
-  score       Float                                     /// 만족도/감정 점수
-  title       String?  @db.VarChar(191)                /// 사건 제목
-  description String?  @db.Text                         /// 상세 설명
-  emotion     Emotion?                                 /// 감정 아이콘 (선택적)
-  attachments Json?                                    /// 첨부파일 정보 배열 [{type: 'image', url: '...', name: '...'}, ...]
+  date        DateTime /// 정확한 날짜 (년-월-일)
+  score       Float /// 만족도/감정 점수
+  title       String?  @db.VarChar(191) /// 사건 제목
+  description String?  @db.Text /// 상세 설명
+  emotion     Emotion? /// 감정 아이콘 (선택적)
+  attachments Json? /// 첨부파일 정보 배열 [{type: 'image', url: '...', name: '...'}, ...]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  graph       LifeGraph             @relation(fields: [graphId], references: [graphId], onDelete: Cascade)
-  tags        LifeGraphPointTag[]   /// 점에 붙은 태그들
-  comments    LifeGraphComment[]    /// 이 점에 대한 댓글들
+  graph    LifeGraph           @relation(fields: [graphId], references: [graphId], onDelete: Cascade)
+  tags     LifeGraphPointTag[] /// 점에 붙은 태그들
+  comments LifeGraphComment[] /// 이 점에 대한 댓글들
 
   @@index([graphId, date])
 }
@@ -259,14 +259,14 @@ model LifeGraphPoint {
 /// 태그 정의
 model LifeGraphTag {
   tagId       String   @id @default(cuid()) @db.Char(25)
-  userId      String   @db.Char(25)                     /// 태그 소유자
-  name        String   @db.VarChar(50)                  /// 태그명
-  color       String   @db.Char(7)      @default("#3B82F6") /// HEX 색상
-  description String?  @db.VarChar(191)                 /// 태그 설명
+  userId      String   @db.Char(25) /// 태그 소유자
+  name        String   @db.VarChar(50) /// 태그명
+  color       String   @default("#3B82F6") @db.Char(7) /// HEX 색상
+  description String?  @db.VarChar(191) /// 태그 설명
   createdAt   DateTime @default(now())
 
-  user        User                 @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  points      LifeGraphPointTag[]  /// 이 태그가 붙은 점들
+  user   User                @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  points LifeGraphPointTag[] /// 이 태그가 붙은 점들
 
   @@unique([userId, name]) /// 유저별로 태그명 중복 방지
   @@index([userId])
@@ -274,13 +274,13 @@ model LifeGraphTag {
 
 /// 점-태그 연결 테이블
 model LifeGraphPointTag {
-  pointId     String
-  tagId       String
-  intensity   Float?   @default(1.0)                    /// 태그 영향도 (0.1~1.0)
-  createdAt   DateTime @default(now())
+  pointId   String
+  tagId     String
+  intensity Float?   @default(1.0) /// 태그 영향도 (0.1~1.0)
+  createdAt DateTime @default(now())
 
-  point       LifeGraphPoint @relation(fields: [pointId], references: [pointId], onDelete: Cascade)
-  tag         LifeGraphTag   @relation(fields: [tagId], references: [tagId], onDelete: Cascade)
+  point LifeGraphPoint @relation(fields: [pointId], references: [pointId], onDelete: Cascade)
+  tag   LifeGraphTag   @relation(fields: [tagId], references: [tagId], onDelete: Cascade)
 
   @@id([pointId, tagId])
 }
@@ -289,15 +289,15 @@ model LifeGraphPointTag {
 model LifeGraphShare {
   shareId     String          @id @default(cuid()) @db.Char(25)
   graphId     String          @db.Char(25)
-  email       String?         @db.VarChar(191)                 /// 공유 대상 이메일 (특정인 공유시)
-  shareToken  String          @unique @db.Char(32)            /// 공유용 토큰
-  permissions SharePermission @default(read)                   /// 권한 레벨
-  expiresAt   DateTime?                                        /// 만료일 (null이면 무제한)
-  isActive    Boolean         @default(true)                   /// 활성 상태
+  email       String?         @db.VarChar(191) /// 공유 대상 이메일 (특정인 공유시)
+  shareToken  String          @unique @db.Char(32) /// 공유용 토큰
+  permissions SharePermission @default(read) /// 권한 레벨
+  expiresAt   DateTime? /// 만료일 (null이면 무제한)
+  isActive    Boolean         @default(true) /// 활성 상태
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  graph       LifeGraph @relation(fields: [graphId], references: [graphId], onDelete: Cascade)
+  graph LifeGraph @relation(fields: [graphId], references: [graphId], onDelete: Cascade)
 
   @@index([graphId])
   @@index([shareToken])
@@ -307,19 +307,19 @@ model LifeGraphShare {
 model LifeGraphComment {
   commentId   String   @id @default(cuid()) @db.Char(25)
   graphId     String   @db.Char(25)
-  pointId     String?  @db.Char(25)                     /// 특정 점에 대한 댓글 (null이면 전체 그래프)
-  authorName  String   @db.VarChar(100)                 /// 댓글 작성자명
-  authorEmail String?  @db.VarChar(191)                 /// 작성자 이메일 (선택)
-  content     String   @db.Text                         /// 댓글 내용
-  isPrivate   Boolean  @default(false)                  /// 비공개 댓글 여부 (작성자만 보기)
-  parentId    String?  @db.Char(25)                     /// 답글인 경우 부모 댓글 ID
+  pointId     String?  @db.Char(25) /// 특정 점에 대한 댓글 (null이면 전체 그래프)
+  authorName  String   @db.VarChar(100) /// 댓글 작성자명
+  authorEmail String?  @db.VarChar(191) /// 작성자 이메일 (선택)
+  content     String   @db.Text /// 댓글 내용
+  isPrivate   Boolean  @default(false) /// 비공개 댓글 여부 (작성자만 보기)
+  parentId    String?  @db.Char(25) /// 답글인 경우 부모 댓글 ID
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  graph       LifeGraph       @relation(fields: [graphId], references: [graphId], onDelete: Cascade)
-  point       LifeGraphPoint? @relation(fields: [pointId], references: [pointId], onDelete: Cascade)
-  parent      LifeGraphComment? @relation("CommentReplies", fields: [parentId], references: [commentId], onDelete: Cascade)
-  replies     LifeGraphComment[] @relation("CommentReplies")
+  graph   LifeGraph          @relation(fields: [graphId], references: [graphId], onDelete: Cascade)
+  point   LifeGraphPoint?    @relation(fields: [pointId], references: [pointId], onDelete: Cascade)
+  parent  LifeGraphComment?  @relation("CommentReplies", fields: [parentId], references: [commentId], onDelete: Cascade)
+  replies LifeGraphComment[] @relation("CommentReplies")
 
   @@index([graphId, createdAt])
   @@index([pointId])
@@ -328,28 +328,28 @@ model LifeGraphComment {
 
 /// 내보낸 결과물 (PDF/이미지/Word 등)
 model Export {
-  exportId   String   @id @default(cuid()) @db.Char(25) /// 결과물 ID
-  workId     String   @db.Char(25)                     /// 소속 작품
-  fileType   String   @db.VarChar(16)                  /// 파일 형식 ('PDF' | 'PNG' | 'JPG' | 'WORD')
-  filePath   String   @db.VarChar(512)                 /// 저장 경로
-  createdAt  DateTime @default(now())                  /// 생성 시각
+  exportId  String   @id @default(cuid()) @db.Char(25) /// 결과물 ID
+  workId    String   @db.Char(25) /// 소속 작품
+  fileType  String   @db.VarChar(16) /// 파일 형식 ('PDF' | 'PNG' | 'JPG' | 'WORD')
+  filePath  String   @db.VarChar(512) /// 저장 경로
+  createdAt DateTime @default(now()) /// 생성 시각
 
-  work       Work     @relation(fields: [workId], references: [workId], onDelete: Cascade, onUpdate: Cascade)
+  work Work @relation(fields: [workId], references: [workId], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([workId, fileType])
 }
 
 /// 로그인 감사 로그: 성공/실패/사유/메타데이터
 model AuthLog {
-  id         String   @id @default(cuid()) @db.Char(25)
-  userId     String?  @db.Char(25)                 /// 매칭된 사용자(성공하거나, 실패라도 email 매칭 가능 시)
-  emailHash  String?  @db.VarChar(191)             /// email 원문 저장 대신 hash
-  ip         String?  @db.VarChar(64)              /// X-Forwarded-For 등
-  ua         String?  @db.VarChar(512)             /// user-agent
-  provider   String   @db.VarChar(32)              /// 'password' | 'kakao' | 'naver' | ...
-  result     String   @db.VarChar(16)              /// 'success' | 'fail'
-  reason     String?  @db.VarChar(64)              /// 'bad_password' | 'no_user' | 'rate_limit' | 'captcha' | ...
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid()) @db.Char(25)
+  userId    String?  @db.Char(25) /// 매칭된 사용자(성공하거나, 실패라도 email 매칭 가능 시)
+  emailHash String?  @db.VarChar(191) /// email 원문 저장 대신 hash
+  ip        String?  @db.VarChar(64) /// X-Forwarded-For 등
+  ua        String?  @db.VarChar(512) /// user-agent
+  provider  String   @db.VarChar(32) /// 'password' | 'kakao' | 'naver' | ...
+  result    String   @db.VarChar(16) /// 'success' | 'fail'
+  reason    String?  @db.VarChar(64) /// 'bad_password' | 'no_user' | 'rate_limit' | 'captcha' | ...
+  createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
   @@index([result, createdAt])
@@ -358,35 +358,35 @@ model AuthLog {
 
 /// 인지 검사 결과
 model CognitiveAssessment {
-  assessmentId   String   @id @default(cuid()) @db.Char(25) /// 검사 결과 ID
-  userId         String   @db.Char(25)                     /// 검사한 사용자 ID
-  assessmentType String   @db.VarChar(50)                  /// 검사 유형 ('dementia_self' | 'dementia_family' | 'brain_health' | 'depression' | 'life_satisfaction' | 'social_network' | 'death_anxiety')
-  
+  assessmentId   String @id @default(cuid()) @db.Char(25) /// 검사 결과 ID
+  userId         String @db.Char(25) /// 검사한 사용자 ID
+  assessmentType String @db.VarChar(50) /// 검사 유형 ('dementia_self' | 'dementia_family' | 'brain_health' | 'depression' | 'life_satisfaction' | 'social_network' | 'death_anxiety')
+
   // 기본 정보
-  age            Int?                                         /// 검사 시 연령
-  gender         String?      @db.VarChar(20)                /// 성별 ('male' | 'female')
-  testDate       DateTime     @default(now())                /// 검사 실시일
-  
+  age      Int? /// 검사 시 연령
+  gender   String?  @db.VarChar(20) /// 성별 ('male' | 'female')
+  testDate DateTime @default(now()) /// 검사 실시일
+
   // 검사 결과 데이터
-  answers        Json                                         /// 검사 답변 (JSON 형식)
-  totalScore     Float?                                       /// 총점
-  averageScore   Float?                                       /// 평균 점수
-  percentage     Float?                                       /// 백분율/지수
-  riskLevel      String?      @db.VarChar(50)                /// 위험도 수준 ('normal' | 'borderline' | 'risk' | 'high_risk' | 'very_low' | 'low' | 'moderate' | 'high' | 'very_high')
-  interpretation String?      @db.VarChar(100)               /// 결과 해석 ('정상' | '경계선' | '위험' 등)
-  message        String?      @db.VarChar(200)               /// 결과 메시지
-  description    String?      @db.Text                       /// 결과 설명
-  recommendations Json?                                      /// 권장 사항 (배열)
-  categoryScores Json?                                        /// 영역별 점수 (카테고리별 분석)
-  
+  answers         Json /// 검사 답변 (JSON 형식)
+  totalScore      Float? /// 총점
+  averageScore    Float? /// 평균 점수
+  percentage      Float? /// 백분율/지수
+  riskLevel       String? @db.VarChar(50) /// 위험도 수준 ('normal' | 'borderline' | 'risk' | 'high_risk' | 'very_low' | 'low' | 'moderate' | 'high' | 'very_high')
+  interpretation  String? @db.VarChar(100) /// 결과 해석 ('정상' | '경계선' | '위험' 등)
+  message         String? @db.VarChar(200) /// 결과 메시지
+  description     String? @db.Text /// 결과 설명
+  recommendations Json? /// 권장 사항 (배열)
+  categoryScores  Json? /// 영역별 점수 (카테고리별 분석)
+
   // 추가 정보
-  metadata       Json?                                        /// 추가 메타데이터 (관계, 교육 수준 등)
-  
-  createdAt      DateTime     @default(now())                /// 생성일시
-  updatedAt      DateTime     @updatedAt                      /// 수정일시
-  
-  user           User         @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  
+  metadata Json? /// 추가 메타데이터 (관계, 교육 수준 등)
+
+  createdAt DateTime @default(now()) /// 생성일시
+  updatedAt DateTime @updatedAt /// 수정일시
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+
   @@index([userId, assessmentType, testDate])
   @@index([userId, createdAt])
   @@index([assessmentType, testDate])
@@ -394,18 +394,18 @@ model CognitiveAssessment {
 
 /// 활동자료 (Activity Resources)
 model ActivityResource {
-  resourceId    String   @id @default(cuid()) @db.Char(25) /// 활동자료 ID
-  title         String   @db.VarChar(191)                  /// 제목
-  subtitle      String?  @db.VarChar(191)                  /// 부제목
-  thumbnail     String?  @db.VarChar(512)                  /// 썸네일 이미지 URL
-  fileUrl       String?  @db.VarChar(512)                  /// PDF 파일 URL
-  category      String   @db.VarChar(50)                   /// 카테고리
-  tags          Json     @default("[]")                    /// 태그 배열 (JSON)
-  popularScore  Int      @default(0)                       /// 인기도 점수
-  visible       Boolean  @default(true)                    /// 사용자에게 표시 여부
-  createdAt     DateTime @default(now())                   /// 생성일시
-  updatedAt     DateTime @updatedAt                        /// 수정일시
-  
+  resourceId   String   @id @default(cuid()) @db.Char(25) /// 활동자료 ID
+  title        String   @db.VarChar(191) /// 제목
+  subtitle     String?  @db.VarChar(191) /// 부제목
+  thumbnail    String?  @db.VarChar(512) /// 썸네일 이미지 URL
+  fileUrl      String?  @db.VarChar(512) /// PDF 파일 URL
+  category     String   @db.VarChar(50) /// 카테고리
+  tags         Json     @default("[]") /// 태그 배열 (JSON)
+  popularScore Int      @default(0) /// 인기도 점수
+  visible      Boolean  @default(true) /// 사용자에게 표시 여부
+  createdAt    DateTime @default(now()) /// 생성일시
+  updatedAt    DateTime @updatedAt /// 수정일시
+
   @@index([category, visible])
   @@index([visible, createdAt])
   @@index([popularScore])
@@ -413,23 +413,23 @@ model ActivityResource {
 
 /// 허브 아카데미 강좌 (Academy Courses)
 model AcademyCourse {
-  courseId      String   @id @default(cuid()) @db.Char(25) /// 강좌 ID
-  title         String   @db.VarChar(191)                  /// 강좌 제목
-  description   String?  @db.Text                           /// 강좌 설명
-  subtitle      String?  @db.VarChar(191)                  /// 부제목
-  thumbnail     String?  @db.VarChar(512)                  /// 썸네일 이미지 URL
-  category      String   @db.VarChar(50)                   /// 카테고리 (자격증, 자기계발 등)
-  instructor    String?  @db.VarChar(100)                  /// 강사명
-  courseUrl     String?  @db.VarChar(512)                  /// 강좌 링크/URL
-  price         Decimal? @db.Decimal(10,2)                /// 가격 (null이면 무료)
-  duration      String?  @db.VarChar(50)                   /// 수강 기간 (예: "4주", "8시간")
-  tags          Json     @default("[]")                    /// 태그 배열 (JSON)
-  level         String?  @db.VarChar(20)                   /// 난이도 (초급, 중급, 고급)
-  popularScore  Int      @default(0)                       /// 인기도 점수
-  visible       Boolean  @default(true)                    /// 사용자에게 표시 여부
-  createdAt     DateTime @default(now())                   /// 생성일시
-  updatedAt     DateTime @updatedAt                        /// 수정일시
-  
+  courseId     String   @id @default(cuid()) @db.Char(25) /// 강좌 ID
+  title        String   @db.VarChar(191) /// 강좌 제목
+  description  String?  @db.Text /// 강좌 설명
+  subtitle     String?  @db.VarChar(191) /// 부제목
+  thumbnail    String?  @db.VarChar(512) /// 썸네일 이미지 URL
+  category     String   @db.VarChar(50) /// 카테고리 (자격증, 자기계발 등)
+  instructor   String?  @db.VarChar(100) /// 강사명
+  courseUrl    String?  @db.VarChar(512) /// 강좌 링크/URL
+  price        Decimal? @db.Decimal(10, 2) /// 가격 (null이면 무료)
+  duration     String?  @db.VarChar(50) /// 수강 기간 (예: "4주", "8시간")
+  tags         Json     @default("[]") /// 태그 배열 (JSON)
+  level        String?  @db.VarChar(20) /// 난이도 (초급, 중급, 고급)
+  popularScore Int      @default(0) /// 인기도 점수
+  visible      Boolean  @default(true) /// 사용자에게 표시 여부
+  createdAt    DateTime @default(now()) /// 생성일시
+  updatedAt    DateTime @updatedAt /// 수정일시
+
   @@index([category, visible])
   @@index([visible, createdAt])
   @@index([popularScore])
@@ -438,19 +438,19 @@ model AcademyCourse {
 
 /// 퍼즐 게임 기록 및 랭킹
 model PuzzleRecord {
-  recordId      String   @id @default(cuid()) @db.Char(25) /// 기록 ID
-  userId        String   @db.Char(25)                     /// 사용자 ID
-  puzzleId      String   @db.VarChar(191)                  /// 퍼즐 이미지 ID
-  difficulty    Int                                       /// 난이도 (4, 9, 16, 36)
-  completionTime Int?                                     /// 완료 시간 (초)
-  moves         Int?                                     /// 이동 횟수
-  score         Int                                       /// 점수 (시간과 이동 횟수 기반)
-  completed     Boolean  @default(false)                  /// 완료 여부
-  completedAt   DateTime?                                 /// 완료 시각
-  createdAt     DateTime @default(now())                  /// 시작 시각
-  updatedAt     DateTime @updatedAt                       /// 수정일시
+  recordId       String    @id @default(cuid()) @db.Char(25) /// 기록 ID
+  userId         String    @db.Char(25) /// 사용자 ID
+  puzzleId       String    @db.VarChar(191) /// 퍼즐 이미지 ID
+  difficulty     Int /// 난이도 (4, 9, 16, 36)
+  completionTime Int? /// 완료 시간 (초)
+  moves          Int? /// 이동 횟수
+  score          Int /// 점수 (시간과 이동 횟수 기반)
+  completed      Boolean   @default(false) /// 완료 여부
+  completedAt    DateTime? /// 완료 시각
+  createdAt      DateTime  @default(now()) /// 시작 시각
+  updatedAt      DateTime  @updatedAt /// 수정일시
 
-  user          User     @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([userId, completedAt])
   @@index([puzzleId, difficulty, score])
@@ -460,22 +460,38 @@ model PuzzleRecord {
 
 /// 게임 스코어 기록 (기억력 게임, 색상 순서 게임 등)
 model GameScore {
-  scoreId       String   @id @default(cuid()) @db.Char(25)  /// 고유 ID
-  userId        String   @db.Char(25)                       /// 사용자 ID
-  gameId        String   @db.VarChar(100)                   /// 게임 ID (예: 'memory-1', 'color-sequence')
-  gameType      String   @db.VarChar(50)                    /// 게임 타입 (예: 'memory-match', 'color-sequence')
-  level         Int                                         /// 게임 난이도 레벨
-  round         Int      @default(1)                        /// 라운드 (색상 순서 게임용)
-  moves         Int      @default(0)                        /// 이동 횟수 (메모리 게임용)
-  time          Int                                         /// 게임 소요 시간 (초)
-  score         Int      @default(0)                        /// 점수
-  success       Boolean  @default(true)                     /// 게임 성공 여부
-  completedAt   DateTime @default(now())                    /// 게임 완료 시간
-  
-  user          User     @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-  
+  scoreId     String   @id @default(cuid()) @db.Char(25) /// 고유 ID
+  userId      String   @db.Char(25) /// 사용자 ID
+  gameId      String   @db.VarChar(100) /// 게임 ID (예: 'memory-1', 'color-sequence')
+  gameType    String   @db.VarChar(50) /// 게임 타입 (예: 'memory-match', 'color-sequence')
+  level       Int /// 게임 난이도 레벨
+  round       Int      @default(1) /// 라운드 (색상 순서 게임용)
+  moves       Int      @default(0) /// 이동 횟수 (메모리 게임용)
+  time        Int /// 게임 소요 시간 (초)
+  score       Int      @default(0) /// 점수
+  success     Boolean  @default(true) /// 게임 성공 여부
+  completedAt DateTime @default(now()) /// 게임 완료 시간
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+
   @@index([userId, gameId])
   @@index([userId, completedAt])
   @@index([gameId, level])
   @@index([score, completedAt])
+}
+
+/// 스마트 워크북 자료
+model WorkbookResource {
+  id        String   @id @default(cuid()) @db.Char(25)
+  title     String   @db.VarChar(191)
+  category  String   @db.VarChar(50)
+  fileUrl   String?  @db.VarChar(512)
+  thumbnail String?  @db.VarChar(512)
+  downloads Int      @default(0)
+  visible   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([createdAt])
 }

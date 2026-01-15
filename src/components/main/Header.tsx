@@ -1,27 +1,28 @@
 // components/main/Header.tsx
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import styles from './Header.module.css';
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import styles from "./Header.module.css";
 
 interface HeaderProps {
   user?: {
     name: string;
     image?: string;
+    isAdmin?: boolean | number;
   } | null;
 }
 
 export default function Header({ user: initialUser }: HeaderProps) {
   const [user, setUser] = React.useState(initialUser);
-  const [imgSrc, setImgSrc] = React.useState('/img/icon_user_default.png');
+  const [imgSrc, setImgSrc] = React.useState("/img/icon_user_default.png");
 
   React.useEffect(() => {
     if (user?.image) {
       setImgSrc(user.image);
     } else {
-      setImgSrc('/img/icon_user_default.png');
+      setImgSrc("/img/icon_user_default.png");
     }
   }, [user]);
 
@@ -31,14 +32,14 @@ export default function Header({ user: initialUser }: HeaderProps) {
       setUser(initialUser);
     } else {
       // props에 유저가 없으면 API로 확인 (클라이언트 사이드 체크)
-      fetch('/api/auth/me')
-        .then(res => res.json())
-        .then(data => {
+      fetch("/api/auth/me")
+        .then((res) => res.json())
+        .then((data) => {
           if (data.authenticated && data.user) {
             setUser(data.user);
           }
         })
-        .catch(err => console.error('Failed to fetch user:', err));
+        .catch((err) => console.error("Failed to fetch user:", err));
     }
   }, [initialUser]);
 
@@ -100,7 +101,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link href="/services/workbook">
                 <p>스마트워크북</p>
               </Link>
             </li>
@@ -139,13 +140,22 @@ export default function Header({ user: initialUser }: HeaderProps) {
                     alt="user profile"
                     width={24}
                     height={24}
-                    onError={() => setImgSrc('/img/icon_user_default.png')}
+                    onError={() => setImgSrc("/img/icon_user_default.png")}
                   />
                 </div>
                 <p>
                   <span>{user.name}</span> 님 안녕하세요.
                 </p>
               </div>
+              {(user.isAdmin === true || user.isAdmin === 1) && (
+                <Link
+                  href="/admin/workbook"
+                  className={`${styles.myCourse} row_f`}
+                  style={{ marginRight: "10px", backgroundColor: "#4f46e5" }}
+                >
+                  <p style={{ color: "#fff" }}>관리자</p>
+                </Link>
+              )}
               <Link href="/status" className={`${styles.myCourse} row_f`}>
                 <Image
                   src="/img/graph_disk.png"
