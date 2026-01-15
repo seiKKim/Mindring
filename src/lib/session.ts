@@ -86,14 +86,38 @@ export async function issueSession(
 export async function getSession() {
   const jar = await cookies(); // await 추가
   const raw = jar.get(COOKIE)?.value;
+  
+  // DEBUG LOG
+  console.log(`[SESSION] Cookie raw value: ${raw ? raw.substring(0, 10) + '...' : 'undefined'}`);
+
   if (!raw) return null;
   const sid = unsign(raw);
+  
+  // DEBUG LOG
+  console.log(`[SESSION] Unsigned SID: ${sid}`);
+
   if (!sid) return null;
 
   const session = await prisma.session.findUnique({
     where: { sessionId: sid },
   });
-  if (!session || session.revokedAt || session.expiresAt < new Date()) return null;
+  
+  if (!session) {
+    console.log(`[SESSION] Session not found in DB for SID: ${sid}`);
+    return null;
+  }
+  
+  if (session.revokedAt) {
+    console.log(`[SESSION] Session revoked`);
+    return null;
+  }
+
+  if (session.expiresAt < new Date()) {
+    console.log(`[SESSION] Session expired: ${session.expiresAt}`);
+    return null;
+  }
+
+  console.log(`[SESSION] Session valid for user: ${session.userId}`);
   return session;
 }
 
