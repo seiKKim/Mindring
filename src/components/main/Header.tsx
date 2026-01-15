@@ -40,7 +40,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
         <div className={`row_f font_goormsans`}>
           {user ? (
             <>
-              <Link href="/api/auth/logout">로그아웃</Link>
+              <a href="/api/auth/logout">로그아웃</a>
               <Link href="/mypage">마이페이지</Link>
             </>
           ) : (
