@@ -285,13 +285,16 @@ export default function SmartWorkbookPage() {
                 <div className="p-4 text-center">
                   <p className="text-gray-500 text-sm mb-1">{item.title}</p>
                   <div className="flex items-center gap-2 text-sm font-medium">
-                    <button
+                    <a
+                      href={item.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex-1 flex items-center justify-center gap-1 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 transition-colors"
                       title="미리보기"
                     >
                       <span>미리보기</span>
                       <Search className="w-3 h-3" />
-                    </button>
+                    </a>
                     <a
                       href={item.fileUrl}
                       download={`${item.title}.pdf`}
