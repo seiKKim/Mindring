@@ -15,6 +15,15 @@ interface HeaderProps {
 
 export default function Header({ user: initialUser }: HeaderProps) {
   const [user, setUser] = React.useState(initialUser);
+  const [imgSrc, setImgSrc] = React.useState('/img/icon_user_default.png');
+
+  React.useEffect(() => {
+    if (user?.image) {
+      setImgSrc(user.image);
+    } else {
+      setImgSrc('/img/icon_user_default.png');
+    }
+  }, [user]);
 
   React.useEffect(() => {
     // props로 받은 유저가 있으면 그것을 사용
@@ -126,10 +135,11 @@ export default function Header({ user: initialUser }: HeaderProps) {
               <div className={`${styles.user} row_f`}>
                 <div className={styles.imgBox}>
                   <Image
-                    src={user.image || '/img/icon_user_default.png'}
+                    src={imgSrc}
                     alt="user profile"
                     width={24}
                     height={24}
+                    onError={() => setImgSrc('/img/icon_user_default.png')}
                   />
                 </div>
                 <p>
