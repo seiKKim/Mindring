@@ -19,6 +19,7 @@ import {
   Shield,
   Sparkles,
   ArrowLeft,
+  Info,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { saveAssessment } from "@/lib/save-assessment";
@@ -244,7 +245,7 @@ export default function BrainHealthChecklistPage() {
 
     let level: "excellent" | "good" | "fair" | "poor";
     let message: string;
-    let color: string;
+    let color: "green" | "blue" | "yellow" | "red";
     let recommendations: string[];
 
     if (averageScore >= 4.5) {
@@ -354,101 +355,86 @@ export default function BrainHealthChecklistPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* 1. Header & Breadcrumb */}
-      <div className="max-w-4xl mx-auto px-4 pt-12 pb-6">
-        <button
-          onClick={() => router.push("/services/smart-cognitive")}
-          className="flex items-center gap-2 text-gray-500 hover:text-purple-600 transition-colors mb-8 font-medium"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>스마트 인지관리로 돌아가기</span>
-        </button>
-
-        <div className="text-center space-y-4 mb-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-bold">
-            <Brain className="w-4 h-4" />
-            <span>뇌 건강 체크리스트</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-            나의 뇌 건강 습관,
-            <br />
-            얼마나 잘 지키고 계신가요?
+      {/* Header */}
+      <div className="border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-4 py-6 text-center relative">
+          <button
+            onClick={() => router.push("/services/smart-cognitive")}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-900"
+            aria-label="뒤로가기"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            뇌 건강 체크리스트
           </h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            간단한 체크리스트를 통해 뇌 건강을 위한 생활 습관을 점검해보세요.
-          </p>
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 pb-20">
+      <div className="max-w-2xl mx-auto px-4 pb-20 mt-8">
         {step === "intro" && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden"
+            className="space-y-8 text-center"
           >
-            <div className="p-10 text-center space-y-8">
-              <div className="flex justify-center">
-                <div className="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center">
-                  <CheckCircle2 className="w-12 h-12 text-purple-600" />
-                </div>
+            <div className="space-y-4">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-purple-100 rounded-full mb-4">
+                <Brain className="w-10 h-10 text-purple-600" />
               </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                  총 10개의 질문
-                </h2>
-                <p className="text-gray-500">
-                  식단, 운동, 수면 등 뇌 건강에 영향을 미치는
-                  <br />
-                  다양한 생활 습관을 평가합니다.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 text-left bg-gray-50 p-6 rounded-2xl">
-                <div className="flex items-center gap-3">
-                  <Heart className="w-5 h-5 text-red-500" />
-                  <span className="font-medium text-gray-700">식단 관리</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Activity className="w-5 h-5 text-blue-500" />
-                  <span className="font-medium text-gray-700">신체 활동</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Moon className="w-5 h-5 text-indigo-500" />
-                  <span className="font-medium text-gray-700">수면 패턴</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Smile className="w-5 h-5 text-yellow-500" />
-                  <span className="font-medium text-gray-700">
-                    스트레스 관리
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setStep("checklist")}
-                className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-lg transition-colors shadow-lg shadow-purple-200"
-              >
-                시작하기
-              </button>
+              <h2 className="text-3xl font-bold text-gray-900">
+                뇌 건강 생활습관 점검
+              </h2>
+              <p className="text-gray-500 text-lg leading-relaxed max-w-lg mx-auto">
+                식단, 운동, 수면 등 뇌 건강에 필수적인
+                <br />
+                생활 습관을 점검하고 개선점을 찾아보세요.
+              </p>
             </div>
+
+            <div className="bg-purple-50 rounded-2xl p-6 border border-purple-100 text-left">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-purple-600 mt-0.5 shrink-0" />
+                <div className="space-y-1">
+                  <h3 className="font-bold text-purple-900">검사 안내</h3>
+                  <ul className="text-sm text-purple-800 space-y-1 list-disc list-inside">
+                    <li>총 10개의 문항으로 구성되어 있습니다.</li>
+                    <li>약 3분 정도 소요됩니다.</li>
+                    <li>솔직하게 답변해주시면 정확한 분석이 가능합니다.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setStep("checklist")}
+              className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold text-lg transition-colors shadow-lg shadow-purple-200"
+            >
+              점검 시작하기
+            </button>
           </motion.div>
         )}
 
         {step === "checklist" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* Progress Bar */}
-            <div className="bg-gray-100 h-2 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-purple-600"
-                initial={{ width: 0 }}
-                animate={{ width: `${currentProgress}%` }}
-                transition={{ duration: 0.5 }}
-              />
-            </div>
-            <div className="flex justify-between text-sm text-gray-500 font-medium">
-              <span>질문 {currentItemIndex + 1}</span>
-              <span>{checklistItems.length}</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm font-medium">
+                <span className="text-purple-600">
+                  {currentItemIndex + 1} / {checklistItems.length}
+                </span>
+                <span className="text-gray-500">
+                  {Math.round(currentProgress)}% 완료
+                </span>
+              </div>
+              <div className="bg-gray-100 h-2 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-purple-600"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${currentProgress}%` }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
             </div>
 
             <AnimatePresence mode="wait">
@@ -457,9 +443,9 @@ export default function BrainHealthChecklistPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12 text-center"
+                className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center"
               >
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-600 mb-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-50 rounded-full text-xs font-bold text-purple-700 mb-6">
                   {categoryIcons[checklistItems[currentItemIndex].category] &&
                     React.createElement(
                       categoryIcons[checklistItems[currentItemIndex].category],
@@ -468,14 +454,14 @@ export default function BrainHealthChecklistPage() {
                   {checklistItems[currentItemIndex].category}
                 </div>
 
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-snug">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4 leading-snug">
                   {checklistItems[currentItemIndex].question}
                 </h2>
-                <p className="text-gray-500 mb-10">
+                <p className="text-gray-500 mb-10 text-sm">
                   {checklistItems[currentItemIndex].description}
                 </p>
 
-                <div className="grid gap-3">
+                <div className="space-y-3">
                   {checklistItems[currentItemIndex].options.map((option) => (
                     <button
                       key={option.value}
@@ -484,7 +470,7 @@ export default function BrainHealthChecklistPage() {
                         answers[checklistItems[currentItemIndex].id] ===
                         option.value
                           ? "border-purple-600 bg-purple-50 text-purple-700"
-                          : "border-gray-100 bg-white text-gray-700 hover:border-purple-200 hover:bg-gray-50"
+                          : "border-gray-100 bg-white text-gray-600 hover:border-purple-200 hover:bg-purple-50/50"
                       }`}
                     >
                       <span>{option.label}</span>
@@ -498,22 +484,13 @@ export default function BrainHealthChecklistPage() {
               </motion.div>
             </AnimatePresence>
 
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between pt-4">
               <button
                 onClick={handlePrev}
                 disabled={currentItemIndex === 0}
                 className="px-6 py-3 rounded-xl text-gray-500 font-medium hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
               >
                 이전
-              </button>
-              <button
-                onClick={handleNext}
-                disabled={!answers[checklistItems[currentItemIndex].id]}
-                className="px-8 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-lg"
-              >
-                {currentItemIndex === checklistItems.length - 1
-                  ? "결과 확인"
-                  : "다음"}
               </button>
             </div>
           </div>
@@ -522,67 +499,136 @@ export default function BrainHealthChecklistPage() {
         {step === "result" &&
           (() => {
             const result = calculateResult();
-            const levelColors = {
+
+            const levelConfig = {
               excellent: {
-                bg: "bg-green-100",
+                bg: "bg-green-50",
                 text: "text-green-700",
                 border: "border-green-200",
-                icon: "text-green-600",
+                badgeBg: "bg-green-100",
               },
               good: {
-                bg: "bg-blue-100",
+                bg: "bg-blue-50",
                 text: "text-blue-700",
                 border: "border-blue-200",
-                icon: "text-blue-600",
+                badgeBg: "bg-blue-100",
               },
               fair: {
-                bg: "bg-yellow-100",
+                bg: "bg-yellow-50",
                 text: "text-yellow-700",
                 border: "border-yellow-200",
-                icon: "text-yellow-600",
+                badgeBg: "bg-yellow-100",
               },
               poor: {
-                bg: "bg-red-100",
+                bg: "bg-red-50",
                 text: "text-red-700",
                 border: "border-red-200",
-                icon: "text-red-600",
+                badgeBg: "bg-red-100",
               },
-            };
-            const theme = levelColors[result.level];
+            }[result.level];
 
             return (
               <div className="space-y-8">
+                <div className="text-center space-y-2">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-2">
+                    <TrendingUp className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-gray-900">
+                    검사 결과 리포트
+                  </h2>
+                </div>
+
                 <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
-                  <div className="p-10 text-center border-b border-gray-100">
-                    <div
-                      className={`inline-flex items-center justify-center w-20 h-20 ${theme.bg} rounded-full mb-6`}
-                    >
-                      <Activity className={`w-10 h-10 ${theme.icon}`} />
+                  <div className="bg-gray-50 p-8 text-center border-b border-gray-100">
+                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      DATE: {new Date().toLocaleDateString()}
+                    </p>
+                    <div className="text-sm font-medium text-gray-500 mb-4">
+                      현재 뇌 건강 상태
                     </div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                    <div
+                      className={`inline-flex items-center gap-2 px-6 py-2 rounded-full text-lg font-bold border ${levelConfig.badgeBg} ${levelConfig.text} ${levelConfig.border}`}
+                    >
+                      {result.level === "excellent" && (
+                        <CheckCircle2 className="w-5 h-5" />
+                      )}
+                      {result.level === "poor" && (
+                        <AlertCircle className="w-5 h-5" />
+                      )}
                       {result.message}
-                    </h2>
-                    <div className="flex justify-center gap-2 items-end mt-4">
-                      <span className="text-6xl font-black text-gray-900">
-                        {result.totalScore}
-                      </span>
-                      <span className="text-xl text-gray-400 mb-2">
-                        / {result.maxScore}점
-                      </span>
                     </div>
                   </div>
 
-                  <div className="p-8 bg-gray-50">
-                    <h3 className="font-bold text-gray-900 mb-4">
-                      맞춤형 조언
+                  <div className="p-8">
+                    {/* Visual Score Meter */}
+                    <div className="mb-10">
+                      <div className="flex justify-between text-xs font-semibold text-gray-400 mb-2 uppercase">
+                        <span>Poor</span>
+                        <span>Fair</span>
+                        <span>Good</span>
+                        <span>Excellent</span>
+                      </div>
+                      <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden flex">
+                        <div className="flex-1 bg-red-400"></div>
+                        <div className="flex-1 bg-yellow-400"></div>
+                        <div className="flex-1 bg-blue-400"></div>
+                        <div className="flex-1 bg-green-400"></div>
+                      </div>
+
+                      {/* Indicator */}
+                      <div className="relative mt-2 h-8">
+                        <div
+                          className="absolute top-0 -translate-x-1/2 flex flex-col items-center transition-all duration-1000 ease-out"
+                          style={{
+                            left: `${Math.min(
+                              100,
+                              Math.max(0, result.percentage)
+                            )}%`,
+                          }}
+                        >
+                          <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-gray-800 rotate-180 mb-1"></div>
+                          <span className="text-sm font-bold text-gray-800 whitespace-nowrap px-2 py-1 bg-gray-800 text-white rounded-md text-xs">
+                            {result.totalScore}점
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-5 bg-gray-50 rounded-2xl text-center">
+                        <div className="text-3xl font-bold text-gray-900 mb-1">
+                          {result.totalScore}
+                        </div>
+                        <div className="text-sm text-gray-500 font-medium">
+                          총점
+                        </div>
+                        <div className="text-xs text-gray-400 mt-1">
+                          (50점 만점)
+                        </div>
+                      </div>
+                      <div className="p-5 bg-gray-50 rounded-2xl text-center">
+                        <div className="text-3xl font-bold text-gray-900 mb-1">
+                          {result.averageScore}
+                        </div>
+                        <div className="text-sm text-gray-500 font-medium">
+                          평균 점수
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-8 border-t border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                      <CheckCircle2 className="h-6 w-6 text-purple-600" />
+                      전문가 조언
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {result.recommendations.map((rec, i) => (
                         <div
                           key={i}
-                          className="flex items-start gap-3 bg-white p-4 rounded-xl border border-gray-100"
+                          className="flex items-start gap-3 bg-purple-50 p-4 rounded-xl border border-purple-100"
                         >
-                          <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs mt-0.5">
+                          <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs mt-0.5 shrink-0">
                             {i + 1}
                           </div>
                           <p className="text-gray-700">{rec}</p>
@@ -592,33 +638,48 @@ export default function BrainHealthChecklistPage() {
                   </div>
 
                   {/* Save Status Indicators */}
-                  <div className="px-8 pb-8 bg-gray-50">
+                  <div className="px-8 pb-4">
                     {isSaving && (
-                      <p className="text-center text-sm text-gray-500">
-                        결과 저장 중...
-                      </p>
+                      <div className="flex items-center justify-center gap-2 text-gray-500 bg-gray-100 py-3 rounded-xl">
+                        <span className="animate-spin w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full"></span>
+                        <span className="text-sm">결과 리포트 저장 중...</span>
+                      </div>
+                    )}
+                    {!isSaving && !saveError && (
+                      <div className="flex items-center justify-center gap-2 text-green-600 bg-green-50 py-3 rounded-xl border border-green-100">
+                        <CheckCircle2 className="w-5 h-5" />
+                        <span className="text-sm font-semibold">
+                          저장되었습니다
+                        </span>
+                      </div>
                     )}
                     {saveError && (
-                      <p className="text-center text-sm text-red-500">
+                      <div className="text-center text-sm text-red-500 py-2">
                         {saveError}
-                      </p>
+                      </div>
                     )}
                   </div>
 
-                  <div className="p-4 flex gap-3 justify-center bg-gray-50">
+                  <div className="p-6 flex flex-col sm:flex-row gap-3 justify-center bg-white border-t border-gray-100">
                     <button
                       onClick={() => {
                         setStep("intro");
                         setAnswers({});
                         setCurrentItemIndex(0);
                       }}
-                      className="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-colors"
+                      className="px-6 py-4 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-colors w-full sm:w-auto"
                     >
                       다시 검사하기
                     </button>
                     <button
+                      onClick={() => router.push("/services/contact")}
+                      className="px-6 py-4 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-colors shadow-lg hover:shadow-xl w-full sm:w-auto"
+                    >
+                      전문가 상담 예약
+                    </button>
+                    <button
                       onClick={() => router.push("/services/smart-cognitive")}
-                      className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors"
+                      className="px-6 py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors shadow-lg w-full sm:w-auto"
                     >
                       목록으로
                     </button>

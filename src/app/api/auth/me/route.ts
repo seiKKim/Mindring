@@ -1,13 +1,33 @@
 // app/api/auth/me/route.ts
 import { NextResponse } from "next/server";
-import { getSessionUser } from "@/lib/session";
+
+import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/session";
 
 export async function GET() {
   try {
-    const user = await getSessionUser();
-    if (!user) {
+    const session = await getSession();
+    if (!session) {
       return NextResponse.json({ authenticated: false }, { status: 200 });
     }
+
+    const user = await prisma.user.findUnique({
+        where: { userId: session.userId },
+        include: {
+            socialAccounts: {
+                select: {
+                    provider: true,
+                    providerUserId: true,
+                    email: true,
+                }
+            }
+        }
+    });
+
+    if (!user) {
+         return NextResponse.json({ authenticated: false }, { status: 200 });
+    }
+
     return NextResponse.json({ 
       authenticated: true,
       user: {
@@ -15,6 +35,7 @@ export async function GET() {
         email: user.email,
         name: user.name,
         isAdmin: user.isAdmin,
+        socialAccounts: user.socialAccounts,
       }
     });
   } catch (error) {

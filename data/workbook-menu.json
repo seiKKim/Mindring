@@ -113,10 +113,10 @@
   },
   {
     "id": "cat-16",
-    "name": "절기",
+    "name": "지남력",
     "slug": "cat-16",
     "order": 16,
-    "visible": false
+    "visible": true
   },
   {
     "id": "cat-17",

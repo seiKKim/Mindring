@@ -1,9 +1,8 @@
-// app/services/cognitive/depression/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  Heart, 
+import {
+  Heart,
   ChevronLeft,
   ChevronRight,
   CheckCircle2,
@@ -11,10 +10,16 @@ import {
   TrendingUp,
   Smile,
   Frown,
-  Meh
+  Meh,
+  ArrowLeft,
+  Calendar,
+  User,
+  Clock,
+  Info,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { saveAssessment } from "@/lib/save-assessment";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Question {
   id: number;
@@ -24,31 +29,71 @@ interface Question {
 
 const questions: Question[] = [
   { id: 1, question: "대체로 생활에 만족하십니까?", positiveAnswer: "no" },
-  { id: 2, question: "최근에 활동이나 취미에 대한 관심이 줄어들었습니까?", positiveAnswer: "yes" },
+  {
+    id: 2,
+    question: "최근에 활동이나 취미에 대한 관심이 줄어들었습니까?",
+    positiveAnswer: "yes",
+  },
   { id: 3, question: "생활이 비어있다고 느끼십니까?", positiveAnswer: "yes" },
   { id: 4, question: "자주 지루하다고 느끼십니까?", positiveAnswer: "yes" },
   { id: 5, question: "대체로 기분이 좋으십니까?", positiveAnswer: "no" },
-  { id: 6, question: "나쁜 일이 일어날 것 같아 두려우십니까?", positiveAnswer: "yes" },
+  {
+    id: 6,
+    question: "나쁜 일이 일어날 것 같아 두려우십니까?",
+    positiveAnswer: "yes",
+  },
   { id: 7, question: "대체로 행복하다고 느끼십니까?", positiveAnswer: "no" },
   { id: 8, question: "자주 무력감을 느끼십니까?", positiveAnswer: "yes" },
-  { id: 9, question: "밖에 나가는 것보다 집에 있는 것을 선호하십니까?", positiveAnswer: "yes" },
-  { id: 10, question: "기억력이 다른 사람들보다 나쁘다고 느끼십니까?", positiveAnswer: "yes" },
-  { id: 11, question: "살아있다는 것이 좋다고 느끼십니까?", positiveAnswer: "no" },
-  { id: 12, question: "현재 자신의 생활이 가치 없다고 느끼십니까?", positiveAnswer: "yes" },
-  { id: 13, question: "현재 자신의 생활에 활력이 넘친다고 느끼십니까?", positiveAnswer: "no" },
-  { id: 14, question: "현재 자신의 상황이 희망이 없다고 느끼십니까?", positiveAnswer: "yes" },
-  { id: 15, question: "대체로 다른 사람들이 자신보다 더 잘 살고 있다고 느끼십니까?", positiveAnswer: "yes" },
+  {
+    id: 9,
+    question: "밖에 나가는 것보다 집에 있는 것을 선호하십니까?",
+    positiveAnswer: "yes",
+  },
+  {
+    id: 10,
+    question: "기억력이 다른 사람들보다 나쁘다고 느끼십니까?",
+    positiveAnswer: "yes",
+  },
+  {
+    id: 11,
+    question: "살아있다는 것이 좋다고 느끼십니까?",
+    positiveAnswer: "no",
+  },
+  {
+    id: 12,
+    question: "현재 자신의 생활이 가치 없다고 느끼십니까?",
+    positiveAnswer: "yes",
+  },
+  {
+    id: 13,
+    question: "현재 자신의 생활에 활력이 넘친다고 느끼십니까?",
+    positiveAnswer: "no",
+  },
+  {
+    id: 14,
+    question: "현재 자신의 상황이 희망이 없다고 느끼십니까?",
+    positiveAnswer: "yes",
+  },
+  {
+    id: 15,
+    question: "대체로 다른 사람들이 자신보다 더 잘 살고 있다고 느끼십니까?",
+    positiveAnswer: "yes",
+  },
 ];
 
 export default function DepressionTestPage() {
   const router = useRouter();
-  const [step, setStep] = useState<"intro" | "info" | "questions" | "result">("intro");
+  const [step, setStep] = useState<"intro" | "info" | "questions" | "result">(
+    "intro"
+  );
   const [userInfo, setUserInfo] = useState({
     age: "",
     gender: "" as "male" | "female" | "",
     date: new Date().toISOString().split("T")[0],
   });
-  const [answers, setAnswers] = useState<{ [key: number]: "yes" | "no" | null }>({});
+  const [answers, setAnswers] = useState<{
+    [key: number]: "yes" | "no" | null;
+  }>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -74,10 +119,6 @@ export default function DepressionTestPage() {
     }
   };
 
-  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-  const answeredCount = Object.values(answers).filter(a => a !== null).length;
-
-  // 결과 계산
   const calculateResult = () => {
     let score = 0;
     questions.forEach((q) => {
@@ -90,7 +131,7 @@ export default function DepressionTestPage() {
     let level: "normal" | "mild" | "severe";
     let message: string;
     let description: string;
-    let color: string;
+    let color: "green" | "yellow" | "red";
     let icon: React.ComponentType<{ className?: string }>;
     let recommendations: string[];
 
@@ -109,7 +150,8 @@ export default function DepressionTestPage() {
     } else if (score <= 9) {
       level = "mild";
       message = "가벼운 우울증이 의심됩니다";
-      description = "경미한 우울 증상이 나타나고 있습니다. 주의 깊은 관찰과 관리가 필요합니다.";
+      description =
+        "경미한 우울 증상이 나타나고 있습니다. 주의 깊은 관찰과 관리가 필요합니다.";
       color = "yellow";
       icon = Meh;
       recommendations = [
@@ -122,7 +164,8 @@ export default function DepressionTestPage() {
     } else {
       level = "severe";
       message = "심한 우울증이 의심됩니다";
-      description = "우울 증상이 상당히 심각한 수준입니다. 전문적인 도움이 필요합니다.";
+      description =
+        "우울 증상이 상당히 심각한 수준입니다. 전문적인 도움이 필요합니다.";
       color = "red";
       icon = Frown;
       recommendations = [
@@ -148,7 +191,6 @@ export default function DepressionTestPage() {
     };
   };
 
-  // 결과 단계로 이동할 때 자동 저장
   useEffect(() => {
     if (step === "result") {
       const result = calculateResult();
@@ -177,458 +219,440 @@ export default function DepressionTestPage() {
     }
   }, [step]);
 
+  const currentProgress = ((currentQuestionIndex + 1) / questions.length) * 100;
+
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
-      {/* Animated Background Gradient */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-pink-50/30 to-rose-50/30"></div>
-        <div className="absolute top-0 -left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-pink-200/20 to-rose-200/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 -right-1/4 w-[800px] h-[800px] bg-gradient-to-tl from-rose-200/20 to-pink-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="border-b border-gray-100">
+        <div className="mx-auto max-w-7xl px-4 py-6 text-center relative">
+          <button
+            onClick={() => router.push("/services/smart-cognitive")}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-900"
+            aria-label="뒤로가기"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            노인 우울 척도 검사
+          </h1>
+        </div>
       </div>
 
-      <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <button
-              onClick={() => router.back()}
-              className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 rounded-lg px-2 py-1"
-              aria-label="뒤로가기"
-            >
-              <ChevronLeft className="h-5 w-5" />
-              <span className="text-sm font-medium">뒤로가기</span>
-            </button>
-            <button
-              onClick={() => router.push("/services/smart-cognitive")}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-300 text-sm font-medium"
-              aria-label="스마트 인지관리로 돌아가기"
-            >
-              <span>스마트 인지관리</span>
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
-          
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-100 to-rose-100 rounded-full border border-pink-200 mb-4">
-              <Heart className="h-5 w-5 text-pink-600" />
-              <span className="text-sm font-semibold text-pink-700">노인 우울 척도 (GDS-SF)</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
-              노인 우울 척도
-            </h1>
-            <p className="text-lg text-gray-600">
-              Geriatric Depression Scale - Short Form
-            </p>
-          </div>
-        </div>
-
-        {/* Intro Step */}
+      <div className="max-w-2xl mx-auto px-4 pb-20 mt-8">
         {step === "intro" && (
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-200/50">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full mb-4">
-                <Heart className="h-10 w-10 text-white" />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-8 text-center"
+          >
+            <div className="space-y-4">
+              <div className="inline-flex items-center justify-center w-24 h-24 bg-pink-100 rounded-full mb-4">
+                <Heart className="w-12 h-12 text-pink-600" />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-                노인 우울 척도 안내
+              <h2 className="text-3xl font-bold text-gray-900">
+                마음 건강 체크
               </h2>
-              <p className="text-lg text-gray-700 mb-6">
-                총 15개의 질문으로 구성된 검사를 통해<br />
-                우울 증상을 평가합니다.
+              <p className="text-gray-500 text-lg leading-relaxed max-w-lg mx-auto">
+                우울 척도 검사(GDS-SF)를 통해
+                <br />
+                어르신의 정서적 건강 상태를 확인해보세요.
               </p>
             </div>
 
-            <div className="bg-pink-50 rounded-2xl p-6 mb-6">
-              <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-pink-600" />
-                검사 정보
-              </h3>
-              <div className="space-y-2 text-sm text-gray-700">
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold w-24">척도명:</span>
-                  <span>Geriatric Depression Scale-Short Form (GDS-SF)</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold w-24">총 문항수:</span>
-                  <span>15문항</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold w-24">소요 시간:</span>
-                  <span>약 5-10분</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="font-semibold w-24">평가 방법:</span>
-                  <span>예/아니오 형식</span>
+            <div className="bg-pink-50 rounded-2xl p-6 border border-pink-100 text-left">
+              <div className="flex items-start gap-3">
+                <Info className="w-5 h-5 text-pink-600 mt-0.5 shrink-0" />
+                <div className="space-y-1">
+                  <h3 className="font-bold text-pink-900">검사 안내</h3>
+                  <ul className="text-sm text-pink-800 space-y-1 list-disc list-inside">
+                    <li>총 15개의 문항으로 구성되어 있습니다.</li>
+                    <li>약 5분 정도 소요됩니다.</li>
+                    <li>지난 1주일 동안 느끼신 기분을 생각하며 답해주세요.</li>
+                  </ul>
                 </div>
               </div>
-            </div>
-
-            <div className="bg-blue-50 rounded-2xl p-6 mb-6">
-              <h3 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-blue-600" />
-                결과 해석 기준
-              </h3>
-              <div className="space-y-2 text-sm text-gray-700">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold w-20">0~5점:</span>
-                  <span className="text-green-600 font-semibold">정상</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold w-20">6~9점:</span>
-                  <span className="text-yellow-600 font-semibold">가벼운 우울증</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold w-20">10~15점:</span>
-                  <span className="text-red-600 font-semibold">심한 우울증</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-yellow-50 rounded-2xl p-4 mb-6 border border-yellow-200">
-              <p className="text-xs text-gray-700 leading-relaxed">
-                <strong>출처:</strong> Yesavage 외(1983), Y.Jang, B.J.Small & W.E.Haley(2001). 
-                Cross-cultural comparability of the Geriatric Depression Scale: comparison between older Koreans and older Americans. 
-                Aging & Mental Health 5(1), 31-37.
-              </p>
             </div>
 
             <button
               onClick={() => setStep("info")}
-              className="w-full px-6 py-4 bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-xl font-semibold hover:from-pink-700 hover:to-rose-700 transition-all shadow-lg hover:shadow-xl"
+              className="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold text-lg transition-colors shadow-lg shadow-pink-200"
             >
               검사 시작하기
             </button>
-          </div>
+          </motion.div>
         )}
 
-        {/* Info Step */}
         {step === "info" && (
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-200/50">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-10"
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">
               기본 정보 입력
             </h2>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  연령
+                <label
+                  htmlFor="age"
+                  className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3"
+                >
+                  <User className="w-4 h-4" /> 연령
                 </label>
                 <input
+                  id="age"
+                  title="연령 입력"
                   type="number"
                   value={userInfo.age}
-                  onChange={(e) => setUserInfo({ ...userInfo, age: e.target.value })}
-                  placeholder="나이를 입력하세요"
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none transition-all"
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, age: e.target.value })
+                  }
+                  placeholder="연령을 입력하세요 (예: 70)"
+                  className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:ring-4 focus:ring-pink-50 outline-none transition-all text-lg"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  성별
+                <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                  <User className="w-4 h-4" /> 성별
                 </label>
                 <div className="flex gap-4">
                   <button
                     onClick={() => setUserInfo({ ...userInfo, gender: "male" })}
-                    className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all ${
+                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg transition-all ${
                       userInfo.gender === "male"
-                        ? "border-pink-500 bg-pink-50 text-pink-700 font-semibold"
-                        : "border-gray-300 bg-white text-gray-700 hover:border-pink-300"
+                        ? "border-pink-500 bg-pink-50 text-pink-700"
+                        : "border-gray-200 text-gray-500 hover:border-gray-300"
                     }`}
                   >
-                    남
+                    남성
                   </button>
                   <button
-                    onClick={() => setUserInfo({ ...userInfo, gender: "female" })}
-                    className={`flex-1 px-4 py-3 rounded-xl border-2 transition-all ${
+                    onClick={() =>
+                      setUserInfo({ ...userInfo, gender: "female" })
+                    }
+                    className={`flex-1 py-4 rounded-xl border-2 font-bold text-lg transition-all ${
                       userInfo.gender === "female"
-                        ? "border-pink-500 bg-pink-50 text-pink-700 font-semibold"
-                        : "border-gray-300 bg-white text-gray-700 hover:border-pink-300"
+                        ? "border-pink-500 bg-pink-50 text-pink-700"
+                        : "border-gray-200 text-gray-500 hover:border-gray-300"
                     }`}
                   >
-                    여
+                    여성
                   </button>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  실시일
+                <label
+                  htmlFor="date"
+                  className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3"
+                >
+                  <Calendar className="w-4 h-4" /> 실시일
                 </label>
                 <input
+                  id="date"
+                  title="실시일 선택"
                   type="date"
                   value={userInfo.date}
-                  onChange={(e) => setUserInfo({ ...userInfo, date: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none transition-all"
+                  onChange={(e) =>
+                    setUserInfo({ ...userInfo, date: e.target.value })
+                  }
+                  className="w-full px-5 py-4 rounded-xl border-2 border-gray-200 focus:border-pink-500 focus:ring-4 focus:ring-pink-50 outline-none transition-all text-lg"
                 />
               </div>
             </div>
-            <div className="flex gap-4 mt-8">
+
+            <div className="flex gap-4 mt-10">
               <button
                 onClick={() => setStep("intro")}
-                className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all"
+                className="flex-1 py-4 bg-gray-100 font-bold text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
               >
                 이전
               </button>
               <button
                 onClick={() => setStep("questions")}
                 disabled={!userInfo.age || !userInfo.gender}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-xl font-medium hover:from-pink-700 hover:to-rose-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="flex-[2] py-4 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-lg"
               >
                 다음
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {step === "questions" && (
+          <div className="space-y-8">
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm font-medium">
+                <span className="text-pink-600">
+                  {currentQuestionIndex + 1} / {questions.length}
+                </span>
+                <span className="text-gray-500">
+                  {Math.round(currentProgress)}% 완료
+                </span>
+              </div>
+              <div className="bg-gray-100 h-2 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-pink-600"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${currentProgress}%` }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentQuestionIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 sm:p-12 text-center"
+              >
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-100 text-pink-600 font-bold rounded-full mb-6 text-xl">
+                  {currentQuestionIndex + 1}
+                </div>
+
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 leading-snug">
+                  {questions[currentQuestionIndex].question}
+                </h2>
+                <p className="text-gray-400 mb-10">
+                  (지난 1주일 동안 느끼신 기분을 생각하며 답해주세요)
+                </p>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => handleAnswer("yes")}
+                    className={`py-8 rounded-2xl border-2 font-bold text-xl transition-all flex flex-col items-center justify-center gap-2 ${
+                      answers[questions[currentQuestionIndex].id] === "yes"
+                        ? "border-pink-500 bg-pink-50 text-pink-700 shadow-md ring-1 ring-pink-500"
+                        : "border-gray-100 bg-white text-gray-600 hover:border-pink-200 hover:bg-pink-50/50"
+                    }`}
+                  >
+                    <CheckCircle2
+                      className={`w-8 h-8 ${
+                        answers[questions[currentQuestionIndex].id] === "yes"
+                          ? "text-pink-600"
+                          : "text-gray-300"
+                      }`}
+                    />
+                    예
+                  </button>
+                  <button
+                    onClick={() => handleAnswer("no")}
+                    className={`py-8 rounded-2xl border-2 font-bold text-xl transition-all flex flex-col items-center justify-center gap-2 ${
+                      answers[questions[currentQuestionIndex].id] === "no"
+                        ? "border-pink-500 bg-pink-50 text-pink-700 shadow-md ring-1 ring-pink-500"
+                        : "border-gray-100 bg-white text-gray-600 hover:border-pink-200 hover:bg-pink-50/50"
+                    }`}
+                  >
+                    <CheckCircle2
+                      className={`w-8 h-8 ${
+                        answers[questions[currentQuestionIndex].id] === "no"
+                          ? "text-pink-600"
+                          : "text-gray-300"
+                      }`}
+                    />
+                    아니오
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="flex justify-between pt-4">
+              <button
+                onClick={handlePrev}
+                disabled={currentQuestionIndex === 0}
+                className="px-6 py-3 rounded-xl text-gray-500 font-medium hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+              >
+                이전
               </button>
             </div>
           </div>
         )}
 
-        {/* Questions Step */}
-        {step === "questions" && (
-          <div className="space-y-6">
-            {/* Progress Bar */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-gray-200/50">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">
-                  진행률: {currentQuestionIndex + 1} / {questions.length}
-                </span>
-                <span className="text-sm font-medium text-pink-600">
-                  {answeredCount}개 완료
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div
-                  className="bg-gradient-to-r from-pink-600 to-rose-600 h-3 rounded-full transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-            </div>
+        {step === "result" &&
+          (() => {
+            const result = calculateResult();
+            const IconComponent = result.icon;
 
-            {/* Question Card */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-200/50">
-              <div className="mb-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl">
-                    <Heart className="h-6 w-6 text-white" />
+            const theme = {
+              green: {
+                bg: "bg-green-50",
+                text: "text-green-700",
+                iconBg: "bg-green-100",
+                icon: "text-green-600",
+                border: "border-green-200",
+                badgeBg: "bg-green-100",
+              },
+              yellow: {
+                bg: "bg-yellow-50",
+                text: "text-yellow-700",
+                iconBg: "bg-yellow-100",
+                icon: "text-yellow-600",
+                border: "border-yellow-200",
+                badgeBg: "bg-yellow-100",
+              },
+              red: {
+                bg: "bg-red-50",
+                text: "text-red-700",
+                iconBg: "bg-red-100",
+                icon: "text-red-600",
+                border: "border-red-200",
+                badgeBg: "bg-red-100",
+              },
+            }[result.color];
+
+            return (
+              <div className="space-y-8">
+                <div className="text-center space-y-2">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-pink-100 rounded-full mb-2">
+                    <TrendingUp className="w-8 h-8 text-pink-600" />
                   </div>
-                  <div>
-                    <div className="text-sm font-semibold text-pink-600 mb-1">
-                      질문 {currentQuestionIndex + 1}
-                    </div>
-                    <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-br from-pink-500 to-rose-600 rounded-full">
-                      <span className="text-lg font-bold text-white">{currentQuestionIndex + 1}</span>
-                    </div>
-                  </div>
+                  <h2 className="text-3xl font-bold text-gray-900">
+                    검사 결과 리포트
+                  </h2>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                  {questions[currentQuestionIndex].question}
-                </h2>
-                <p className="text-sm text-gray-500 mb-6">
-                  현재의 상태에 해당하는 답에 선택해주세요.
-                </p>
-              </div>
 
-              {/* Answer Options */}
-              <div className="space-y-3 mb-8">
-                <button
-                  onClick={() => handleAnswer("yes")}
-                  className={`w-full px-6 py-4 rounded-xl border-2 transition-all text-left ${
-                    answers[questions[currentQuestionIndex].id] === "yes"
-                      ? "border-pink-500 bg-pink-50 text-pink-700 shadow-lg"
-                      : "border-gray-300 bg-white text-gray-700 hover:border-pink-300 hover:bg-pink-50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-lg mb-1">예</div>
+                <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+                  <div className="bg-gray-50 p-8 text-center border-b border-gray-100">
+                    <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                      DATE: {new Date().toLocaleDateString()}
+                    </p>
+                    <div className="text-sm font-medium text-gray-500 mb-4">
+                      현재 마음 건강 상태
                     </div>
-                    {answers[questions[currentQuestionIndex].id] === "yes" && (
-                      <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-pink-600" />
-                    )}
+                    <div
+                      className={`inline-flex items-center gap-2 px-6 py-2 rounded-full text-lg font-bold border ${theme.badgeBg} ${theme.text} ${theme.border}`}
+                    >
+                      <IconComponent className="w-5 h-5" />
+                      {result.message}
+                    </div>
                   </div>
-                </button>
-                <button
-                  onClick={() => handleAnswer("no")}
-                  className={`w-full px-6 py-4 rounded-xl border-2 transition-all text-left ${
-                    answers[questions[currentQuestionIndex].id] === "no"
-                      ? "border-pink-500 bg-pink-50 text-pink-700 shadow-lg"
-                      : "border-gray-300 bg-white text-gray-700 hover:border-pink-300 hover:bg-pink-50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-semibold text-lg mb-1">아니오</div>
-                    </div>
-                    {answers[questions[currentQuestionIndex].id] === "no" && (
-                      <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-pink-600" />
-                    )}
-                  </div>
-                </button>
-              </div>
 
-              {/* Navigation Buttons */}
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={handlePrev}
-                  disabled={currentQuestionIndex === 0}
-                  className="flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                  이전
-                </button>
-                <button
-                  onClick={handleNext}
-                  disabled={!answers[questions[currentQuestionIndex].id]}
-                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-xl font-medium hover:from-pink-700 hover:to-rose-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-                >
-                  {currentQuestionIndex === questions.length - 1 ? "결과 보기" : "다음"}
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+                  <div className="p-8">
+                    <p className="text-xl text-gray-800 leading-relaxed font-medium text-center mb-10">
+                      {result.description}
+                    </p>
 
-        {/* Result Step */}
-        {step === "result" && (() => {
-          const result = calculateResult();
-          const IconComponent = result.icon;
-          const colorClasses = {
-            green: "from-green-500 to-emerald-600",
-            yellow: "from-yellow-500 to-amber-600",
-            red: "from-red-600 to-rose-700",
-          };
-          const bgClasses = {
-            green: "bg-green-50 border-green-200",
-            yellow: "bg-yellow-50 border-yellow-200",
-            red: "bg-red-50 border-red-200",
-          };
-
-          return (
-            <div className="space-y-6">
-              {/* Result Header */}
-              <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-xl border border-gray-200/50 text-center">
-                <div className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${colorClasses[result.color as keyof typeof colorClasses]} rounded-full mb-4`}>
-                  <IconComponent className="h-10 w-10 text-white" />
-                </div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  검사 결과
-                </h2>
-                <div className={`inline-block px-4 py-2 rounded-full border-2 ${bgClasses[result.color as keyof typeof bgClasses]} mb-4`}>
-                  <span className="font-semibold">{result.message}</span>
-                </div>
-                <p className="text-gray-700 mb-6">{result.description}</p>
-
-                {/* Score Display */}
-                <div className="bg-gray-50 rounded-2xl p-6 mb-6">
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <div className="text-3xl font-bold text-gray-900 mb-1">{result.score}</div>
-                      <div className="text-sm text-gray-600">총 점수</div>
-                      <div className="text-xs text-gray-500">(최대 {result.maxScore}점)</div>
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold text-gray-900 mb-1">{result.percentage}%</div>
-                      <div className="text-sm text-gray-600">우울 지수</div>
-                    </div>
-                    <div>
-                      <div className="text-lg font-bold text-gray-900 mb-1">
-                        {result.level === "normal" ? "정상" : result.level === "mild" ? "가벼운 우울증" : "심한 우울증"}
+                    {/* Visual Score Meter (0-15 Scale) */}
+                    <div className="mb-12">
+                      <div className="flex justify-between text-xs font-semibold text-gray-400 mb-2 uppercase">
+                        <span>Normal (0-5)</span>
+                        <span>Mild (6-9)</span>
+                        <span>Severe (10-15)</span>
                       </div>
-                      <div className="text-sm text-gray-600">평가 결과</div>
+                      <div className="relative h-4 bg-gray-100 rounded-full overflow-hidden flex">
+                        {/* 
+                            Normal: 6/16 (0-5) -> 37.5%
+                            Mild: 4/16 (6-9) -> 25%
+                            Severe: 6/16 (10-15) -> 37.5%
+                         */}
+                        <div className="flex-[6] bg-green-400"></div>
+                        <div className="flex-[4] bg-yellow-400"></div>
+                        <div className="flex-[6] bg-red-400"></div>
+                      </div>
+
+                      {/* Indicator */}
+                      <div className="relative mt-2 h-6">
+                        <div
+                          className="absolute top-0 -translate-x-1/2 flex flex-col items-center transition-all duration-1000 ease-out"
+                          style={{
+                            left: `${Math.min(
+                              100,
+                              Math.max(0, (result.score / 15) * 100)
+                            )}%`,
+                          }}
+                        >
+                          <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-gray-800 rotate-180 mb-1"></div>
+                          <span className="text-sm font-bold text-gray-800 whitespace-nowrap px-2 py-1 bg-gray-800 text-white rounded-md text-xs">
+                            {result.score}점
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-400 mt-6 px-1">
+                        <span>0</span>
+                        <span>5</span>
+                        <span>9</span>
+                        <span>15</span>
+                      </div>
+                    </div>
+
+                    <div className="p-6 bg-pink-50 rounded-2xl border border-pink-100">
+                      <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 text-pink-600" />
+                        맞춤 권장사항
+                      </h3>
+                      <div className="space-y-3">
+                        {result.recommendations.map((rec, i) => (
+                          <div
+                            key={i}
+                            className="flex items-start gap-3 bg-white p-3 rounded-xl border border-pink-100/50"
+                          >
+                            <div className="w-5 h-5 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-xs mt-0.5 shrink-0">
+                              {i + 1}
+                            </div>
+                            <p className="text-gray-700 text-sm">{rec}</p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Score Range Info */}
-                <div className="bg-blue-50 rounded-2xl p-6 mb-6 text-left">
-                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-blue-600" />
-                    점수 해석 기준
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold w-20">0~5점:</span>
-                      <span className="text-green-600 font-semibold">정상</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold w-20">6~9점:</span>
-                      <span className="text-yellow-600 font-semibold">가벼운 우울증</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold w-20">10~15점:</span>
-                      <span className="text-red-600 font-semibold">심한 우울증</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recommendations */}
-                <div className="bg-pink-50 rounded-2xl p-6 mb-6 text-left">
-                  <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-pink-600" />
-                    권장 사항
-                  </h3>
-                  <ul className="space-y-2">
-                    {result.recommendations.map((rec, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
-                        <span className="text-pink-600 mt-1">•</span>
-                        <span>{rec}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Save Status */}
-                {isSaving && (
-                  <div className="bg-blue-50 rounded-2xl p-4 border border-blue-200">
-                    <p className="text-sm text-blue-700 flex items-center gap-2">
-                      <span className="animate-spin">⏳</span>
-                      검사 결과를 저장하는 중...
+                  {/* Disclaimer */}
+                  <div className="p-6 bg-yellow-50/50 border-t border-yellow-100 text-center">
+                    <p className="text-xs text-yellow-700 leading-relaxed max-w-lg mx-auto">
+                      ⚠️ 본 검사 결과는 의학적 진단이 아니며, 전문가의 진료를
+                      대신할 수 없습니다.
+                      <br />
+                      정확한 진단을 위해서는 정신건강의학과 전문의와의 상담을
+                      권장합니다.
                     </p>
                   </div>
-                )}
-                {saveError && (
-                  <div className="bg-red-50 rounded-2xl p-4 border border-red-200">
-                    <p className="text-sm text-red-700">{saveError}</p>
-                  </div>
-                )}
-                {!isSaving && !saveError && (
-                  <div className="bg-green-50 rounded-2xl p-4 border border-green-200">
-                    <p className="text-sm text-green-700 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4" />
-                      검사 결과가 저장되었습니다.
-                    </p>
-                  </div>
-                )}
 
-                {/* Disclaimer */}
-                <div className="bg-yellow-50 rounded-2xl p-4 border border-yellow-200">
-                  <p className="text-xs text-gray-700 leading-relaxed">
-                    ⚠️ 이 검사는 참고용이며, 의학적 진단을 대체하지 않습니다. 
-                    정확한 진단은 전문의의 상담을 통해 받으시기 바랍니다.
-                  </p>
+                  {/* Save Status Indicators */}
+                  <div className="px-8 pb-4 bg-white">
+                    {isSaving && (
+                      <div className="flex items-center justify-center gap-2 text-gray-500 mt-4">
+                        <span className="animate-spin w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full"></span>
+                        <span className="text-sm">결과 저장 중...</span>
+                      </div>
+                    )}
+                    {saveError && (
+                      <p className="text-center text-sm text-red-500 mt-4">
+                        {saveError}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="p-6 flex flex-col sm:flex-row gap-3 justify-center bg-white border-t border-gray-100">
+                    <button
+                      onClick={() => {
+                        setStep("intro");
+                        setAnswers({});
+                        setCurrentQuestionIndex(0);
+                        setUserInfo({
+                          age: "",
+                          gender: "",
+                          date: new Date().toISOString().split("T")[0],
+                        });
+                      }}
+                      className="px-6 py-4 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-colors w-full sm:w-auto"
+                    >
+                      다시 검사하기
+                    </button>
+                    <button
+                      onClick={() => router.push("/services/smart-cognitive")}
+                      className="px-6 py-4 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition-colors shadow-lg w-full sm:w-auto"
+                    >
+                      목록으로 이동
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-4 justify-center">
-                <button
-                  onClick={() => {
-                    setStep("intro");
-                    setAnswers({});
-                    setCurrentQuestionIndex(0);
-                    setUserInfo({ age: "", gender: "", date: new Date().toISOString().split("T")[0] });
-                  }}
-                  className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-all"
-                >
-                  다시 검사하기
-                </button>
-                <button
-                  onClick={() => router.push("/services/smart-cognitive")}
-                  className="px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-xl font-medium hover:from-pink-700 hover:to-rose-700 transition-all shadow-lg"
-                >
-                  스마트 인지관리로 돌아가기
-                </button>
-              </div>
-            </div>
-          );
-        })()}
+            );
+          })()}
       </div>
     </div>
   );
 }
-

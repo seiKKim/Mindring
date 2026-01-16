@@ -6,11 +6,19 @@ import { Modal } from "@/components/ui/modal";
 interface WorkbookRegistrationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialData?: {
+    id: string;
+    title: string;
+    category: string;
+    fileUrl: string;
+    thumbnail: string;
+  } | null;
 }
 
 export function WorkbookRegistrationModal({
   isOpen,
   onClose,
+  initialData,
 }: WorkbookRegistrationModalProps) {
   const [categories, setCategories] = useState<string[]>([]);
   const [category, setCategory] = useState("");
@@ -28,70 +36,111 @@ export function WorkbookRegistrationModal({
             .filter((name) => name !== "전체"); // Usually 'All' is not for registration
 
           setCategories(visibleCats);
-          if (visibleCats.length > 0) {
-            setCategory((prev) => prev || visibleCats[0]);
+          if (!category) {
+            if (initialData?.category) {
+              setCategory(initialData.category);
+            } else if (visibleCats.length > 0) {
+              setCategory(visibleCats[0]);
+            }
           }
         })
         .catch((err) => console.error("Failed to fetch categories:", err));
     }
-  }, [isOpen]);
+  }, [isOpen, category, initialData]);
+
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [agreed, setAgreed] = useState(false);
+  const [existingFileUrl, setExistingFileUrl] = useState("");
+
+  useEffect(() => {
+    if (isOpen && initialData) {
+      setTitle(initialData.title);
+      setCategory(initialData.category);
+      setExistingFileUrl(initialData.fileUrl);
+      // We can't easily convert URL back to File object, so we handle it separately
+      setFile(null);
+    } else if (isOpen && !initialData) {
+      // Reset for new entry
+      setTitle("");
+      setCategory(categories[0] || ""); // Will be set by category fetch useEffect as well, but safe here
+      setFile(null);
+      setExistingFileUrl("");
+      setAgreed(false);
+    }
+  }, [isOpen, initialData, categories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!category || !title || !file || !agreed) {
+    // Validate: Title, Category, Agreed are mandatory. File is mandatory for Create, optional for Edit (if keeping existing)
+    if (!category || !title || (!file && !existingFileUrl) || !agreed) {
       alert("모든 필드를 입력하고 약관에 동의해주세요.");
       return;
     }
 
     try {
-      // 1. Upload File
-      const formData = new FormData();
-      formData.append("file", file);
+      let finalFileUrl = existingFileUrl;
 
-      // Use existing upload API or similar logic
-      const uploadRes = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: formData,
-      });
+      // 1. Upload File if selected
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
 
-      if (!uploadRes.ok) {
-        throw new Error("File upload failed");
+        // Use existing upload API or similar logic
+        const uploadRes = await fetch("/api/admin/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error("File upload failed");
+        }
+
+        const { url } = await uploadRes.json();
+        finalFileUrl = url;
       }
 
-      const { url: fileUrl } = await uploadRes.json();
-
-      // 2. Create Workbook
-      const res = await fetch("/api/workbook", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          category,
-          fileUrl,
-          thumbnail: "/img/cover-fallback.png", // Simplified for now
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to register workbook");
+      // 2. Create or Update Workbook
+      if (initialData?.id) {
+        // Update
+        const res = await fetch(`/api/workbook/${initialData.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            category,
+            fileUrl: finalFileUrl,
+            thumbnail: initialData.thumbnail || "/img/cover-fallback.png",
+          }),
+        });
+        if (!res.ok) throw new Error("Failed to update workbook");
+        alert("워크북이 성공적으로 수정되었습니다.");
+      } else {
+        // Create
+        const res = await fetch("/api/workbook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            category,
+            fileUrl: finalFileUrl,
+            thumbnail: "/img/cover-fallback.png", // Simplified for now
+          }),
+        });
+        if (!res.ok) throw new Error("Failed to register workbook");
+        alert("워크북이 성공적으로 등록되었습니다.");
       }
 
       // Reset and close
-      setCategory(categories[0] || "");
-      setTitle("");
-      setFile(null);
-      setAgreed(false);
       onClose();
-      alert("워크북이 성공적으로 등록되었습니다.");
       window.location.reload(); // Simple reload to refresh list
     } catch (error) {
       console.error(error);
-      alert("등록에 실패했습니다. 다시 시도해주세요.");
+      alert("작업에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -102,7 +151,12 @@ export function WorkbookRegistrationModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="워크북 등록하기" size="md">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "워크북 수정하기" : "워크북 등록하기"}
+      size="md"
+    >
       <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
         <p className="text-sm text-gray-600 text-center leading-relaxed">
           본 워크북은 누구나 자유롭게 등록하고 사용이 가능합니다. 단, 상업적
@@ -180,7 +234,10 @@ export function WorkbookRegistrationModal({
                 <input
                   type="text"
                   readOnly
-                  value={file?.name || ""}
+                  value={
+                    file?.name ||
+                    (existingFileUrl ? existingFileUrl.split("/").pop() : "")
+                  }
                   className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm bg-white"
                   aria-label="선택된 파일명"
                 />

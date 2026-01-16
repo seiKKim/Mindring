@@ -8,8 +8,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Upload,
+  Edit2,
+  Trash2,
+  Heart,
 } from "lucide-react";
 import { WorkbookRegistrationModal } from "./WorkbookRegistrationModal";
+import { Modal } from "@/components/ui/modal";
 
 // --- Mock Data ---
 
@@ -18,14 +22,14 @@ type Workbook = {
   title: string;
   category: string;
   thumbnail: string;
-  fileUrl: string; // Using a placeholder for now
+  fileUrl: string;
   createdAt: string;
+  likes: number;
 };
 
 // --- Page Component ---
 
 export default function SmartWorkbookPage() {
-  // State
   // State
   const [activeCategory, setActiveCategory] = useState("전체");
   const [categories, setCategories] = useState<string[]>(["전체"]);
@@ -33,6 +37,98 @@ export default function SmartWorkbookPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<"latest" | "popular">("latest");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingWorkbook, setEditingWorkbook] = useState<Workbook | null>(null);
+
+  // Like & Download State
+  const [likedWorkbooks, setLikedWorkbooks] = useState<Set<string>>(new Set());
+  const [isLikeModalOpen, setIsLikeModalOpen] = useState(false);
+
+  // Preview State
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
+
+  // Load liked workbooks from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("likedWorkbooks");
+    if (saved) {
+      setLikedWorkbooks(new Set(JSON.parse(saved)));
+    }
+  }, []);
+
+  const toggleLike = async (id: string) => {
+    const isLiked = likedWorkbooks.has(id);
+    const newSet = new Set(likedWorkbooks);
+    if (isLiked) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setLikedWorkbooks(newSet);
+    localStorage.setItem("likedWorkbooks", JSON.stringify(Array.from(newSet)));
+
+    // Optimistic UI update for count
+    setWorkbooks((prev) =>
+      prev.map((w) =>
+        w.id === id ? { ...w, likes: w.likes + (isLiked ? -1 : 1) } : w
+      )
+    );
+
+    try {
+      await fetch(`/api/workbook/${id}/like`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ increment: !isLiked }),
+      });
+    } catch (error) {
+      console.error("Failed to update like:", error);
+    }
+  };
+
+  const handleDownload = (e: React.MouseEvent, workbook: Workbook) => {
+    if (!likedWorkbooks.has(workbook.id)) {
+      e.preventDefault(); // Prevent default download link behavior
+      setIsLikeModalOpen(true);
+    }
+  };
+
+  const handlePreview = (e: React.MouseEvent, workbook: Workbook) => {
+    e.preventDefault();
+    // Append parameters to hide PDF toolbar
+    // Note: #toolbar=0 works for Chrome/Edge PDF viewer.
+    setPreviewUrl(workbook.fileUrl);
+    setIsPreviewModalOpen(true);
+  };
+
+  const handleEdit = (workbook: Workbook) => {
+    setEditingWorkbook(workbook);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("정말로 이 워크북을 삭제하시겠습니까?")) return;
+
+    try {
+      const res = await fetch(`/api/workbook/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        alert("삭제되었습니다.");
+        setWorkbooks((prev) => prev.filter((w) => w.id !== id));
+        setTotalItems((prev) => prev - 1);
+      } else {
+        alert("삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Failed to delete workbook:", error);
+      alert("오류가 발생했습니다.");
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setEditingWorkbook(null);
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -48,7 +144,6 @@ export default function SmartWorkbookPage() {
             .filter((d) => d.visible)
             .sort((a, b) => a.order - b.order)
             .map((d) => d.name);
-          // Set "전체" first, then others, filtering out duplicates if "전체" exists in API
           setCategories(["전체", ...visibleCats.filter((c) => c !== "전체")]);
         }
       } catch (e) {
@@ -75,7 +170,9 @@ export default function SmartWorkbookPage() {
           sort: sortBy,
           q: searchQuery,
         });
-        const res = await fetch(`/api/workbook?${params}`);
+        const res = await fetch(`/api/workbook?${params}`, {
+          cache: "no-store",
+        });
         if (res.ok) {
           const data = await res.json();
           setWorkbooks(data.items);
@@ -89,7 +186,6 @@ export default function SmartWorkbookPage() {
       }
     };
 
-    // Debounce search
     const timer = setTimeout(() => {
       fetchWorkbooks();
     }, 300);
@@ -100,7 +196,7 @@ export default function SmartWorkbookPage() {
   const handleCategoryChange = (cat: string) => {
     setActiveCategory(cat);
     setCurrentPage(1);
-    setSearchQuery(""); // Optional: clear search on category change
+    setSearchQuery("");
   };
 
   const handlePageChange = (page: number) => {
@@ -142,7 +238,10 @@ export default function SmartWorkbookPage() {
             </div>
 
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                setEditingWorkbook(null);
+                setIsModalOpen(true);
+              }}
               className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-colors shadow-sm whitespace-nowrap"
             >
               워크북 등록하기
@@ -261,7 +360,26 @@ export default function SmartWorkbookPage() {
               >
                 {/* Thumbnail */}
                 <div className="relative aspect-[4/3] bg-teal-50 p-4 flex items-center justify-center overflow-hidden">
-                  {/* In real app, use next/image with actual URL */}
+                  {/* Like Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(item.id);
+                    }}
+                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white shadow-sm transition-all"
+                    title={
+                      likedWorkbooks.has(item.id) ? "좋아요 취소" : "좋아요"
+                    }
+                  >
+                    <Heart
+                      className={`w-5 h-5 transition-colors ${
+                        likedWorkbooks.has(item.id)
+                          ? "fill-red-500 text-red-500"
+                          : "text-gray-400"
+                      }`}
+                    />
+                  </button>
+
                   <div className="relative w-full h-full shadow-md transform group-hover:scale-105 transition-transform duration-300 bg-white flex flex-col items-center justify-center text-center p-2">
                     {/* Placeholder styling to mimic the design */}
                     <div className="text-2xl font-extrabold text-teal-400 leading-tight mb-2">
@@ -272,7 +390,7 @@ export default function SmartWorkbookPage() {
                       </span>
                     </div>
                     <Image
-                      src="/img/mindring_logo_h.png" // Fallback logo usage just for decoration
+                      src="/img/mindring_logo_h.png"
                       alt=""
                       width={60}
                       height={20}
@@ -283,13 +401,36 @@ export default function SmartWorkbookPage() {
 
                 {/* Content */}
                 <div className="p-4 text-center">
-                  <p className="text-gray-500 text-sm mb-1">{item.title}</p>
+                  <div className="flex items-center justify-center gap-1 mb-3 text-sm text-gray-500">
+                    <Heart className="w-3 h-3 fill-gray-300 text-gray-300" />{" "}
+                    <span>{item.likes || 0}</span>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="p-1.5 text-gray-400 hover:text-teal-600 hover:bg-teal-50 rounded-full transition-colors"
+                      title="수정"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                      title="삭제"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <a
                       href={item.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 transition-colors"
+                      onClick={(e) => handlePreview(e, item)}
+                      className="flex-1 flex items-center justify-center gap-1 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 transition-colors cursor-pointer"
                       title="미리보기"
                     >
                       <span>미리보기</span>
@@ -300,7 +441,8 @@ export default function SmartWorkbookPage() {
                       download={`${item.title}.pdf`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-1 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 transition-colors"
+                      onClick={(e) => handleDownload(e, item)}
+                      className="flex-1 flex items-center justify-center gap-1 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 transition-colors cursor-pointer"
                       title="다운로드"
                     >
                       <span>다운로드</span>
@@ -365,8 +507,59 @@ export default function SmartWorkbookPage() {
       {/* Registration Modal */}
       <WorkbookRegistrationModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleModalClose}
+        initialData={editingWorkbook}
       />
+
+      {/* Like Restriction Modal */}
+      <Modal
+        isOpen={isLikeModalOpen}
+        onClose={() => setIsLikeModalOpen(false)}
+        showCloseButton={false}
+        size="sm"
+      >
+        <div className="text-center py-6">
+          <p className="text-lg font-bold mb-6 whitespace-pre-line">
+            좋아요를 눌러주셔야
+            <br />
+            워크북 다운로드가 가능합니다.
+          </p>
+          <button
+            onClick={() => setIsLikeModalOpen(false)}
+            className="w-full bg-black text-white py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors"
+          >
+            확인
+          </button>
+        </div>
+      </Modal>
+
+      {/* Preview Modal */}
+      <Modal
+        isOpen={isPreviewModalOpen}
+        onClose={() => setIsPreviewModalOpen(false)}
+        title="워크북 미리보기"
+        size="4xl"
+      >
+        <div className="w-full h-[80vh] bg-gray-100 rounded-lg overflow-hidden relative">
+          {previewUrl ? (
+            <iframe
+              src={`${previewUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+              className="w-full h-full border-0"
+              title="Preview"
+              onContextMenu={(e) => e.preventDefault()}
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-gray-500">불러오는 중...</p>
+            </div>
+          )}
+          {/* Overlay to prevent right click context menu widely */}
+          <div
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            onContextMenu={(e) => e.preventDefault()}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }

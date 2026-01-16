@@ -400,7 +400,7 @@ model ActivityResource {
   thumbnail    String?  @db.VarChar(512) /// 썸네일 이미지 URL
   fileUrl      String?  @db.VarChar(512) /// PDF 파일 URL
   category     String   @db.VarChar(50) /// 카테고리
-  tags         Json     @default("[]") /// 태그 배열 (JSON)
+  tags         Json?    /// 태그 배열 (JSON)
   popularScore Int      @default(0) /// 인기도 점수
   visible      Boolean  @default(true) /// 사용자에게 표시 여부
   createdAt    DateTime @default(now()) /// 생성일시
@@ -423,7 +423,7 @@ model AcademyCourse {
   courseUrl    String?  @db.VarChar(512) /// 강좌 링크/URL
   price        Decimal? @db.Decimal(10, 2) /// 가격 (null이면 무료)
   duration     String?  @db.VarChar(50) /// 수강 기간 (예: "4주", "8시간")
-  tags         Json     @default("[]") /// 태그 배열 (JSON)
+  tags         Json?    /// 태그 배열 (JSON)
   level        String?  @db.VarChar(20) /// 난이도 (초급, 중급, 고급)
   popularScore Int      @default(0) /// 인기도 점수
   visible      Boolean  @default(true) /// 사용자에게 표시 여부
@@ -488,6 +488,7 @@ model WorkbookResource {
   fileUrl   String?  @db.VarChar(512)
   thumbnail String?  @db.VarChar(512)
   downloads Int      @default(0)
+  likes     Int      @default(0)
   visible   Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
