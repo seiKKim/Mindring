@@ -156,7 +156,10 @@ export default function Header({ user: initialUser }: HeaderProps) {
                   <p style={{ color: "#fff" }}>관리자</p>
                 </Link>
               )}
-              <Link href="/status" className={`${styles.myCourse} row_f`}>
+              <Link
+                href="/mypage?tab=learning"
+                className={`${styles.myCourse} row_f`}
+              >
                 <Image
                   src="/img/graph_disk.png"
                   alt="course icon"

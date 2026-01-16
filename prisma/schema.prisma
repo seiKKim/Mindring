@@ -67,6 +67,12 @@ enum SharePermission {
   edit /// 읽기 + 댓글 + 편집
 }
 
+/// 강좌 수강 상태
+enum UserCourseStatus {
+  LEARNING /// 수강중
+  COMPLETED /// 수료/완료
+}
+
 // -------- Models --------
 
 /// 사용자 계정
@@ -91,6 +97,7 @@ model User {
   cognitiveAssessments CognitiveAssessment[] /// 인지 검사 결과들
   puzzleRecords        PuzzleRecord[] /// 퍼즐 게임 기록들
   gameScores           GameScore[] /// 게임 스코어 기록들
+  userCourses          UserCourse[] /// 수강중인 강좌들
 
   @@index([email])
 }
@@ -430,6 +437,8 @@ model AcademyCourse {
   createdAt    DateTime @default(now()) /// 생성일시
   updatedAt    DateTime @updatedAt /// 수정일시
 
+  userCourses  UserCourse[] /// 이 강좌를 수강하는 유저들
+
   @@index([category, visible])
   @@index([visible, createdAt])
   @@index([popularScore])
@@ -495,4 +504,23 @@ model WorkbookResource {
 
   @@index([category])
   @@index([createdAt])
+}
+
+/// 사용자 수강 강좌 (User Course Enrollment)
+model UserCourse {
+  enrollmentId String           @id @default(cuid()) @db.Char(25)
+  userId       String           @db.Char(25)
+  courseId     String           @db.Char(25) /// AcademyCourse ID
+  status       UserCourseStatus @default(LEARNING)
+  progress     Float            @default(0) /// 진도율 (0 ~ 100)
+  lastAccessedAt DateTime       @default(now()) /// 최근 학습일
+  createdAt    DateTime         @default(now()) /// 수강 시작일
+  updatedAt    DateTime         @updatedAt
+
+  user          User          @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  academyCourse AcademyCourse @relation(fields: [courseId], references: [courseId], onDelete: Cascade)
+
+  @@unique([userId, courseId]) /// 유저당 강좌 중복 수강 방지
+  @@index([userId])
+  @@index([courseId])
 }
