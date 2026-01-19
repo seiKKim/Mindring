@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -39,13 +40,18 @@ type RawCourseData = {
 };
 
 export default function AcademyPage() {
+  const searchParams = useSearchParams();
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("curriculum"); // curriculum, video, field
 
   useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab && ["curriculum", "video", "field"].includes(tab)) {
+      setActiveTab(tab);
+    }
     fetchData();
-  }, []);
+  }, [searchParams]);
 
   const fetchData = async () => {
     try {

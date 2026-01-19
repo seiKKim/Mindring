@@ -116,13 +116,19 @@ export default function Header({ user: initialUser }: HeaderProps) {
               </Link>
               <ul className={styles.depth02}>
                 <li>
-                  <p>인지 커리큘럼</p>
+                  <Link href="/services/academy?tab=curriculum">
+                    <p>인지 커리큘럼</p>
+                  </Link>
                 </li>
                 <li>
-                  <p>인지교육 영상</p>
+                  <Link href="/services/academy?tab=video">
+                    <p>인지교육 영상</p>
+                  </Link>
                 </li>
                 <li>
-                  <p>교육현장</p>
+                  <Link href="/services/academy?tab=field">
+                    <p>교육현장</p>
+                  </Link>
                 </li>
               </ul>
             </li>
