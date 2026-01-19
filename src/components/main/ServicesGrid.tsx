@@ -43,7 +43,7 @@ const SERVICES: ServiceBox[] = [
     title: "스마트 워크북",
     subtitle: "누구나 쉽게 등록하고\n공유하는 맞춤 워크북",
     image: "/img/content_img05.png",
-    href: "/services/academy",
+    href: "/services/workbook",
   },
   {
     id: "8",
