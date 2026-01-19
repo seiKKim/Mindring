@@ -6,8 +6,6 @@
   margin: 0 auto;
   user-select: none;
   border-radius: 0.75rem;
-  border: 1px solid rgb(163 163 163);
-  background-color: rgb(229 229 229);
   transition: all 0.2s ease;
 }
 
@@ -690,10 +688,7 @@
 
 /* ===================== 다크 모드 지원 ===================== */
 @media (prefers-color-scheme: dark) {
-  .puzzleBoard {
-    background-color: rgb(55, 65, 81);
-    border-color: rgb(75, 85, 99);
-  }
+
 
   .playAreaBorder {
     border-color: rgba(255, 255, 255, 0.2);
