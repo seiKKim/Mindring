@@ -17,6 +17,21 @@ interface HeaderProps {
 export default function Header({ user: initialUser }: HeaderProps) {
   const [user, setUser] = React.useState(initialUser);
   const [imgSrc, setImgSrc] = React.useState("/img/icon_user_default.png");
+  const [zoomLevel, setZoomLevel] = React.useState(100);
+
+  React.useEffect(() => {
+    // Apply zoom to body
+    // @ts-ignore - zoom consists of non-standard CSS property
+    document.body.style.zoom = `${zoomLevel}%`;
+  }, [zoomLevel]);
+
+  const handleZoomIn = () => {
+    setZoomLevel((prev) => Math.min(prev + 10, 150));
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel((prev) => Math.max(prev - 10, 80));
+  };
 
   React.useEffect(() => {
     if (user?.image) {
@@ -61,8 +76,26 @@ export default function Header({ user: initialUser }: HeaderProps) {
           )}
           <div className={`${styles.screenSet} row_f`}>
             <p>화면크기</p>
-            <div>+</div>
-            <div>-</div>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={handleZoomIn}
+              onKeyDown={(e) => e.key === "Enter" && handleZoomIn()}
+              style={{ cursor: "pointer" }}
+              aria-label="화면 확대"
+            >
+              +
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={handleZoomOut}
+              onKeyDown={(e) => e.key === "Enter" && handleZoomOut()}
+              style={{ cursor: "pointer" }}
+              aria-label="화면 축소"
+            >
+              -
+            </div>
           </div>
         </div>
       </div>
