@@ -51,7 +51,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ gam
     }
 
     // 점수 계산 (게임 타입별로 다르게)
-    let score = 0;
+    let score = typeof body.score === 'number' ? body.score : 0;
     if (gameType === "memory-match") {
       // 메모리 게임: 시간이 짧을수록, 이동이 적을수록 높은 점수
       const timeScore = Math.max(0, 300 - body.time);

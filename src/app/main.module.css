@@ -277,6 +277,7 @@
   position: relative;
   width: 100%;
   height: auto;
+  aspect-ratio: 1 / 0.95;
 }
 
 .sec02Content .box .titleT {
@@ -301,6 +302,10 @@
   grid-column: span 2;
   width: 100%;
   aspect-ratio: 2 / 1;
+  background-color: #fff8d0;
+}
+
+.sec02Content .box.yellow {
   background-color: #fff8d0;
 }
 

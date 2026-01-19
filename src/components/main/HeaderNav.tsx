@@ -10,7 +10,10 @@ interface HeaderNavProps {
 export default function HeaderNav({ isAuthenticated }: HeaderNavProps) {
   const router = useRouter();
 
-  const handleRestrictedClick = (e: React.MouseEvent<HTMLAnchorElement>, isPreparing?: boolean) => {
+  const handleRestrictedClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    isPreparing?: boolean
+  ) => {
     if (isPreparing) {
       e.preventDefault();
       alert("준비중인 서비스입니다.");
@@ -27,13 +30,17 @@ export default function HeaderNav({ isAuthenticated }: HeaderNavProps) {
     { label: "AI기억퍼즐", href: "/puzzle-home" },
     { label: "AI자서전", href: "/services/lifebook" },
     { label: "인지콘텐츠", href: "/services/cognitive" },
-    { label: "스마트워크북", href: "#", preparing: true },
+    { label: "스마트워크북", href: "/services/workbook", preparing: false },
+    { label: "마음색칠", href: "/services/coloring" },
     { label: "스마트교육", href: "/services/academy" },
     { label: "스마트인지관리", href: "/services/smart-cognitive" },
   ];
 
   return (
-    <nav className="hidden lg:flex items-center gap-8 font-bold text-gray-800 text-[16px]" suppressHydrationWarning>
+    <nav
+      className="hidden lg:flex items-center gap-8 font-bold text-gray-800 text-[16px]"
+      suppressHydrationWarning
+    >
       {navItems.map((item) => (
         <Link
           key={item.label}

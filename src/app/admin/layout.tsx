@@ -30,7 +30,7 @@ const adminMenuItems = [
   { href: "/admin/assessments", label: "검사 결과", icon: FileText },
   { href: "/admin/statistics", label: "통계 분석", icon: BarChart3 },
   { href: "/admin/activities", label: "활동자료", icon: Settings },
-  { href: "/admin/academy", label: "허브 아카데미", icon: Settings },
+  { href: "/admin/academy", label: "스마트 교육관리", icon: Settings },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {

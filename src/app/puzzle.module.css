@@ -4,6 +4,7 @@
 .puzzleBoard {
   position: relative;
   margin: 0 auto;
+  -webkit-user-select: none;
   user-select: none;
   border-radius: 0.75rem;
   transition: all 0.2s ease;
@@ -186,10 +187,12 @@
 @keyframes overlayFadeIn {
   from {
     opacity: 0;
+    -webkit-backdrop-filter: blur(0px);
     backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
   }
 }
@@ -203,6 +206,7 @@
     rgba(59, 130, 246, 0.2) 50%,
     rgba(147, 51, 234, 0.3) 100%
   );
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   animation: backdropFadeIn 0.6s ease-out;
 }
@@ -210,10 +214,12 @@
 @keyframes backdropFadeIn {
   from {
     opacity: 0;
+    -webkit-backdrop-filter: blur(0px);
     backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
   }
 }
@@ -322,6 +328,7 @@
   margin-bottom: 1.5rem;
   border-radius: 0.75rem;
   background: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   padding: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.3);

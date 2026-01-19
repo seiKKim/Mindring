@@ -106,6 +106,11 @@ export default function Header({ user: initialUser }: HeaderProps) {
               </Link>
             </li>
             <li>
+              <Link href="/services/coloring">
+                <p>마음색칠</p>
+              </Link>
+            </li>
+            <li>
               <Link href="/services/academy">
                 <p>스마트교육</p>
               </Link>

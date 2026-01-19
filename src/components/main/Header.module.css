@@ -104,8 +104,11 @@
   opacity: 0;
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease;
-  background-color: transparent;
+  background-color: #ffffff;
   padding: 0px 8px;
+  z-index: 100;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 .depth01 > li:hover > .depth02 {

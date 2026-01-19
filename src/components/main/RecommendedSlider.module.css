@@ -91,7 +91,7 @@
 
 /* Swiper Slides */
 .recommended-content :global(.swiper-wrapper .swiper-slide) {
-  padding: 30px;
+  padding: 5px;
   align-items: flex-start;
   justify-content: flex-start;
   aspect-ratio: 4 / 3;
@@ -132,6 +132,9 @@
   display: inline-block;
   margin-bottom: 20px;
   font-size: 18px;
+  position: relative; 
+  left: 20px; 
+  top: 25px; 
 }
 
 .recommended-content :global(.swiper-wrapper .swiper-slide.c_yellow .card_keyword) {
@@ -157,6 +160,9 @@
 /* Card Title */
 .recommended-content :global(.swiper-wrapper .swiper-slide .card_title) {
   font-size: 28px;
+  position: relative;
+  left: 20px;
+  top: 15px;
 }
 
 /* Status/Progress */

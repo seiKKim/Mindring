@@ -19,6 +19,7 @@ import {
   Puzzle,
   AlertTriangle,
   Play,
+  Check,
 } from "lucide-react";
 
 /** ---------------- Types ---------------- */
@@ -74,7 +75,7 @@ function shuffleArray<T>(array: T[]): T[] {
 // 추천 퍼즐을 선별하는 함수
 function getRecommendedPuzzles(
   puzzles: PuzzleImage[],
-  count: number = 6
+  count: number = 4
 ): PuzzleImage[] {
   const shuffled = shuffleArray(puzzles);
   return shuffled.slice(0, count);
@@ -437,26 +438,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className={styles.hero}>
-        <div className={styles.heroContainer}>
-          <div className={styles.heroContent}>
-            <p className={styles.heroDescription}>
-              함께하는 시간이, 인생을 빛나게 합니다
-            </p>
-            <h2 className={styles.heroTitle}>
-              마음과 기억을 이어주는 따뜻한 연결, 오늘도 당신 곁에 있습니다.
-            </h2>
-
-            <p className={styles.heroSubtext}>
-              다양한 아름다운 이미지를 퍼즐로 즐겨보세요.
-              <br />
-              4단계 난이도로 도전할 수 있으며, 컬러와 흑백 퍼즐 중 원하는
-              이미지로 선택할 수 있어요.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section Removed */}
 
       {/* Recommended Puzzles Section */}
       <section className={styles.recommendedSection}>
@@ -573,81 +555,61 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Filters */}
-      <section className={styles.filtersSection}>
+      {/* Type Filter Section (Gradient) */}
+      <section className={styles.typeFilterSection}>
         <div className={styles.filtersContainer}>
-          <div className={styles.filtersContent}>
-            {/* Color/Gray Toggle */}
-            <div className={styles.filterGroup}>
-              <h4 className={styles.filterGroupTitle}>퍼즐 타입</h4>
-              <div className={styles.filterButtons}>
-                <button
-                  onClick={() => handleCategoryChange("color")}
-                  className={`${styles.categoryButton} ${
-                    categoryType === "color"
-                      ? `${styles.categoryButtonActive} ${styles.categoryButtonColor}`
-                      : styles.categoryButtonInactive
-                  }`}
-                >
-                  <div className={styles.categoryColorDots}>
-                    <div
-                      className={`${styles.colorDot} ${styles.colorDotRed}`}
-                    />
-                    <div
-                      className={`${styles.colorDot} ${styles.colorDotBlue}`}
-                    />
-                    <div
-                      className={`${styles.colorDot} ${styles.colorDotGreen}`}
-                    />
-                  </div>
-                  컬러 퍼즐
-                </button>
-                <button
-                  onClick={() => handleCategoryChange("gray")}
-                  className={`${styles.categoryButton} ${
-                    categoryType === "gray"
-                      ? `${styles.categoryButtonActive} ${styles.categoryButtonGray}`
-                      : styles.categoryButtonInactive
-                  }`}
-                >
-                  <div className={styles.categoryColorDots}>
-                    <div
-                      className={`${styles.colorDot} ${styles.colorDotGray300}`}
-                    />
-                    <div
-                      className={`${styles.colorDot} ${styles.colorDotGray500}`}
-                    />
-                    <div
-                      className={`${styles.colorDot} ${styles.colorDotGray700}`}
-                    />
-                  </div>
-                  흑백 퍼즐
-                </button>
-              </div>
-            </div>
+          <div className={styles.filterButtons}>
+            <button
+              onClick={() => handleCategoryChange("color")}
+              className={`${styles.categoryButton} ${
+                categoryType === "color"
+                  ? styles.categoryButtonActive
+                  : styles.categoryButtonInactive
+              }`}
+            >
+              {categoryType === "color" && (
+                <div className="w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center mr-2">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
+              )}
+              컬러머즐
+            </button>
+            <button
+              onClick={() => handleCategoryChange("gray")}
+              className={`${styles.categoryButton} ${
+                categoryType === "gray"
+                  ? styles.categoryButtonActive
+                  : styles.categoryButtonInactive
+              }`}
+            >
+              흑백머즐
+            </button>
+          </div>
+        </div>
+      </section>
 
-            {/* Difficulty */}
-            <div className={styles.filterGroup}>
-              <h4 className={styles.filterGroupTitle}>난이도 선택</h4>
-              <div className={styles.difficultyButtons}>
-                {DIFFICULTIES.map((diff) => (
-                  <button
-                    key={diff.pieces}
-                    onClick={() => setSelectedDifficulty(diff.pieces)}
-                    className={`${styles.difficultyButton} ${
-                      selectedDifficulty === diff.pieces
-                        ? categoryType === "color"
-                          ? "bg-orange-500 text-white"
-                          : "bg-gray-700 text-white"
-                        : diff.color
-                    }`}
-                  >
-                    {diff.label}
-                    {diff.pieces > 0 && ` (${diff.pieces}조각)`}
-                  </button>
-                ))}
-              </div>
-            </div>
+      {/* Difficulty Filter Section (Dark) */}
+      <section className={styles.difficultyFilterSection}>
+        <div className={styles.filtersContainer}>
+          <div className={styles.difficultyButtons}>
+            <span className="flex items-center text-sm font-bold mr-4">
+              <AlertTriangle className="w-4 h-4 mr-1 text-white opacity-70" />
+              난이도 선택
+            </span>
+            {DIFFICULTIES.map((diff) => (
+              <button
+                key={diff.pieces}
+                onClick={() => setSelectedDifficulty(diff.pieces)}
+                className={`${styles.difficultyButton} ${
+                  selectedDifficulty === diff.pieces
+                    ? styles.difficultyButtonActive
+                    : ""
+                }`}
+              >
+                {diff.label}
+                {diff.pieces > 0 && `(${diff.pieces}조각)`}
+              </button>
+            ))}
           </div>
         </div>
       </section>
