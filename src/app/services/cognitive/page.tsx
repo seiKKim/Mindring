@@ -52,11 +52,9 @@ const gameRoutes: Record<string, string> = {
   "attention-1": "/services/cognitive/find-difference",
   "attention-2": "/services/cognitive/same-match",
   "attention-3": "/services/cognitive/word-search",
-  "attention-4": "/services/cognitive/connect-words", // Assumed based on name
   "attention-5": "/services/cognitive/connect-numbers",
   "orientation-1": "/services/cognitive/person-quiz",
   "orientation-2": "/services/cognitive/time-quiz",
-  "orientation-5": "/services/cognitive/emotion-game", // Assumed
   "language-1": "/services/cognitive/proverb",
   "language-2": "/services/cognitive/word-chain",
   "visuospatial-3": "/services/cognitive/visuospatial-3",
@@ -66,40 +64,23 @@ const ALL_GAMES: GameData[] = [
   // Memory
   { id: "memory-1", title: "회상카드 맞추기", category: "memory" },
   { id: "color-sequence", title: "색상 순서 기억하기", category: "memory" },
-  { id: "memory-photo", title: "사진 기억하기", category: "memory" }, // Placeholder ID
-  { id: "memory-pair", title: "단어 짝 맞추기", category: "memory" },
-  { id: "memory-game", title: "기억 게임", category: "memory" },
 
   // Attention
   { id: "attention-1", title: "다른 그림 찾기", category: "attention" },
   { id: "attention-2", title: "같은 그림 터치하기", category: "attention" },
   { id: "attention-3", title: "단어 찾기 퍼즐", category: "attention" },
-  { id: "attention-4", title: "낱말 연결 게임", category: "attention" },
   { id: "attention-5", title: "숫자 이어주기", category: "attention" },
 
   // Language
   { id: "language-1", title: "속담 완성하기", category: "language" },
   { id: "language-2", title: "끝말잇기", category: "language" },
-  { id: "language-4", title: "이야기 완성하기", category: "language" },
-  { id: "language-5", title: "단어연상퀴즈", category: "language" },
-  { id: "language-order", title: "낱말 순서 맞추기", category: "language" },
 
   // Visuospatial
-  { id: "visuospatial-3", title: "색상 구분 테스트", category: "visuospatial" },
-  { id: "visuospatial-5", title: "조각 맞추기", category: "visuospatial" },
-  { id: "visuospatial-path", title: "길 찾기", category: "visuospatial" },
-  { id: "visuospatial-seq", title: "순서 맞추기", category: "visuospatial" },
+  { id: "visuospatial-3", title: "색상 구분하기", category: "visuospatial" },
 
   // Orientation
   { id: "orientation-1", title: "인물 맞추기", category: "orientation" },
   { id: "orientation-2", title: "날짜·시간 맞추기", category: "orientation" },
-  { id: "orientation-5", title: "감정 표현 게임", category: "orientation" },
-  {
-    id: "orientation-hometown",
-    title: "내 고향 퀴즈",
-    category: "orientation",
-  },
-  { id: "orientation-old", title: "옛날 물건 맞추기", category: "orientation" },
 ];
 
 // Helper to assign images based on index or category to simulate the variety in design

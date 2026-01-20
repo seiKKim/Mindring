@@ -21,7 +21,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
 
   React.useEffect(() => {
     // Apply zoom to body
-    // @ts-ignore - zoom consists of non-standard CSS property
+    // @ts-expect-error - zoom consists of non-standard CSS property
     document.body.style.zoom = `${zoomLevel}%`;
   }, [zoomLevel]);
 

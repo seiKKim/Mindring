@@ -2,59 +2,33 @@
 
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
-import { ArrowLeft, RotateCcw, Trophy, Clock, Brain } from "lucide-react";
+import { ArrowLeft, RotateCcw, Trophy, Clock, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-interface MemoryMatchGameProps {
+interface VisuospatialColorGameProps {
   gameId?: string;
-}
-
-interface Card {
-  id: string; // Emoji content
-  isFlipped: boolean;
-  isMatched: boolean;
-  uniqueId: string; // Unique ID for key
 }
 
 // Level Configuration
 const LEVEL_CONFIG = {
-  1: { pairs: 2, cols: 2, timeLimit: 60 }, // 4 cards (2x2)
-  2: { pairs: 4, cols: 4, timeLimit: 50 }, // 8 cards (4x2)
-  3: { pairs: 6, cols: 4, timeLimit: 40 }, // 12 cards (4x3)
-  4: { pairs: 8, cols: 4, timeLimit: 30 }, // 16 cards (4x4)
-  5: { pairs: 10, cols: 5, timeLimit: 20 }, // 20 cards (5x4)
+  1: { rows: 2, cols: 2, targetScore: 3, diff: 0.3 }, // 2x2, Very easy
+  2: { rows: 2, cols: 2, targetScore: 3, diff: 0.2 }, // 2x2, Easy
+  3: { rows: 3, cols: 3, targetScore: 4, diff: 0.15 }, // 3x3, Moderate
+  4: { rows: 3, cols: 3, targetScore: 4, diff: 0.12 }, // 3x3, Slightly harder
+  5: { rows: 4, cols: 4, targetScore: 5, diff: 0.1 }, // 4x4, Hard (for seniors)
 };
 
-const DEFAULT_EMOJIS = [
-  "🍎",
-  "🍊",
-  "🍋",
-  "🍌",
-  "🍇",
-  "🍓",
-  "🍉",
-  "🍒",
-  "🍑",
-  "🍍",
-  "🥝",
-  "🥥",
-];
-
-const shuffle = <T,>(arr: T[]): T[] => {
-  return [...arr].sort(() => Math.random() - 0.5);
-};
-
-export function MemoryMatchGame({}: MemoryMatchGameProps) {
+export function VisuospatialColorGame({}: VisuospatialColorGameProps) {
   const router = useRouter();
   const [gameState, setGameState] = useState<"intro" | "playing" | "result">(
     "intro"
   );
   const [level, setLevel] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [cards, setCards] = useState<Card[]>([]);
+  const [score, setScore] = useState(0);
   const [time, setTime] = useState(0);
-  const [flippedCards, setFlippedCards] = useState<Card[]>([]);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [, setCompletedPairs] = useState(0);
+  const [targetIndex, setTargetIndex] = useState(0);
+  const [baseColor, setBaseColor] = useState("");
+  const [targetColor, setTargetColor] = useState("");
 
   // Timer
   useEffect(() => {
@@ -67,98 +41,62 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
     return () => clearInterval(interval);
   }, [gameState]);
 
+  const generateRound = (currentLevel: number) => {
+    // @ts-expect-error - indexing config
+    const config = LEVEL_CONFIG[currentLevel];
+    const totalCells = config.rows * config.cols;
+
+    // Pick random index
+    const newTarget = Math.floor(Math.random() * totalCells);
+    setTargetIndex(newTarget);
+
+    // Generate Base Color (random HSL)
+    const h = Math.floor(Math.random() * 360);
+    const s = 60 + Math.floor(Math.random() * 40); // 60-100%
+    const l = 40 + Math.floor(Math.random() * 40); // 40-80%
+    setBaseColor(`hsl(${h}, ${s}%, ${l}%)`);
+
+    // Generate Target Color (Same Hue, Shift Lightness)
+    // Make sure we shift enough but within bounds
+    // We alternate shift direction to make it harder to guess
+    const shift = Math.random() > 0.5 ? 1 : -1;
+    let newL = l + shift * (config.diff * 100);
+
+    // Clamp lightness
+    if (newL > 95) newL = l - config.diff * 100;
+    if (newL < 20) newL = l + config.diff * 100;
+
+    setTargetColor(`hsl(${h}, ${s}%, ${newL}%)`);
+  };
+
   const startGame = (selectedLevel: number) => {
-    // @ts-expect-error - Level is strictly 1-5 but types might be loose
+    // @ts-expect-error - loose type
     setLevel(selectedLevel);
-
-    // @ts-expect-error - Indexing with generic number
-    const config = LEVEL_CONFIG[selectedLevel];
-    const gameEmojis = shuffle(DEFAULT_EMOJIS).slice(0, config.pairs);
-
-    const initialCards: Card[] = [];
-    gameEmojis.forEach((emoji) => {
-      initialCards.push({
-        id: emoji,
-        isFlipped: false,
-        isMatched: false,
-        uniqueId: `${emoji}-1`,
-      });
-      initialCards.push({
-        id: emoji,
-        isFlipped: false,
-        isMatched: false,
-        uniqueId: `${emoji}-2`,
-      });
-    });
-
-    setCards(shuffle(initialCards));
+    setScore(0);
     setTime(0);
-    setFlippedCards([]);
-    setCompletedPairs(0);
-    setIsProcessing(false);
     setGameState("playing");
+    generateRound(selectedLevel);
   };
 
-  const handleCardClick = (clickedCard: Card) => {
-    if (
-      isProcessing ||
-      clickedCard.isMatched ||
-      clickedCard.isFlipped ||
-      gameState !== "playing"
-    )
-      return;
+  const handleBlockClick = (index: number) => {
+    if (gameState !== "playing") return;
 
-    // Flip the card
-    const newCards = cards.map((c) =>
-      c.uniqueId === clickedCard.uniqueId ? { ...c, isFlipped: true } : c
-    );
-    setCards(newCards);
+    if (index === targetIndex) {
+      // Correct!
+      const nextScore = score + 1;
+      setScore(nextScore);
 
-    const newFlipped = [...flippedCards, clickedCard];
-    setFlippedCards(newFlipped);
-
-    if (newFlipped.length === 2) {
-      setIsProcessing(true);
-
-      const [first, second] = newFlipped;
-
-      if (first.id === second.id) {
-        // Match found
-        setTimeout(() => {
-          setCards((prev) =>
-            prev.map((c) => (c.id === first.id ? { ...c, isMatched: true } : c))
-          );
-          setFlippedCards([]);
-          setIsProcessing(false);
-          setCompletedPairs((prev) => {
-            const newVal = prev + 1;
-            // Check win condition
-
-            if (newVal === LEVEL_CONFIG[level].pairs) {
-              setTimeout(() => setGameState("result"), 500);
-            }
-            return newVal;
-          });
-        }, 500);
+      // Check Level Completion
+      // @ts-expect-error - indexing
+      if (nextScore >= LEVEL_CONFIG[level].targetScore) {
+        setTimeout(() => setGameState("result"), 500);
       } else {
-        // No match
-        setTimeout(() => {
-          setCards((prev) =>
-            prev.map((c) =>
-              c.uniqueId === first.uniqueId || c.uniqueId === second.uniqueId
-                ? { ...c, isFlipped: false }
-                : c
-            )
-          );
-          setFlippedCards([]);
-          setIsProcessing(false);
-        }, 1000);
+        generateRound(level);
       }
+    } else {
+      // Wrong click logic (optional: shake effect or time penalty)
+      // For now, no penalty, just ignore
     }
-  };
-
-  const StopGame = () => {
-    setGameState("intro");
   };
 
   // --- Render ---
@@ -167,7 +105,7 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
   if (gameState === "intro") {
     return (
       <div className="flex flex-col items-center justify-center min-h-[600px] w-full max-w-5xl mx-auto p-4">
-        {/* Navigation Header */}
+        {/* Navigation */}
         <div className="w-full mb-8 flex justify-start">
           <button
             onClick={() => router.push("/services/cognitive")}
@@ -185,20 +123,20 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 leading-tight">
-                회상카드
+                색상 구분
                 <br />
-                <span className="text-indigo-600">맞추기</span>
+                <span className="text-indigo-600">테스트</span>
               </h1>
               <p className="text-xl text-gray-500">
-                카드의 위치를 기억하고
+                여러 가지 블록 중에서
                 <br />
-                같은 그림의 짝을 찾아보세요.
+                색이 다른 하나를 찾아보세요.
               </p>
             </div>
 
             <div className="space-y-4">
               <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Brain className="w-5 h-5 text-indigo-500" />
+                <Target className="w-5 h-5 text-indigo-500" />
                 난이도 선택
               </h2>
               <div className="flex flex-wrap gap-3">
@@ -224,7 +162,6 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
 
           {/* Right Guide */}
           <div className="bg-gray-50 rounded-[2rem] p-8 border border-gray-100 relative overflow-hidden">
-            {/* Decorative Circle */}
             <div className="absolute -right-20 -top-20 w-64 h-64 bg-indigo-100 rounded-full opacity-50 blur-3xl pointer-events-none"></div>
 
             <h3 className="text-lg font-bold text-gray-900 mb-6 relative z-10">
@@ -237,10 +174,10 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 text-sm mb-1">
-                    카드 뒤집기
+                    다른 색 찾기
                   </h4>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    뒤집혀 있는 카드를 클릭해서 그림을 확인하세요.
+                    나열된 블록 중에서 혼자만 색이 다른 블록을 찾으세요.
                   </p>
                 </div>
               </div>
@@ -250,23 +187,10 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 text-sm mb-1">
-                    기억하기
+                    클릭하여 선택
                   </h4>
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    그림의 위치를 잘 기억해두세요.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                <div className="w-10 h-10 bg-pink-50 rounded-full flex items-center justify-center text-pink-600 font-bold shrink-0">
-                  3
-                </div>
-                <div>
-                  <h4 className="font-bold text-gray-900 text-sm mb-1">
-                    짝 맞추기
-                  </h4>
-                  <p className="text-xs text-gray-500 leading-relaxed">
-                    같은 그림의 카드를 연속으로 찾으면 성공입니다!
+                    정답이라고 생각되는 블록을 클릭하세요.
                   </p>
                 </div>
               </div>
@@ -286,18 +210,15 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
           animate={{ scale: 1, opacity: 1 }}
           className="w-full bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100 text-center p-12 relative"
         >
-          {/* Confetti or decoration could go here */}
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-400 to-indigo-500"></div>
 
           <div className="mb-8 flex justify-center bg-yellow-50 w-32 h-32 rounded-full items-center mx-auto">
             <Trophy className="w-16 h-16 text-yellow-500 drop-shadow-sm" />
           </div>
 
-          <h2 className="text-4xl font-black text-gray-900 mb-3">
-            훌륭합니다!
-          </h2>
+          <h2 className="text-4xl font-black text-gray-900 mb-3">목표 달성!</h2>
           <p className="text-gray-500 mb-12 text-lg">
-            모든 카드의 짝을 성공적으로 맞췄습니다.
+            뛰어난 색상 구분 능력을 가지고 계시네요.
           </p>
 
           <div className="grid grid-cols-2 gap-6 mb-12">
@@ -326,7 +247,9 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
               <ArrowLeft className="w-5 h-5" /> 목록으로
             </button>
             <button
-              onClick={() => setGameState("intro")}
+              onClick={() => {
+                startGame(level);
+              }}
               className="px-10 py-4 rounded-xl bg-gray-900 text-white font-bold hover:bg-gray-800 shadow-xl shadow-gray-200 flex items-center gap-2 transition-all hover:translate-y-[-2px]"
             >
               <RotateCcw className="w-5 h-5" /> 다시 하기
@@ -337,18 +260,22 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
     );
   }
 
-  // Playing Screen
+  // playing
+  // @ts-expect-error - config indexing
+  const config = LEVEL_CONFIG[level];
+  const gridTemplateColumns = `repeat(${config.cols}, 1fr)`;
+
   return (
     <div className="min-h-[700px] bg-white flex flex-col items-center py-6 px-4">
       <div className="w-full max-w-4xl">
-        {/* Game Controls Header */}
+        {/* Header */}
         <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-100">
           <button
-            onClick={() => router.push("/services/cognitive")}
+            onClick={() => setGameState("intro")}
             className="flex items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>나가기</span>
+            <span>그만하기</span>
           </button>
 
           <div className="flex items-center gap-6">
@@ -358,83 +285,62 @@ export function MemoryMatchGame({}: MemoryMatchGameProps) {
               </span>
               <span className="font-black text-indigo-700">{level}</span>
             </div>
+            <div className="bg-green-50 px-4 py-1.5 rounded-full flex items-center gap-2">
+              <span className="text-xs font-bold text-green-500 uppercase">
+                Score
+              </span>
+              <span className="font-black text-green-700">
+                {score} / {config.targetScore}
+              </span>
+              <div className="flex gap-0.5 ml-1">
+                {Array.from({ length: config.targetScore }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-2 rounded-full ${
+                      i < score ? "bg-green-500" : "bg-gray-200"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
             <div className="flex items-center gap-2 text-gray-600 font-mono text-lg">
               <Clock className="w-4 h-4 text-gray-400" />
               <span>{time}s</span>
             </div>
           </div>
-
-          <button
-            onClick={StopGame}
-            className="text-gray-400 hover:text-red-500 text-sm font-medium transition-colors"
-          >
-            중단하기
-          </button>
+          <div className="w-10"></div>
         </div>
 
-        {/* Responsive Grid Container */}
-        <div className="flex justify-center">
+        {/* Grid Area */}
+        <div className="flex justify-center items-center h-[500px]">
           <div
-            className={`grid ${
-              level === 1
-                ? "grid-cols-2 max-w-sm"
-                : level === 5
-                ? "grid-cols-5 max-w-4xl"
-                : "grid-cols-4 max-w-2xl"
-            } gap-4 w-full`}
+            className="w-full max-w-[500px] aspect-square rounded-2xl p-4 bg-gray-50 border border-gray-200 grid gap-3"
+            style={{ gridTemplateColumns }}
           >
-            {cards.map((card) => (
-              <motion.button
-                key={card.uniqueId}
-                onClick={() => handleCardClick(card)}
-                whileHover={{ scale: 1.02, y: -4 }}
-                whileTap={{ scale: 0.95 }}
-                className="aspect-[3/4] perspective-1000 relative group cursor-pointer"
-                disabled={card.isMatched}
-              >
-                <div
-                  className={`w-full h-full transition-all duration-500 transform-style-3d relative rounded-2xl shadow-sm group-hover:shadow-md border border-gray-100 ${
-                    card.isFlipped || card.isMatched ? "rotate-y-180" : ""
-                  }`}
+            {Array.from({ length: config.rows * config.cols }).map(
+              (_, index) => (
+                <motion.button
+                  key={index}
+                  className={`w-full h-full rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer relative overflow-hidden`}
                   style={{
-                    transformStyle: "preserve-3d",
-                    transform:
-                      card.isFlipped || card.isMatched
-                        ? "rotateY(180deg)"
-                        : "rotateY(0deg)",
+                    backgroundColor:
+                      index === targetIndex ? targetColor : baseColor,
                   }}
+                  whileHover={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleBlockClick(index)}
                 >
-                  {/* Front (Card Back - Question Mark) */}
-                  <div
-                    className="absolute w-full h-full backface-hidden rounded-2xl bg-indigo-50 flex items-center justify-center overflow-hidden"
-                    style={{ backfaceVisibility: "hidden" }}
-                  >
-                    <div className="w-12 h-12 rounded-full bg-white/50 flex items-center justify-center">
-                      <span className="text-indigo-200 text-2xl font-black">
-                        ?
-                      </span>
-                    </div>
-                    {/* Pattern */}
-                    <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-tl from-indigo-100 to-transparent opacity-50 rounded-tl-full"></div>
-                  </div>
-
-                  {/* Back (Card Front - Emoji) */}
-                  <div
-                    className="absolute w-full h-full backface-hidden rounded-2xl bg-white border-2 border-indigo-500 flex items-center justify-center rotate-y-180 shadow-inner"
-                    style={{
-                      backfaceVisibility: "hidden",
-                      transform: "rotateY(180deg)",
-                    }}
-                  >
-                    <span className="text-4xl md:text-5xl select-none">
-                      {card.isMatched || card.isFlipped ? card.id : ""}
-                    </span>
-                  </div>
-                </div>
-              </motion.button>
-            ))}
+                  {/* Optional texture or gradient to make it look nicer */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none"></div>
+                </motion.button>
+              )
+            )}
           </div>
         </div>
+
+        <p className="text-center text-gray-400 mt-8 text-sm animate-pulse">
+          색이 다른 블록 하나를 찾아보세요!
+        </p>
       </div>
     </div>
   );

@@ -13,5 +13,6 @@ export { ConnectNumbersGame } from "./ConnectNumbersGame";
 export { SameMatchGame } from "./SameMatchGame";
 export { WordSearchGame } from "./WordSearchGame";
 export { ProverbGame } from "./ProverbGame";
+export { VisuospatialColorGame } from "./VisuospatialColorGame";
 
 // 다른 게임 컴포넌트는 필요에 따라 추가
