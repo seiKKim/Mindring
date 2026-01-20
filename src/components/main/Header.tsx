@@ -10,7 +10,7 @@ interface HeaderProps {
   user?: {
     name: string;
     image?: string;
-    isAdmin?: boolean | number;
+    isAdmin?: boolean;
   } | null;
 }
 
@@ -20,9 +20,10 @@ export default function Header({ user: initialUser }: HeaderProps) {
   const [zoomLevel, setZoomLevel] = React.useState(100);
 
   React.useEffect(() => {
-    // Apply zoom to body
-    // @ts-expect-error - zoom consists of non-standard CSS property
-    document.body.style.zoom = `${zoomLevel}%`;
+    // 표준 transform 사용 (Safari 호환)
+    document.body.style.transform = `scale(${zoomLevel / 100})`;
+    document.body.style.transformOrigin = "top left";
+    document.body.style.width = `${10000 / zoomLevel}%`;
   }, [zoomLevel]);
 
   const handleZoomIn = () => {
@@ -31,6 +32,11 @@ export default function Header({ user: initialUser }: HeaderProps) {
 
   const handleZoomOut = () => {
     setZoomLevel((prev) => Math.max(prev - 10, 80));
+  };
+
+  const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    window.location.href = "/api/auth/logout";
   };
 
   React.useEffect(() => {
@@ -42,11 +48,9 @@ export default function Header({ user: initialUser }: HeaderProps) {
   }, [user]);
 
   React.useEffect(() => {
-    // props로 받은 유저가 있으면 그것을 사용
     if (initialUser) {
       setUser(initialUser);
     } else {
-      // props에 유저가 없으면 API로 확인 (클라이언트 사이드 체크)
       fetch("/api/auth/me")
         .then((res) => res.json())
         .then((data) => {
@@ -65,7 +69,13 @@ export default function Header({ user: initialUser }: HeaderProps) {
         <div className={`row_f font_goormsans`}>
           {user ? (
             <>
-              <a href="/api/auth/logout">로그아웃</a>
+              <button
+                onClick={handleLogout}
+                className={styles.logoutBtn}
+                type="button"
+              >
+                로그아웃
+              </button>
               <Link href="/mypage">마이페이지</Link>
             </>
           ) : (
@@ -76,26 +86,22 @@ export default function Header({ user: initialUser }: HeaderProps) {
           )}
           <div className={`${styles.screenSet} row_f`}>
             <p>화면크기</p>
-            <div
-              role="button"
-              tabIndex={0}
+            <button
               onClick={handleZoomIn}
-              onKeyDown={(e) => e.key === "Enter" && handleZoomIn()}
-              style={{ cursor: "pointer" }}
+              className={styles.zoomBtn}
               aria-label="화면 확대"
+              type="button"
             >
               +
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
+            </button>
+            <button
               onClick={handleZoomOut}
-              onKeyDown={(e) => e.key === "Enter" && handleZoomOut()}
-              style={{ cursor: "pointer" }}
+              className={styles.zoomBtn}
               aria-label="화면 축소"
+              type="button"
             >
               -
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -191,7 +197,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
                   <span>{user.name}</span> 님 안녕하세요.
                 </p>
               </div>
-              {(user.isAdmin === true || user.isAdmin === 1) && (
+              {user.isAdmin && (
                 <Link
                   href="/admin/workbook"
                   className={`${styles.myCourse} row_f`}

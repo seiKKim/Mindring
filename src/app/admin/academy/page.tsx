@@ -156,8 +156,11 @@ export default function AdminAcademyPage() {
         if (uploaded) thumbUrl = uploaded;
       }
 
-      const payload = { ...form, thumbnail: thumbUrl };
-      if (editingItem) (payload as any).id = editingItem.id;
+      const payload = {
+        ...form,
+        thumbnail: thumbUrl,
+        ...(editingItem ? { id: editingItem.id } : {}),
+      };
 
       const res = await fetch("/api/admin/academy-courses", {
         method: editingItem ? "PUT" : "POST",
@@ -395,6 +398,7 @@ export default function AdminAcademyPage() {
               <button
                 onClick={() => setShowModal(false)}
                 className="text-gray-400 hover:text-gray-600"
+                title="닫기"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -440,6 +444,7 @@ export default function AdminAcademyPage() {
                     카테고리
                   </label>
                   <select
+                    title="카테고리"
                     value={form.category}
                     onChange={(e) =>
                       setForm({ ...form, category: e.target.value })
@@ -502,6 +507,8 @@ export default function AdminAcademyPage() {
                   </label>
                   <input
                     type="text"
+                    title="강사명/출처"
+                    placeholder="강사명 또는 출처를 입력하세요"
                     value={form.instructor}
                     onChange={(e) =>
                       setForm({ ...form, instructor: e.target.value })
@@ -535,6 +542,7 @@ export default function AdminAcademyPage() {
                 <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:bg-gray-50 transition-colors relative group">
                   <input
                     type="file"
+                    title="썸네일 업로드"
                     accept="image/*"
                     onChange={(e) =>
                       setThumbnailFile(e.target.files?.[0] || null)

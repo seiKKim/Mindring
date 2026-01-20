@@ -87,7 +87,6 @@ export function VisuospatialColorGame({}: VisuospatialColorGameProps) {
       setScore(nextScore);
 
       // Check Level Completion
-      // @ts-expect-error - indexing
       if (nextScore >= LEVEL_CONFIG[level].targetScore) {
         setTimeout(() => setGameState("result"), 500);
       } else {
@@ -261,7 +260,6 @@ export function VisuospatialColorGame({}: VisuospatialColorGameProps) {
   }
 
   // playing
-  // @ts-expect-error - config indexing
   const config = LEVEL_CONFIG[level];
   const gridTemplateColumns = `repeat(${config.cols}, 1fr)`;
 
