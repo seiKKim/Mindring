@@ -8,6 +8,46 @@
   src: url(/font/ClipartKorea_Medium.ttf);
 }
 
+/* Noto Sans Variable */
+@font-face {
+  font-family: "NotoSans";
+  src: url("/font/NotoSans-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "NotoSans";
+  src: url("/font/NotoSans-Italic-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: italic;
+}
+
+/* ClipartKorea Family */
+@font-face {
+  font-family: "ClipartKorea";
+  src: url("/font/클립아트코리아_Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ClipartKorea";
+  src: url("/font/클립아트코리아_Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ClipartKorea";
+  src: url("/font/클립아트코리아_Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "ClipartKorea";
+  src: url("/font/클립아트코리아_Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
 /* Tailwind Directives */
 @tailwind base;
 @tailwind components;
@@ -46,6 +86,14 @@ a {
 
 .font_clipart {
   font-family: "ClipartKorea_M", sans-serif;
+}
+
+.font_noto {
+  font-family: "NotoSans", sans-serif;
+}
+
+.font_clipart_family {
+  font-family: "ClipartKorea", sans-serif;
 }
 
 /* Utility Classes - Flex Layouts */

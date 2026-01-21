@@ -123,7 +123,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
 
         {/* Navigation */}
         <nav>
-          <ul className={`${styles.depth01} row_f`}>
+          <ul className={`${styles.depth01} row_f font-clipart`}>
             <li>
               <Link href="/puzzle-home">
                 <p>AI기억퍼즐</p>
@@ -153,7 +153,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
               <Link href="/services/academy">
                 <p>스마트교육</p>
               </Link>
-              <ul className={styles.depth02}>
+              <ul className={`${styles.depth02} font-clipart`}>
                 <li>
                   <Link href="/services/academy?tab=curriculum">
                     <p>인지 커리큘럼</p>

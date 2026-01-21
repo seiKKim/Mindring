@@ -10,6 +10,8 @@ module.exports = {
       fontFamily: {
         'suit': ['SUIT Variable', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
         'sans': ['SUIT Variable', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        'noto': ['NotoSans', 'sans-serif'],
+        'clipart': ['ClipartKorea', 'ClipartKorea_M', 'sans-serif'],
       },
     } 
   },
