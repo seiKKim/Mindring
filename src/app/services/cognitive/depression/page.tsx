@@ -84,7 +84,7 @@ const questions: Question[] = [
 export default function DepressionTestPage() {
   const router = useRouter();
   const [step, setStep] = useState<"intro" | "info" | "questions" | "result">(
-    "intro"
+    "intro",
   );
   const [userInfo, setUserInfo] = useState({
     age: "",
@@ -467,6 +467,15 @@ export default function DepressionTestPage() {
               >
                 이전
               </button>
+              <button
+                onClick={handleNext}
+                disabled={!answers[questions[currentQuestionIndex].id]}
+                className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md"
+              >
+                {currentQuestionIndex < questions.length - 1
+                  ? "다음"
+                  : "결과 보기"}
+              </button>
             </div>
           </div>
         )}
@@ -560,7 +569,7 @@ export default function DepressionTestPage() {
                           style={{
                             left: `${Math.min(
                               100,
-                              Math.max(0, (result.score / 15) * 100)
+                              Math.max(0, (result.score / 15) * 100),
                             )}%`,
                           }}
                         >

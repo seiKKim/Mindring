@@ -75,7 +75,7 @@ function shuffleArray<T>(array: T[]): T[] {
 // 추천 퍼즐을 선별하는 함수
 function getRecommendedPuzzles(
   puzzles: PuzzleImage[],
-  count: number = 4
+  count: number = 4,
 ): PuzzleImage[] {
   const shuffled = shuffleArray(puzzles);
   return shuffled.slice(0, count);
@@ -86,7 +86,7 @@ export default function HomePage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<number>(0);
   const [puzzleImages, setPuzzleImages] = useState<PuzzleImage[]>([]);
   const [recommendedPuzzles, setRecommendedPuzzles] = useState<PuzzleImage[]>(
-    []
+    [],
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -188,7 +188,7 @@ export default function HomePage() {
           "/api/puzzles/rankings?limit=1000&type=global",
           {
             credentials: "include",
-          }
+          },
         );
 
         if (rankingsResponse.ok) {
@@ -197,7 +197,7 @@ export default function HomePage() {
           if (rankingsData.success && rankingsData.rankings) {
             // 사용자의 최고 순위 찾기
             const userRankings = rankingsData.rankings.filter(
-              (r) => r.userId === user.userId
+              (r) => r.userId === user.userId,
             );
 
             if (userRankings.length > 0) {
@@ -236,7 +236,7 @@ export default function HomePage() {
                     bestRank: null,
                     bestScore: null,
                     totalCompleted: recordsData.records.length,
-                  }
+                  },
             );
           }
         }
@@ -451,7 +451,6 @@ export default function HomePage() {
                   오늘의 추천 퍼즐
                 </h3>
               </div>
-              <div className={styles.recommendedBadge}>매일 새로운 추천</div>
             </div>
             <button
               onClick={refreshRecommendations}
@@ -507,7 +506,7 @@ export default function HomePage() {
                     <div className={styles.hoverOverlay}>
                       <Link
                         href={`/puzzle?image=${encodeURIComponent(
-                          puzzle.url
+                          puzzle.url,
                         )}&id=${puzzle.id}&difficulty=16`}
                         className={styles.hoverButton}
                       >
@@ -526,7 +525,7 @@ export default function HomePage() {
                           <Link
                             key={pieces}
                             href={`/puzzle?image=${encodeURIComponent(
-                              puzzle.url
+                              puzzle.url,
                             )}&id=${puzzle.id}&difficulty=${pieces}`}
                             className={`${styles.difficultyTag} ${
                               diffIndex === 0
@@ -555,61 +554,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Type Filter Section (Gradient) */}
-      <section className={styles.typeFilterSection}>
+      {/* Combined Filter Section */}
+      <section className={styles.combinedFilterSection}>
         <div className={styles.filtersContainer}>
-          <div className={styles.filterButtons}>
-            <button
-              onClick={() => handleCategoryChange("color")}
-              className={`${styles.categoryButton} ${
-                categoryType === "color"
-                  ? styles.categoryButtonActive
-                  : styles.categoryButtonInactive
-              }`}
-            >
-              {categoryType === "color" && (
-                <div className="w-5 h-5 bg-pink-500 rounded-full flex items-center justify-center mr-2">
-                  <Check className="w-3 h-3 text-white" />
-                </div>
-              )}
-              컬러머즐
-            </button>
-            <button
-              onClick={() => handleCategoryChange("gray")}
-              className={`${styles.categoryButton} ${
-                categoryType === "gray"
-                  ? styles.categoryButtonActive
-                  : styles.categoryButtonInactive
-              }`}
-            >
-              흑백머즐
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Difficulty Filter Section (Dark) */}
-      <section className={styles.difficultyFilterSection}>
-        <div className={styles.filtersContainer}>
-          <div className={styles.difficultyButtons}>
-            <span className="flex items-center text-sm font-bold mr-4">
-              <AlertTriangle className="w-4 h-4 mr-1 text-white opacity-70" />
-              난이도 선택
-            </span>
-            {DIFFICULTIES.map((diff) => (
+          <div className={styles.filterWrapper}>
+            {/* Type Toggle */}
+            <div className={styles.typeToggleContainer}>
               <button
-                key={diff.pieces}
-                onClick={() => setSelectedDifficulty(diff.pieces)}
-                className={`${styles.difficultyButton} ${
-                  selectedDifficulty === diff.pieces
-                    ? styles.difficultyButtonActive
-                    : ""
+                onClick={() => handleCategoryChange("color")}
+                className={`${styles.typeToggleButton} ${
+                  categoryType === "color"
+                    ? styles.typeToggleButtonActive
+                    : styles.typeToggleButtonInactive
                 }`}
               >
-                {diff.label}
-                {diff.pieces > 0 && `(${diff.pieces}조각)`}
+                컬러퍼즐
+                {categoryType === "color" && (
+                  <div className="bg-purple-800 rounded-full p-0.5 ml-2">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
               </button>
-            ))}
+              <button
+                onClick={() => handleCategoryChange("gray")}
+                className={`${styles.typeToggleButton} ${
+                  categoryType === "gray"
+                    ? styles.typeToggleButtonActive
+                    : styles.typeToggleButtonInactive
+                }`}
+              >
+                흑백퍼즐
+              </button>
+            </div>
+
+            {/* Difficulty List */}
+            <div className={styles.difficultyListContainer}>
+              <div className="flex items-center text-white/90 text-sm font-bold mr-6">
+                <div className="bg-white/20 p-1 rounded mr-2">
+                  <AlertTriangle className="w-3 h-3 text-white" />
+                </div>
+                난이도 선택
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {DIFFICULTIES.map((diff) => (
+                  <button
+                    key={diff.pieces}
+                    onClick={() => setSelectedDifficulty(diff.pieces)}
+                    className={`${styles.newDifficultyButton} ${
+                      selectedDifficulty === diff.pieces
+                        ? styles.newDifficultyButtonActive
+                        : ""
+                    }`}
+                  >
+                    {diff.label}
+                    {diff.pieces > 0 && `(${diff.pieces}조각)`}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -694,16 +696,16 @@ export default function HomePage() {
                         <Link
                           key={pieces}
                           href={`/puzzle?image=${encodeURIComponent(
-                            puzzle.url
+                            puzzle.url,
                           )}&id=${puzzle.id}&difficulty=${pieces}`}
                           className={`${styles.galleryDifficultyTag} ${
                             diffIndex === 0
                               ? styles.galleryDifficultyTagGreen
                               : diffIndex === 1
-                              ? styles.galleryDifficultyTagBlue
-                              : diffIndex === 2
-                              ? styles.galleryDifficultyTagOrange
-                              : styles.galleryDifficultyTagRed
+                                ? styles.galleryDifficultyTagBlue
+                                : diffIndex === 2
+                                  ? styles.galleryDifficultyTagOrange
+                                  : styles.galleryDifficultyTagRed
                           }`}
                         >
                           {pieces}조각
@@ -712,7 +714,7 @@ export default function HomePage() {
                     </div>
                     <Link
                       href={`/puzzle?image=${encodeURIComponent(
-                        puzzle.url
+                        puzzle.url,
                       )}&id=${puzzle.id}&difficulty=16`}
                       className={`${styles.galleryPlayButton} ${
                         categoryType === "color"

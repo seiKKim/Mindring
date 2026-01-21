@@ -628,6 +628,7 @@ function PuzzleGameContent() {
 
   const [paused, setPaused] = useState(false);
   const [elapsed, setElapsed] = useState(0);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [moves, setMoves] = useState(0); // 이동 횟수
   const [recordSaved, setRecordSaved] = useState(false); // 기록 저장 여부
@@ -1380,11 +1381,23 @@ function PuzzleGameContent() {
               backgroundImage: "url('/img/puzzle_bg.jpg')",
               backgroundSize: "cover",
               backgroundPosition: "center",
-              filter: "blur(30px)",
+              backgroundAttachment: "fixed",
+            }}
+          />
+          {/* Background Blur Overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none z-0"
+            style={{
+              backdropFilter: "blur(30px)",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
             }}
           />
           {/* Left: Puzzle Play Area */}
-          <div className="flex-1 relative overflow-hidden flex items-center justify-center min-h-[600px] p-4 lg:p-10">
+          <div
+            className={`flex-1 relative overflow-hidden flex items-center justify-center min-h-[600px] p-4 lg:p-10 z-10 transition-[padding] duration-300 ease-in-out ${
+              !isSidebarOpen ? "lg:pr-[360px]" : ""
+            }`}
+          >
             {/* Background blurred ambiance */}
 
             {/* Actual Board */}
@@ -1602,193 +1615,209 @@ function PuzzleGameContent() {
 
           {/* Right: Control Panel Sidebar */}
           <div
-            className="w-full lg:w-[320px] text-white p-6 flex flex-col gap-5 relative z-20 transition-all rounded-tl-[40px] rounded-bl-[40px] shadow-none"
-            style={{
-              backgroundImage: "url('/img/puzzl_side.png')",
-              backgroundSize: "100% 100%",
-              backgroundPosition: "center",
-              filter: "drop-shadow(-5px 0 15px rgba(0,0,0,0.15))",
-            }}
+            className={`hidden lg:flex flex-col gap-5 relative z-20 transition-all duration-300 ease-in-out ${
+              isSidebarOpen ? "w-[320px]" : "w-0"
+            }`}
           >
-            {/* Collapse Handle (Visual Tab) */}
-            <div className="hidden lg:flex absolute -left-[15px] top-[60px] w-[60px] h-[60px] items-center justify-center z-50 cursor-pointer hover:brightness-110 hover:scale-105 transition-all">
+            <div
+              className="w-[320px] text-white p-6 flex flex-col gap-5 rounded-tl-[40px] rounded-bl-[40px] shadow-none transition-transform duration-300"
+              style={{
+                backgroundImage: "url('/img/puzzl_side.png')",
+                backgroundSize: "100% 100%",
+                backgroundPosition: "center",
+                filter: "drop-shadow(-5px 0 15px rgba(0,0,0,0.15))",
+                height: "100%",
+              }}
+            >
+              {/* Collapse Handle (Visual Tab) */}
               <div
-                className="w-[58px] h-[58px] rounded-full flex items-center justify-center transform active:scale-95 transition-transform"
-                style={{
-                  backgroundImage: "url('/img/puzzl_button.png')",
-                  backgroundSize: "100% 100%",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                }}
-              ></div>
-            </div>
-
-            {/* Thumbnail */}
-            <div className="w-full flex justify-center mt-6">
-              <div className="relative w-[130px] aspect-[4/3] rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-black/20 group">
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt="Target"
-                    className="w-full h-full object-cover"
+                className="absolute -left-[15px] top-[60px] w-[60px] h-[60px] flex items-center justify-center z-50 cursor-pointer hover:brightness-110 hover:scale-105 transition-all"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              >
+                <div
+                  className={`w-[58px] h-[58px] rounded-full flex items-center justify-center transform transition-transform duration-500 ${
+                    isSidebarOpen ? "rotate-0" : "rotate-180"
+                  }`}
+                  style={{
+                    backgroundImage: "url('/img/puzzl_button.png')",
+                    backgroundSize: "100% 100%",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                >
+                  <ChevronsRight
+                    className={`w-8 h-8 text-white ${isSidebarOpen ? "" : "rotate-180"}`}
                   />
-                ) : (
-                  <div className="flex items-center justify-center w-full h-full text-white/50 text-xs">
-                    No Image
+                </div>
+              </div>
+
+              {/* Thumbnail */}
+              <div className="w-full flex justify-center mt-6">
+                <div className="relative w-[130px] aspect-[4/3] rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-black/20 group">
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt="Target"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-full text-white/50 text-xs">
+                      No Image
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Title */}
+              <div className="text-center">
+                <div className="font-bold text-lg drop-shadow-sm tracking-tight text-white">
+                  퍼즐 #{puzzleId || "COLOR-16"}
+                </div>
+              </div>
+
+              {/* Difficulty Dropdown */}
+              <div className="relative w-full px-2">
+                <select
+                  title="난이도 선택"
+                  aria-label="난이도 선택"
+                  value={`${cols}x${rows}`}
+                  onChange={(e) => {
+                    const [c, r] = e.target.value.split("x").map(Number);
+                    setCols(c);
+                    setRows(r);
+                  }}
+                  className="w-full appearance-none bg-white text-[#1a9388] font-extrabold text-lg py-3 px-4 rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-teal-300 cursor-pointer text-center tracking-wider"
+                >
+                  <option value="2x2">2 X 2</option>
+                  <option value="3x3">3 X 3</option>
+                  <option value="4x4">4 X 4</option>
+                  <option value="6x6">6 X 6</option>
+                  <option value="9x9">9 X 9</option>
+                </select>
+                <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#1a9388]">
+                  <ChevronLeft className="w-5 h-5 -rotate-90" />
+                </div>
+              </div>
+
+              {/* Action Buttons Grid */}
+              <div className="grid grid-cols-2 gap-y-6 gap-x-4 mt-2 justify-items-center">
+                {/* Shuffle */}
+                <button
+                  onClick={shuffle}
+                  className="flex flex-col items-center gap-2 group w-full"
+                >
+                  <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
+                    <Shuffle className="w-8 h-8 text-white drop-shadow-sm" />
                   </div>
-                )}
-              </div>
-            </div>
+                  <span className="text-sm font-bold text-white/90">
+                    퍼즐 섞기
+                  </span>
+                </button>
 
-            {/* Title */}
-            <div className="text-center">
-              <div className="font-bold text-lg drop-shadow-sm tracking-tight text-white">
-                퍼즐 #{puzzleId || "COLOR-16"}
-              </div>
-            </div>
+                {/* Pause */}
+                <button
+                  onClick={() => setPaused((p) => !p)}
+                  className="flex flex-col items-center gap-2 group w-full"
+                >
+                  <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
+                    {paused ? (
+                      <Play className="w-8 h-8 text-white ml-1 drop-shadow-sm" />
+                    ) : (
+                      <Pause className="w-8 h-8 text-white drop-shadow-sm" />
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-white/90">
+                    {paused ? "재개" : "일시정지"}
+                  </span>
+                </button>
 
-            {/* Difficulty Dropdown */}
-            <div className="relative w-full px-2">
-              <select
-                title="난이도 선택"
-                aria-label="난이도 선택"
-                value={`${cols}x${rows}`}
-                onChange={(e) => {
-                  const [c, r] = e.target.value.split("x").map(Number);
-                  setCols(c);
-                  setRows(r);
-                }}
-                className="w-full appearance-none bg-white text-[#1a9388] font-extrabold text-lg py-3 px-4 rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-teal-300 cursor-pointer text-center tracking-wider"
-              >
-                <option value="2x2">2 X 2</option>
-                <option value="3x3">3 X 3</option>
-                <option value="4x4">4 X 4</option>
-                <option value="6x6">6 X 6</option>
-                <option value="9x9">9 X 9</option>
-              </select>
-              <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-[#1a9388]">
-                <ChevronLeft className="w-5 h-5 -rotate-90" />
-              </div>
-            </div>
-
-            {/* Action Buttons Grid */}
-            <div className="grid grid-cols-2 gap-y-6 gap-x-4 mt-2 justify-items-center">
-              {/* Shuffle */}
-              <button
-                onClick={shuffle}
-                className="flex flex-col items-center gap-2 group w-full"
-              >
-                <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
-                  <Shuffle className="w-8 h-8 text-white drop-shadow-sm" />
-                </div>
-                <span className="text-sm font-bold text-white/90">
-                  퍼즐 섞기
-                </span>
-              </button>
-
-              {/* Pause */}
-              <button
-                onClick={() => setPaused((p) => !p)}
-                className="flex flex-col items-center gap-2 group w-full"
-              >
-                <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
-                  {paused ? (
-                    <Play className="w-8 h-8 text-white ml-1 drop-shadow-sm" />
-                  ) : (
-                    <Pause className="w-8 h-8 text-white drop-shadow-sm" />
-                  )}
-                </div>
-                <span className="text-sm font-bold text-white/90">
-                  {paused ? "재개" : "일시정지"}
-                </span>
-              </button>
-
-              {/* Upload */}
-              <label className="flex flex-col items-center gap-2 group w-full cursor-pointer">
-                <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
-                  <ImageIcon className="w-8 h-8 text-white drop-shadow-sm" />
-                </div>
-                <span className="text-sm font-bold text-white/90 break-words text-center leading-tight">
-                  이미지
-                  <br />
-                  업로드
-                </span>
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                />
-              </label>
-
-              {/* Sound */}
-              <button
-                onClick={() => sfx.setEnabled(!sfx.enabled)}
-                className="flex flex-col items-center gap-2 group w-full"
-              >
-                <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
-                  {sfx.enabled ? (
-                    <Volume2 className="w-8 h-8 text-white drop-shadow-sm" />
-                  ) : (
-                    <VolumeX className="w-8 h-8 text-white drop-shadow-sm" />
-                  )}
-                </div>
-                <span className="text-sm font-bold text-white/90">
-                  소리 {sfx.enabled ? "켜기" : "끄기"}
-                </span>
-              </button>
-            </div>
-
-            {/* Zoom Controls */}
-            <div className="mt-auto mb-2 flex flex-col gap-1 px-4">
-              <div className="flex items-center justify-between gap-3">
-                <ZoomOut
-                  className="w-7 h-7 text-white cursor-pointer hover:scale-110 transition-transform"
-                  strokeWidth={2}
-                  onClick={() => setBoardScale((s) => Math.max(0.5, s - 0.1))}
-                />
-                <div className="flex-1 h-3 bg-white/30 rounded-full relative overflow-visible">
-                  <div
-                    className="h-full bg-white rounded-full relative"
-                    style={{
-                      width: `${((boardScale - 0.5) / 1) * 100}%`,
-                    }}
-                  />
-                  {/* Thumb specifically */}
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md pointer-events-none"
-                    style={{
-                      left: `calc(${((boardScale - 0.5) / 1) * 100}% - 10px)`,
-                    }}
-                  />
+                {/* Upload */}
+                <label className="flex flex-col items-center gap-2 group w-full cursor-pointer">
+                  <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
+                    <ImageIcon className="w-8 h-8 text-white drop-shadow-sm" />
+                  </div>
+                  <span className="text-sm font-bold text-white/90 break-words text-center leading-tight">
+                    이미지
+                    <br />
+                    업로드
+                  </span>
                   <input
-                    title="줌 조절"
-                    aria-label="줌 조절"
-                    type="range"
-                    min="0.5"
-                    max="1.5"
-                    step="0.01"
-                    value={boardScale}
-                    onChange={(e) => setBoardScale(Number(e.target.value))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                  />
+                </label>
+
+                {/* Sound */}
+                <button
+                  onClick={() => sfx.setEnabled(!sfx.enabled)}
+                  className="flex flex-col items-center gap-2 group w-full"
+                >
+                  <div className="w-[72px] h-[72px] rounded-full border-2 border-white/20 flex items-center justify-center bg-teal-800/40 group-hover:bg-teal-700/50 group-active:scale-95 transition-all shadow-inner backdrop-blur-sm">
+                    {sfx.enabled ? (
+                      <Volume2 className="w-8 h-8 text-white drop-shadow-sm" />
+                    ) : (
+                      <VolumeX className="w-8 h-8 text-white drop-shadow-sm" />
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-white/90">
+                    소리 {sfx.enabled ? "켜기" : "끄기"}
+                  </span>
+                </button>
+              </div>
+
+              {/* Zoom Controls */}
+              <div className="mt-auto mb-2 flex flex-col gap-1 px-4">
+                <div className="flex items-center justify-between gap-3">
+                  <ZoomOut
+                    className="w-7 h-7 text-white cursor-pointer hover:scale-110 transition-transform"
+                    strokeWidth={2}
+                    onClick={() => setBoardScale((s) => Math.max(0.5, s - 0.1))}
+                  />
+                  <div className="flex-1 h-3 bg-white/30 rounded-full relative overflow-visible">
+                    <div
+                      className="h-full bg-white rounded-full relative"
+                      style={{
+                        width: `${((boardScale - 0.5) / 1) * 100}%`,
+                      }}
+                    />
+                    {/* Thumb specifically */}
+                    <div
+                      className="absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md pointer-events-none"
+                      style={{
+                        left: `calc(${((boardScale - 0.5) / 1) * 100}% - 10px)`,
+                      }}
+                    />
+                    <input
+                      title="줌 조절"
+                      aria-label="줌 조절"
+                      type="range"
+                      min="0.5"
+                      max="1.5"
+                      step="0.01"
+                      value={boardScale}
+                      onChange={(e) => setBoardScale(Number(e.target.value))}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                  </div>
+                  <ZoomIn
+                    className="w-7 h-7 text-white cursor-pointer hover:scale-110 transition-transform"
+                    strokeWidth={2}
+                    onClick={() => setBoardScale((s) => Math.min(1.5, s + 0.1))}
                   />
                 </div>
-                <ZoomIn
-                  className="w-7 h-7 text-white cursor-pointer hover:scale-110 transition-transform"
-                  strokeWidth={2}
-                  onClick={() => setBoardScale((s) => Math.min(1.5, s + 0.1))}
-                />
+                <div className="flex justify-between text-[11px] text-white font-medium px-1 mt-1">
+                  <span>화면 작게</span>
+                  <span>화면 크게</span>
+                </div>
               </div>
-              <div className="flex justify-between text-[11px] text-white font-medium px-1 mt-1">
-                <span>화면 작게</span>
-                <span>화면 크게</span>
-              </div>
-            </div>
 
-            {/* Timer */}
-            <div className="mt-auto pt-6 pb-4 text-center">
-              <div className="text-5xl font-black text-white tracking-wider drop-shadow-lg font-[system-ui]">
-                {formatTime(elapsed || 30)}
+              {/* Timer */}
+              <div className="mt-auto pt-6 pb-4 text-center">
+                <div className="text-5xl font-black text-white tracking-wider drop-shadow-lg font-[system-ui]">
+                  {formatTime(elapsed || 30)}
+                </div>
               </div>
             </div>
           </div>

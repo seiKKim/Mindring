@@ -175,8 +175,6 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 3px solid rgb(73, 221, 214); /* Teal border roughly */
 }
 
 .recommendedHeaderLeft {
@@ -400,192 +398,87 @@
   background-color: rgb(191 219 254);
 }
 
-/* 필터 섹션 */
-/* 필터 섹션들 */
-.typeFilterSection {
-  padding: 1.5rem 0;
-  background: linear-gradient(to right, rgb(240, 169, 160), rgb(123, 104, 238));
+/* Combined Filter Section */
+.combinedFilterSection {
+  padding: 3rem 0;
+  background: linear-gradient(90deg, #db7d6b 0%, #9a5286 50%, #5e778e 100%);
 }
 
-.difficultyFilterSection {
-  padding: 1rem 0;
-  background-color: rgb(85, 99, 115); /* Slate/Blue-gray dark */
-  color: white;
-}
-
-.filtersContainer {
-  width: 100%;
-  margin: 0 auto;
-  max-width: 1380px;
-  padding: 0 1rem;
-}
-
-.filtersContent {
+.filterWrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2.5rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.filterGroup {
-  /* 필터 그룹 기본 스타일 */
-}
-
-.filterButtons {
+/* Type Toggle Buttons */
+.typeToggleContainer {
   display: flex;
   gap: 1rem;
-  max-width: 800px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.5rem;
-  border-radius: 9999px;
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
+  justify-content: center;
+  width: 100%;
 }
 
-/* 카테고리 버튼 */
-.categoryButton {
+.typeToggleButton {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 2rem;
-  border-radius: 9999px; /* Pill shape */
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
   font-weight: 700;
-  border: none;
   cursor: pointer;
-  transition: all 0.2s;
-  flex: 1;
-  justify-content: center;
-  font-size: 1.125rem;
+  transition: all 0.2s ease;
+  height: 60px;
 }
 
-.categoryButtonActive {
+.typeToggleButtonActive {
+  background-color: white;
+  color: #7d4476; /* Purple text from image approximate */
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.typeToggleButtonInactive {
+  background-color: transparent;
   color: white;
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid white;
 }
 
-.categoryButtonInactive {
-  background-color: rgb(243 244 246);
-  color: rgb(55 65 81);
+.typeToggleButtonInactive:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-.categoryButtonInactive:hover {
-  background-color: rgb(229 231 235);
-}
-
-.categoryButtonColor {
-  background: white;
-  color: rgb(236, 72, 153);
-  border: 2px solid rgb(236, 72, 153); /* Pink border to match active state or similar */
-}
-
-/* Specific override for active state to match mockup - likely white bg with colored text and icon, or colored bg with white text */
-.categoryButtonActive {
-  background: white !important;
-  border: 2px solid currentColor !important;
-  /* Applying specific colors via modifier classes */
-}
-
-.categoryButtonActive.categoryButtonColor {
-  color: rgb(168, 85, 247) !important; /* Purple text */
-  border-color: rgb(168, 85, 247) !important;
-}
-
-/* Actually, the mockup shows a gradient background behind tabs and the tabs are white/transparent pills.
-   Let's make the container the gradient instead in page.tsx and these transparent/white.
-*/
-.filterButtons {
-  background: linear-gradient(to right, rgb(240, 169, 160), rgb(123, 104, 238)); /* Gradient approx */
-  padding: 0.5rem;
-  border-radius: 0.75rem;
-  gap: 0;
+/* Difficulty List */
+.difficultyListContainer {
   display: flex;
-}
-
-.categoryButton {
-  flex: 1;
-  background: transparent;
-  color: white;
-  border-radius: 0.5rem;
-}
-
-.categoryButtonActive {
-  background: white;
-  color: rgb(75, 85, 99); /* Dark text */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.categoryButtonInactive {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.categoryButtonGray {
-  background: linear-gradient(to right, rgb(75 85 99), rgb(31 41 55));
-}
-
-.categoryColorDots {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.colorDot {
-  width: 0.75rem;
-  height: 0.75rem;
-  border-radius: 9999px;
-}
-
-.colorDotRed {
-  background-color: rgb(248 113 113);
-}
-
-.colorDotBlue {
-  background-color: rgb(96 165 250);
-}
-
-.colorDotGreen {
-  background-color: rgb(74 222 128);
-}
-
-.colorDotGray300 {
-  background-color: rgb(209 213 219);
-}
-
-.colorDotGray500 {
-  background-color: rgb(107 114 128);
-}
-
-.colorDotGray700 {
-  background-color: rgb(55 65 81);
-}
-
-/* 난이도 버튼 */
-.difficultyButtons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  align-items: center;
   justify-content: center;
 }
 
-.difficultyButton {
-  padding: 0.5rem 1.5rem;
-  border-radius: 9999px;
+.newDifficultyButton {
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
   font-size: 0.95rem;
   font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: transparent;
-  color: white;
   cursor: pointer;
   transition: all 0.2s;
+  border: 1px solid white;
+  background-color: transparent;
+  color: white;
 }
 
-.difficultyButton:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.difficultyButtonActive {
-  background: white;
-  color: rgb(75, 85, 99);
+.newDifficultyButtonActive {
+  background-color: white;
+  color: #333;
   font-weight: 700;
+  border: none;
+}
+
+.newDifficultyButton:hover:not(.newDifficultyButtonActive) {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 

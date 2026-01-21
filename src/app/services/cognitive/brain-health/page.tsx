@@ -205,7 +205,7 @@ export default function BrainHealthChecklistPage() {
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleAnswer = (
-    answer: "always" | "often" | "sometimes" | "rarely" | "never"
+    answer: "always" | "often" | "sometimes" | "rarely" | "never",
   ) => {
     const itemId = checklistItems[currentItemIndex].id;
     setAnswers({ ...answers, [itemId]: answer });
@@ -308,7 +308,7 @@ export default function BrainHealthChecklistPage() {
       ([category, data]) => ({
         category,
         average: data.count > 0 ? data.total / data.count : 0,
-      })
+      }),
     );
 
     return {
@@ -449,7 +449,7 @@ export default function BrainHealthChecklistPage() {
                   {categoryIcons[checklistItems[currentItemIndex].category] &&
                     React.createElement(
                       categoryIcons[checklistItems[currentItemIndex].category],
-                      { className: "w-3 h-3" }
+                      { className: "w-3 h-3" },
                     )}
                   {checklistItems[currentItemIndex].category}
                 </div>
@@ -491,6 +491,15 @@ export default function BrainHealthChecklistPage() {
                 className="px-6 py-3 rounded-xl text-gray-500 font-medium hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
               >
                 이전
+              </button>
+              <button
+                onClick={handleNext}
+                disabled={!answers[checklistItems[currentItemIndex].id]}
+                className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md"
+              >
+                {currentItemIndex < checklistItems.length - 1
+                  ? "다음"
+                  : "결과 보기"}
               </button>
             </div>
           </div>
@@ -582,7 +591,7 @@ export default function BrainHealthChecklistPage() {
                           style={{
                             left: `${Math.min(
                               100,
-                              Math.max(0, result.percentage)
+                              Math.max(0, result.percentage),
                             )}%`,
                           }}
                         >

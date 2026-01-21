@@ -24,7 +24,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function SocialNetworkPage() {
   const router = useRouter();
   const [step, setStep] = useState<"intro" | "info" | "questions" | "result">(
-    "intro"
+    "intro",
   );
   const [userInfo, setUserInfo] = useState({
     age: "",
@@ -58,7 +58,7 @@ export default function SocialNetworkPage() {
   };
 
   const saveAssessmentResult = async (
-    result: ReturnType<typeof calculateLSNSResult>
+    result: ReturnType<typeof calculateLSNSResult>,
   ) => {
     if (isSaving) return;
 
@@ -88,7 +88,7 @@ export default function SocialNetworkPage() {
     } catch (error) {
       console.error("Failed to save assessment:", error);
       setSaveError(
-        "검사 결과 저장에 실패했습니다. 결과는 화면에서 확인하실 수 있습니다."
+        "검사 결과 저장에 실패했습니다. 결과는 화면에서 확인하실 수 있습니다.",
       );
     } finally {
       setIsSaving(false);
@@ -349,6 +349,17 @@ export default function SocialNetworkPage() {
               >
                 이전
               </button>
+              <button
+                onClick={handleNext}
+                disabled={
+                  answers[lsnsQuestions[currentQuestionIndex].id] === undefined
+                }
+                className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md"
+              >
+                {currentQuestionIndex < lsnsQuestions.length - 1
+                  ? "다음"
+                  : "결과 보기"}
+              </button>
             </div>
           </div>
         )}
@@ -440,7 +451,7 @@ export default function SocialNetworkPage() {
                           style={{
                             left: `${Math.min(
                               100,
-                              Math.max(0, (result.totalScore / 30) * 100)
+                              Math.max(0, (result.totalScore / 30) * 100),
                             )}%`,
                           }}
                         >

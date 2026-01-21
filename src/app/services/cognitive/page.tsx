@@ -7,8 +7,6 @@ import { useRouter } from "next/navigation";
 import {
   Search,
   Check,
-  FolderOpen,
-  Eye,
   MessageCircle,
   MapPin,
   User,
@@ -84,7 +82,10 @@ const ALL_GAMES: GameData[] = [
 ];
 
 // Helper to assign images based on index or category to simulate the variety in design
-const getGameImage = (index: number) => {
+const getGameImage = (index: number, gameId?: string) => {
+  if (gameId === "color-sequence") {
+    return "/img/color.png";
+  }
   const images = [
     "/img/smart2.png",
     "/img/smart3.png",
@@ -99,7 +100,15 @@ const categoryCards: CategoryCardData[] = [
   {
     id: "memory",
     title: "기억력 게임",
-    icon: <FolderOpen className="w-6 h-6 text-yellow-500" />,
+    icon: (
+      <Image
+        src="/img/remember.png"
+        alt="기억력 게임 아이콘"
+        width={24}
+        height={24}
+        className="object-contain"
+      />
+    ),
     items: ALL_GAMES.filter((g) => g.category === "memory").map((g) => ({
       title: g.title,
       href: gameRoutes[g.id] || "#",
@@ -108,7 +117,15 @@ const categoryCards: CategoryCardData[] = [
   {
     id: "attention",
     title: "주의력 게임",
-    icon: <Eye className="w-6 h-6 text-blue-500" />,
+    icon: (
+      <Image
+        src="/img/eye.png"
+        alt="주의력 게임 아이콘"
+        width={24}
+        height={24}
+        className="object-contain"
+      />
+    ),
     items: ALL_GAMES.filter((g) => g.category === "attention").map((g) => ({
       title: g.title,
       href: gameRoutes[g.id] || "#",
@@ -117,7 +134,15 @@ const categoryCards: CategoryCardData[] = [
   {
     id: "language",
     title: "언어능력 게임",
-    icon: <MessageCircle className="w-6 h-6 text-orange-500" />,
+    icon: (
+      <Image
+        src="/img/tok.png"
+        alt="언어능력 게임 아이콘"
+        width={24}
+        height={24}
+        className="object-contain"
+      />
+    ),
     items: ALL_GAMES.filter((g) => g.category === "language").map((g) => ({
       title: g.title,
       href: gameRoutes[g.id] || "#",
@@ -126,7 +151,15 @@ const categoryCards: CategoryCardData[] = [
   {
     id: "visuospatial",
     title: "시공간능력 게임",
-    icon: <MapPin className="w-6 h-6 text-purple-500" />,
+    icon: (
+      <Image
+        src="/img/map.png"
+        alt="언어능력 게임 아이콘"
+        width={24}
+        height={24}
+        className="object-contain"
+      />
+    ),
     items: ALL_GAMES.filter((g) => g.category === "visuospatial").map((g) => ({
       title: g.title,
       href: gameRoutes[g.id] || "#",
@@ -135,7 +168,15 @@ const categoryCards: CategoryCardData[] = [
   {
     id: "orientation",
     title: "지남력 게임",
-    icon: <User className="w-6 h-6 text-green-500" />,
+    icon: (
+      <Image
+        src="/img/man.png"
+        alt="언어능력 게임 아이콘"
+        width={24}
+        height={24}
+        className="object-contain"
+      />
+    ),
     items: ALL_GAMES.filter((g) => g.category === "orientation").map((g) => ({
       title: g.title,
       href: gameRoutes[g.id] || "#",
@@ -190,17 +231,20 @@ export default function CognitivePage() {
         </h1>
 
         <div className="relative max-w-2xl mx-auto">
-          <input
-            type="text"
-            placeholder="검색어를 입력하세요"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-6 pr-16 py-4 rounded-full border-2 border-purple-200 outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all text-lg placeholder-gray-400"
-          />
+          {/* Gradient Border Input Container */}
+          <div className="relative p-[2px] rounded-full bg-gradient-to-r from-[#da5073] to-[#820fb4]">
+            <input
+              type="text"
+              placeholder="검색어를 입력하세요"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-6 pr-16 py-4 rounded-full outline-none text-lg placeholder-gray-400 bg-white"
+            />
+          </div>
           <button
             aria-label="검색"
             title="검색"
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white hover:bg-purple-700 transition-colors shadow-md"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md bg-gradient-to-r from-[#820fb4] to-[#a030c0]"
           >
             <Search className="w-6 h-6" />
           </button>
@@ -211,11 +255,11 @@ export default function CognitivePage() {
       <div className="bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
           {/* "전체" Header */}
-          <div className="flex justify-center mb-8">
-            <div className="bg-white rounded-full py-3 px-8 inline-flex items-center gap-3 shadow-sm border border-gray-200">
-              <span className="font-bold text-gray-800">전체</span>
-              <div className="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center">
-                <Check className="w-3 h-3 text-white" strokeWidth={3} />
+          <div className="flex justify-center mb-8 w-full">
+            <div className="w-full bg-white rounded-xl py-4 px-6 flex items-center justify-center gap-2 shadow-sm border border-gray-200">
+              <span className="font-bold text-black text-lg">전체</span>
+              <div className="w-5 h-5 bg-[#bfbfbf] rounded-full flex items-center justify-center">
+                <Check className="w-3 h-3 text-white" strokeWidth={4} />
               </div>
             </div>
           </div>
@@ -283,7 +327,7 @@ export default function CognitivePage() {
                   {/* Image Area */}
                   <div className="aspect-[16/10] bg-gray-100 relative overflow-hidden">
                     <Image
-                      src={getGameImage(gameIndex)}
+                      src={getGameImage(gameIndex, game.id)}
                       alt={game.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -297,9 +341,15 @@ export default function CognitivePage() {
                     </h3>
                     <button
                       onClick={() => handleGameStart(game.id)}
-                      className="w-full py-3 bg-gray-50 hover:bg-pink-50 text-gray-700 hover:text-pink-600 font-bold rounded-lg transition-colors mt-auto group/btn"
+                      className="w-full py-3 bg-white border border-gray-200 hover:border-[#da5073] hover:text-[#da5073] text-gray-500 font-bold rounded-lg transition-all mt-auto group/btn flex items-center justify-center gap-2"
                     >
-                      시작하기
+                      <span>시작하기</span>
+                      <div className="w-5 h-5 rounded-full bg-gray-300 group-hover/btn:bg-[#da5073] flex items-center justify-center transition-colors">
+                        <ChevronRight
+                          className="w-3 h-3 text-white"
+                          strokeWidth={3}
+                        />
+                      </div>
                     </button>
                   </div>
                 </div>
