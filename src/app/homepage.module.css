@@ -744,36 +744,43 @@
 }
 
 .galleryPlayButton {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   width: 100%;
   text-align: center;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: white;
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
   text-decoration: none;
   transition: all 0.2s;
+  border: 2px solid;
 }
 
 .galleryPlayButtonColor {
-  background-color: rgb(236, 72, 153); /* Pink-500 */
-  color: white;
-  border: 1px solid rgb(236, 72, 153);
+  background-color: white;
+  color: rgb(168, 85, 247); /* Purple-500 */
+  border-color: rgb(168, 85, 247);
 }
 
 .galleryPlayButtonColor:hover {
-  background-color: rgb(219, 39, 119); /* Pink-600 */
+  background-color: rgb(250, 245, 255); /* Purple-50 */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.2);
 }
 
 .galleryPlayButtonGray {
-  background-color: rgb(75, 85, 99);
-  color: white;
-  border: 1px solid rgb(75, 85, 99);
+  background-color: white;
+  color: rgb(75, 85, 99);
+  border-color: rgb(75, 85, 99);
 }
 
 .galleryPlayButtonGray:hover {
-  background-color: rgb(31 41 55);
+  background-color: rgb(249, 250, 251);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
 }
 
 /* 로딩 및 에러 상태 */
