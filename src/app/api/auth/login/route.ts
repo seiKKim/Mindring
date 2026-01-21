@@ -8,7 +8,7 @@ import { issueSession } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { writeAuthLog } from "@/lib/auth-log";
 
-type LoginBody = { email?: string; password?: string };
+type LoginBody = { email?: string; password?: string; rememberMe?: boolean };
 
 const RL_OPT = { windowMs: 5 * 60 * 1000, max: 15, keyPrefix: "rl:login" as const };
 const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       }
     }
 
-    const { email, password } = (await req.json()) as LoginBody;
+    const { email, password, rememberMe } = (await req.json()) as LoginBody;
     if (!email || !password) {
       if (ip) addPenalty(`ip:${ip}`, RL_OPT, 1);
       return NextResponse.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "INVALID_CREDENTIALS" }, { status: 401 });
     }
 
-    await issueSession(user.userId);
+    await issueSession(user.userId, rememberMe);
     await writeAuthLog({ provider: "password", result: "success", userId: user.userId, email: normalizedEmail, ip, ua });
 
     return NextResponse.json({ ok: true });
