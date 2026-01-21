@@ -28,19 +28,29 @@
 .topH > div .screenSet {
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 8px;
   border-right: 0;
 }
 
-.topH > div .screenSet div {
-  border: 1px solid #333333;
-  text-align: center;
-  width: 20px;
-  aspect-ratio: 1 / 1;
+.topH > div .screenSet .zoomBtn {
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   background-color: #ffffff;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
+  color: #666;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.topH > div .screenSet .zoomBtn:hover {
+  border-color: #a90076;
+  color: #a90076;
+  background-color: #fdf2f8;
 }
 
 /* Bottom Header */
@@ -252,9 +262,14 @@
   .topH > div .screenSet {
     gap: 3px;
   }
-  .topH > div .screenSet div {
+  .topH > div .screenSet .zoomBtn {
     width: 18px;
+    height: 18px;
     font-size: 14px;
+  }
+  .topH > div .screenSet .zoomBtn svg {
+    width: 10px;
+    height: 10px;
   }
   .botH {
     flex-wrap: wrap;

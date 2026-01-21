@@ -4,6 +4,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Minus, Plus } from "lucide-react";
 import styles from "./Header.module.css";
 
 interface HeaderProps {
@@ -92,7 +93,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
               aria-label="화면 확대"
               type="button"
             >
-              +
+              <Plus size={14} />
             </button>
             <button
               onClick={handleZoomOut}
@@ -100,7 +101,7 @@ export default function Header({ user: initialUser }: HeaderProps) {
               aria-label="화면 축소"
               type="button"
             >
-              -
+              <Minus size={14} />
             </button>
           </div>
         </div>
