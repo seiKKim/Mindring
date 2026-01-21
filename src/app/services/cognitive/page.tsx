@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Search,
-  CheckCircle2,
+  Check,
   FolderOpen,
   Eye,
   MessageCircle,
@@ -151,14 +151,14 @@ export default function CognitivePage() {
 
   // Filter games based on search
   const filteredGames = ALL_GAMES.filter((game) =>
-    game.title.toLowerCase().includes(searchTerm.toLowerCase())
+    game.title.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredGames.length / itemsPerPage);
   const currentGames = filteredGames.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const handlePageChange = (page: number) => {
@@ -210,45 +210,52 @@ export default function CognitivePage() {
       {/* 2. Category Cards Section */}
       <div className="bg-gray-50 py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-white rounded-full py-3 px-8 inline-flex items-center gap-2 shadow-sm border border-gray-100 mb-8 mx-auto table">
-            <span className="font-bold text-gray-800">전체</span>
-            <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center">
-              <CheckCircle2 className="w-3 h-3 text-white" />
+          {/* "전체" Header */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-white rounded-full py-3 px-8 inline-flex items-center gap-3 shadow-sm border border-gray-200">
+              <span className="font-bold text-gray-800">전체</span>
+              <div className="w-5 h-5 bg-gray-300 rounded-full flex items-center justify-center">
+                <Check className="w-3 h-3 text-white" strokeWidth={3} />
+              </div>
             </div>
           </div>
 
+          {/* Category Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {categoryCards.map((card) => (
               <div
                 key={card.id}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-white rounded-xl p-5 shadow-sm border border-gray-200 hover:shadow-md transition-all"
               >
-                <div className="flex items-center gap-3 mb-4">
+                {/* Card Header */}
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
                   {card.icon}
-                  <h3 className="font-bold text-gray-900">{card.title}</h3>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {card.title}
+                  </h3>
                 </div>
-                <ul className="space-y-2">
-                  {card.items.slice(0, 5).map(
-                    (
-                      item,
-                      idx // Show only first 5 in card
-                    ) => (
-                      <li
-                        key={idx}
-                        className="flex items-start gap-2 text-sm text-gray-500 hover:text-purple-600 transition-colors"
+
+                {/* Game Items List */}
+                <ul className="space-y-2.5">
+                  {card.items.map((item, idx) => (
+                    <li key={idx} className="flex items-start gap-2.5 group">
+                      {/* Simple Gray Circle Checkbox */}
+                      <div className="w-4 h-4 rounded-full bg-gray-300 flex-shrink-0 mt-0.5 flex items-center justify-center">
+                        <Check
+                          className="w-2.5 h-2.5 text-white"
+                          strokeWidth={3}
+                        />
+                      </div>
+
+                      {/* Game Link */}
+                      <Link
+                        href={item.href}
+                        className="text-sm text-gray-600 hover:text-gray-900 transition-colors line-clamp-2 leading-snug"
                       >
-                        <div className="w-4 h-4 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <CheckCircle2 className="w-2.5 h-2.5 text-gray-400" />
-                        </div>
-                        <Link
-                          href={item.href}
-                          className="line-clamp-1 hover:underline text-left"
-                        >
-                          {item.title}
-                        </Link>
-                      </li>
-                    )
-                  )}
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             ))}
@@ -263,7 +270,7 @@ export default function CognitivePage() {
 
         {currentGames.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {currentGames.map((game, idx) => {
+            {currentGames.map((game) => {
               // Determine absolute index for consistent image assignment if needed,
               // but idx refers to current page.
               // Using game.id to hash or find original index would be stable.

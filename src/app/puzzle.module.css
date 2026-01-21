@@ -174,14 +174,179 @@
 
 /* ===================== 완료 팝업 ===================== */
 .completionOverlay {
-  pointer-events: none;
-  position: absolute;
+  pointer-events: auto;
+  position: fixed;
   inset: 0;
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: overlayFadeIn 0.8s ease-out;
+  animation: overlayFadeIn 0.5s ease-out;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.completionBackdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.completionPopup {
+  position: relative;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 24px;
+  /* Background handled by children layers now */
+  /* No fallback color */
+  padding: 0;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  animation: popupSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.completionBgImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.completionBgOverlay {
+  position: absolute;
+  inset: 0;
+  /* Dark overlay to dim the background image */
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.completionContent {
+  position: relative;
+  z-index: 2;
+  padding: 3rem 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes popupSlideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Titles */
+.completionTitle {
+  font-family: var(--font-gmarket), sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.completionSubtitle {
+  font-family: var(--font-gmarket), sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  margin-bottom: 2rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Time Display - White Pill */
+.completionTime {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: #ffffff;
+  padding: 0.75rem 2rem;
+  border-radius: 16px;
+  margin-bottom: 3rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.completionTimeLabel {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #FBBF24; /* Amber-400 equivalent for "플레이 시간 :" */
+}
+
+.completionTimeValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #FBBF24;
+}
+
+/* Buttons */
+.completionButtons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.completionButton {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  min-width: 160px;
+  justify-content: center;
+}
+
+.completionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.completionButtonPrimary {
+  /* Replay: White background with black text */
+  background: #ffffff;
+  color: #000000;
+}
+
+.completionButtonSecondary {
+  /* Other Puzzle: Pink to Purple Gradient */
+  background: linear-gradient(90deg, #EC4899 0%, #A855F7 100%);
+  color: #ffffff;
+}
+
+.arrowIcon {
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.completionButtonPrimary .arrowIcon {
+  color: #3B82F6; /* Icon color for primary button */
+}
+
+.completionButtonSecondary .arrowIcon {
+  color: #059669; /* Icon color for secondary button */
 }
 
 @keyframes overlayFadeIn {

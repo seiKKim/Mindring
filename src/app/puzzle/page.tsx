@@ -23,6 +23,7 @@ import {
   ZoomOut,
   ChevronLeft,
   ChevronsRight,
+  ChevronRight,
   Info,
   Image as ImageIcon,
 } from "lucide-react";
@@ -64,7 +65,7 @@ type PointerCaptureTarget = Element & {
   setPointerCapture(pointerId: number): void;
 };
 function isPointerCaptureTarget(
-  t: EventTarget | null
+  t: EventTarget | null,
 ): t is PointerCaptureTarget {
   return !!t && typeof (t as Element).setPointerCapture === "function";
 }
@@ -94,7 +95,7 @@ function buildEdges(rows: number, cols: number, rng: () => number): Edges[][] {
       right: 0,
       bottom: 0,
       left: 0,
-    }))
+    })),
   );
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -119,7 +120,7 @@ function buildPiecePath(
   w: number,
   h: number,
   e: Edges,
-  knob = Math.min(w, h) * 0.22
+  knob = Math.min(w, h) * 0.22,
 ): string {
   const k = knob,
     cw = w / 2,
@@ -192,7 +193,7 @@ function generateNonOverlappingSpawnPositions(
   tileW: number,
   tileH: number,
   count: number,
-  rng: () => number
+  rng: () => number,
 ) {
   const gapBase = Math.max(10, Math.round(Math.min(tileW, tileH) * 0.12));
   const bands: Rect[] = [
@@ -350,7 +351,7 @@ function useSfx(): SfxApi {
     dur: number,
     a = 0.005,
     r = 0.08,
-    peak = 1
+    peak = 1,
   ) => {
     node.gain.cancelScheduledValues(startTime);
     node.gain.setValueAtTime(0.0001, startTime);
@@ -364,7 +365,7 @@ function useSfx(): SfxApi {
     freq: number,
     dur = 0.15,
     type: OscillatorType = "sine",
-    detune = 0
+    detune = 0,
   ) => {
     if (!enabled) return;
     const ctx = await ensureCtx();
@@ -410,10 +411,13 @@ function useSfx(): SfxApi {
 
       // 2단계: 섞기 (6개의 연속음)
       for (let i = 0; i < 6; i++) {
-        setTimeout(() => {
-          const freq = 180 + Math.random() * 80; // 180-260Hz
-          pluck(freq, 0.05, "triangle");
-        }, 50 + i * 50);
+        setTimeout(
+          () => {
+            const freq = 180 + Math.random() * 80; // 180-260Hz
+            pluck(freq, 0.05, "triangle");
+          },
+          50 + i * 50,
+        );
       }
 
       // 3단계: 마무리
@@ -508,7 +512,7 @@ function useSfx(): SfxApi {
           pluck(
             1000 + Math.random() * 5000,
             0.08 + Math.random() * 0.05,
-            "sine"
+            "sine",
           );
         }, Math.random() * 300);
       }
@@ -637,7 +641,7 @@ function PuzzleGameContent() {
 
   const playSize = Math.min(
     720,
-    Math.max(400, Math.floor(Math.min(outerRect.w, outerRect.h) * 0.75))
+    Math.max(400, Math.floor(Math.min(outerRect.w, outerRect.h) * 0.75)),
   );
   const playW = playSize;
   const playH = playSize;
@@ -786,7 +790,7 @@ function PuzzleGameContent() {
     if (!imageUrl) return;
     const total = rows * cols;
     const seed = hashString(
-      `spawn|${outerRect.w}x${outerRect.h}|${playX},${playY},${playW}x${playH}|${rows}x${cols}`
+      `spawn|${outerRect.w}x${outerRect.h}|${playX},${playY},${playW}x${playH}|${rows}x${cols}`,
     );
     const rng = mulberry32(seed);
     const spawns = generateNonOverlappingSpawnPositions(
@@ -796,7 +800,7 @@ function PuzzleGameContent() {
       tileW,
       tileH,
       total,
-      rng
+      rng,
     );
     const init = range(rows).flatMap((r) =>
       range(cols).map((c) => {
@@ -817,7 +821,7 @@ function PuzzleGameContent() {
           groupId: id,
         };
         return tile;
-      })
+      }),
     );
     setTiles(init);
     setElapsed(0);
@@ -826,6 +830,8 @@ function PuzzleGameContent() {
     setRecordSaved(false); // 기록 저장 상태 초기화
     setCurrentScore(null); // 점수 초기화
     setCurrentRank(null); // 랭킹 초기화
+    setDragging(null); // 드래그 상태 초기화
+    setEdgesOnly(false); // 가장자리만 보기 해제
     sfx.shuffle();
   };
 
@@ -911,7 +917,7 @@ function PuzzleGameContent() {
       tiles.length > 0 &&
       tiles.length === rows * cols &&
       tiles.every((t) => t.locked),
-    [tiles, rows, cols]
+    [tiles, rows, cols],
   );
 
   // 완료 사운드 1회 재생 및 기록 저장
@@ -955,14 +961,14 @@ function PuzzleGameContent() {
                 `/api/puzzles/rankings?puzzleId=${puzzleId}&difficulty=${difficulty}&limit=100`,
                 {
                   credentials: "include",
-                }
+                },
               )
                 .then((res) => res.json())
                 .then((rankData) => {
                   if (rankData.success) {
                     const myRank = rankData.rankings.findIndex(
                       (r: PuzzleRanking) =>
-                        r.userId === user.userId && r.score === score
+                        r.userId === user.userId && r.score === score,
                     );
                     if (myRank !== -1) {
                       setCurrentRank(myRank + 1);
@@ -1020,7 +1026,7 @@ function PuzzleGameContent() {
       const gid = me.groupId;
       const willSelect = !me.selected;
       return prev.map((t) =>
-        t.groupId === gid ? { ...t, selected: willSelect } : t
+        t.groupId === gid ? { ...t, selected: willSelect } : t,
       );
     });
   }
@@ -1029,8 +1035,8 @@ function PuzzleGameContent() {
       prev.map((t) =>
         t.selected && !t.locked
           ? { ...t, angle: (t.angle + delta + 360) % 360 }
-          : t
-      )
+          : t,
+      ),
     );
   }
 
@@ -1056,7 +1062,7 @@ function PuzzleGameContent() {
       const fitsGrid = group.every(
         (t) =>
           Math.abs(t.x - (baseX + t.col * tileW)) <= tol &&
-          Math.abs(t.y - (baseY + t.row * tileH)) <= tol
+          Math.abs(t.y - (baseY + t.row * tileH)) <= tol,
       );
       if (!fitsGrid) continue;
 
@@ -1073,7 +1079,7 @@ function PuzzleGameContent() {
               locked: true,
               selected: false,
             }
-          : t
+          : t,
       );
       break;
     }
@@ -1102,7 +1108,7 @@ function PuzzleGameContent() {
 
       if (captureMode)
         next = next.map((x) =>
-          x.id === id ? { ...x, selected: !x.selected } : x
+          x.id === id ? { ...x, selected: !x.selected } : x,
         );
       else {
         const me = next.find((x) => x.id === id)!;
@@ -1160,12 +1166,12 @@ function PuzzleGameContent() {
         const pulledX = clamp(
           baseX + (slotX - baseX) * strength * 0.3,
           0,
-          Math.max(0, outerRect.w - tileW)
+          Math.max(0, outerRect.w - tileW),
         );
         const pulledY = clamp(
           baseY + (slotY - baseY) * strength * 0.3,
           0,
-          Math.max(0, outerRect.h - tileH)
+          Math.max(0, outerRect.h - tileH),
         );
 
         return { ...t, x: pulledX, y: pulledY };
@@ -1225,10 +1231,10 @@ function PuzzleGameContent() {
           dir === "R"
             ? { dx: tileW, dy: 0 }
             : dir === "L"
-            ? { dx: -tileW, dy: 0 }
-            : dir === "T"
-            ? { dx: 0, dy: -tileH }
-            : { dx: 0, dy: tileH };
+              ? { dx: -tileW, dy: 0 }
+              : dir === "T"
+                ? { dx: 0, dy: -tileH }
+                : { dx: 0, dy: tileH };
         const ddx = Math.abs(b.x - a.x - expect.dx);
         const ddy = Math.abs(b.y - a.y - expect.dy);
         const tol = Math.max(30, Math.min(tileW, tileH) * 0.35);
@@ -1247,10 +1253,10 @@ function PuzzleGameContent() {
                 y: t.y + offsetY2,
                 angle: a.angle,
               }
-            : t
+            : t,
         );
         next = next.map((t) =>
-          t.groupId === to ? { ...t, ...clampIntoBoard(t.x, t.y) } : t
+          t.groupId === to ? { ...t, ...clampIntoBoard(t.x, t.y) } : t,
         );
         mergedAny = true;
         return true;
@@ -1275,7 +1281,7 @@ function PuzzleGameContent() {
             merged = tryMergePair(a, bottomN, "B") || merged;
         }
         const gids = new Set(
-          next.filter((t) => idSet.has(t.id)).map((t) => t.groupId)
+          next.filter((t) => idSet.has(t.id)).map((t) => t.groupId),
         );
         const expanded = next
           .filter((t) => gids.has(t.groupId))
@@ -1315,8 +1321,8 @@ function PuzzleGameContent() {
       prev.map((t) =>
         t.id === id || (t.selected && !t.locked)
           ? { ...t, angle: (t.angle + delta + 360) % 360 }
-          : t
-      )
+          : t,
+      ),
     );
     sfx.rotate();
   };
@@ -1326,8 +1332,8 @@ function PuzzleGameContent() {
         prev.map((t) =>
           t.id === id || (t.selected && !t.locked)
             ? { ...t, angle: (t.angle + 90) % 360 }
-            : t
-        )
+            : t,
+        ),
       );
       sfx.rotate();
     }
@@ -1337,10 +1343,10 @@ function PuzzleGameContent() {
     () =>
       range(rows).flatMap((r) =>
         range(cols).map((c) =>
-          buildPiecePath(tileW, tileH, edgesGrid[r][c], knob)
-        )
+          buildPiecePath(tileW, tileH, edgesGrid[r][c], knob),
+        ),
       ),
-    [rows, cols, tileW, tileH, edgesGrid, knob]
+    [rows, cols, tileW, tileH, edgesGrid, knob],
   );
 
   return (
@@ -1469,7 +1475,7 @@ function PuzzleGameContent() {
                           tileW,
                           tileH,
                           edgesGrid[r][c],
-                          knob
+                          knob,
                         );
                         const slotX = c * tileW;
                         const slotY = r * tileH;
@@ -1500,7 +1506,7 @@ function PuzzleGameContent() {
                             />
                           </g>
                         );
-                      })
+                      }),
                     )}
                   </svg>
                 </div>
@@ -1527,8 +1533,8 @@ function PuzzleGameContent() {
                   const stroke = t.locked
                     ? "rgba(0,0,0,0.1)" // locked tiles blend in
                     : t.selected
-                    ? "#fff" // selected gets white highlight
-                    : "rgba(255,255,255,0.4)"; // default tile border
+                      ? "#fff" // selected gets white highlight
+                      : "rgba(255,255,255,0.4)"; // default tile border
 
                   return (
                     <div
@@ -1803,36 +1809,57 @@ function PuzzleGameContent() {
       {solved && (
         <div className={styles.completionOverlay}>
           <div className={styles.completionBackdrop} />
-          <div className={styles.completionPopup}>
-            <div className="text-center">
-              <div className={styles.completionEmojis}>🎉✨🏆✨🎉</div>
-              <div className={styles.completionTitle}>퍼즐 완성!</div>
-              <div className={styles.completionSubtitle}>축하합니다</div>
+          <div
+            className={styles.completionPopup}
+            style={{
+              width: renderWidth,
+              height: renderHeight,
+              maxWidth: "none",
+            }}
+          >
+            {/* Background Image Layer */}
+            <div
+              className={styles.completionBgImage}
+              style={{ backgroundImage: `url(${imageUrl})` }}
+            />
+            {/* Gradient Overlay Layer */}
+            <div className={styles.completionBgOverlay} />
+
+            {/* Content Layer */}
+            <div className={styles.completionContent}>
+              <div className={styles.completionTitle}>퍼즐 완성</div>
+              <div className={styles.completionSubtitle}>축하합니다!</div>
+
               <div className={styles.completionTime}>
-                <div className={styles.completionTimeMain}>
-                  ⏱ 완료 시간: {elapsed.toFixed(1)}초
-                </div>
+                <span className={styles.completionTimeLabel}>
+                  플레이 시간 :{" "}
+                </span>
+                <span className={styles.completionTimeValue}>
+                  {formatTime(elapsed)}
+                </span>
               </div>
+
               {/* Reset/Back Buttons */}
-              <div className="mt-6 flex flex-col gap-3 max-w-[200px] mx-auto">
+              <div className={styles.completionButtons}>
                 <button
                   onClick={() => {
                     shuffle();
-                    setElapsed(0);
-                    setMoves(0);
-                    setRecordSaved(false);
-                    setCurrentScore(null);
-                    setCurrentRank(null);
                   }}
-                  className="bg-teal-600 text-white py-2 rounded-lg font-bold hover:bg-teal-700"
+                  className={`${styles.completionButton} ${styles.completionButtonPrimary}`}
                 >
                   다시하기
+                  <div className={styles.arrowIcon}>
+                    <ChevronRight size={14} strokeWidth={3} />
+                  </div>
                 </button>
                 <button
-                  onClick={() => (window.location.href = "/")}
-                  className="bg-gray-200 text-gray-800 py-2 rounded-lg font-bold hover:bg-gray-300"
+                  onClick={() => (window.location.href = "/puzzle-home")}
+                  className={`${styles.completionButton} ${styles.completionButtonSecondary}`}
                 >
-                  홈으로
+                  다른퍼즐
+                  <div className={styles.arrowIcon}>
+                    <ChevronRight size={14} strokeWidth={3} />
+                  </div>
                 </button>
               </div>
             </div>

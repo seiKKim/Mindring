@@ -78,15 +78,19 @@
 .recommended-content .swiper-container {
   width: 100%;
   margin: 0 auto;
-  max-width: 1380px;
-  overflow: hidden;
+  max-width: 100%;
+  overflow: visible;
 }
 
 .recommended-content .swiper {
   width: 100%;
   margin: 0 auto;
-  overflow: hidden;
   margin-top: 30px;
+  /* Align first slide with the 1380px grid, ensuring 20px min padding */
+  padding-left: 20px;
+  padding-right: 20px; /* Optional right padding */
+  box-sizing: border-box;
+  overflow: visible !important;
 }
 
 /* Swiper Slides */
@@ -102,27 +106,27 @@
 /* Card Color Variants */
 .recommended-content :global(.swiper-wrapper .swiper-slide.c_yellow) {
   background: url(/img/card_yellow.png) no-repeat center;
-  background-size: contain;
+  background-size: cover;
 }
 
 .recommended-content :global(.swiper-wrapper .swiper-slide.c_violet) {
   background: url(/img/card_violet.png) no-repeat center;
-  background-size: contain;
+  background-size: cover;
 }
 
 .recommended-content :global(.swiper-wrapper .swiper-slide.c_purple) {
   background: url(/img/card_purple.png) no-repeat center;
-  background-size: contain;
+  background-size: cover;
 }
 
 .recommended-content :global(.swiper-wrapper .swiper-slide.c_blue) {
   background: url(/img/card_blue.png) no-repeat center;
-  background-size: contain;
+  background-size: cover;
 }
 
 .recommended-content :global(.swiper-wrapper .swiper-slide.c_teal) {
   background: url(/img/card_teal.png) no-repeat center;
-  background-size: contain;
+  background-size: cover;
 }
 
 /* Card Keywords */

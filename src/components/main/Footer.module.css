@@ -3,7 +3,7 @@
 .footer {
   background-color: #292f36;
   border-radius: 0 100px 0 0;
-  padding: 50px 0;
+  padding: 60px 0;
 }
 
 .footer .content {
@@ -33,16 +33,16 @@
 }
 
 .footer .content .textBox > .col_f {
-  gap: 30px;
+  gap: 0;
 }
 
 .footer .content .textBox .terms {
   align-items: center;
   justify-content: flex-start;
-  gap: 20px;
+  gap: 30px;
   color: #ffffff;
-  font-weight: 400;
-  font-size: 16px;
+  font-weight: 700;
+  font-size: 15px;
 }
 
 .footer .content .textBox .terms > li {
@@ -50,16 +50,19 @@
 }
 
 .footer .content .textBox .terms > li:first-child {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .footer .content .textBox .info {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 14px;
+  margin-top: 24px;
+  color: #9CA3AF;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .footer .content .textBox .copyright {
-  color: rgba(255, 255, 255, 0.25);
+  margin-top: 12px;
+  color: #6B7280;
   font-size: 12px;
 }
 

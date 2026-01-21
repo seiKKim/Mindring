@@ -67,7 +67,11 @@ const RECOMMENDED_CONTENT: ContentCard[] = [
   },
 ];
 
-export default function RecommendedSlider() {
+export default function RecommendedSlider({
+  isLoggedIn,
+}: {
+  isLoggedIn?: boolean;
+}) {
   const swiperRef = useRef<SwiperType>();
   const [isPlaying, setIsPlaying] = useState(true);
   const [completedGameIds, setCompletedGameIds] = useState<string[]>([]);
@@ -92,8 +96,9 @@ export default function RecommendedSlider() {
   };
 
   useEffect(() => {
-    // 1. Fetch completed games from API
+    // 1. Fetch completed games from API (only if logged in)
     const fetchGameStatus = async () => {
+      if (!isLoggedIn) return; // Skip if not logged in
       try {
         const res = await fetch("/api/games/my-status");
         if (res.ok) {
@@ -114,7 +119,7 @@ export default function RecommendedSlider() {
       }
     }
     setStartedGameIds(started);
-  }, []);
+  }, [isLoggedIn]);
 
   const getProgress = (gameId: string) => {
     if (completedGameIds.includes(gameId)) return 100;
@@ -122,7 +127,7 @@ export default function RecommendedSlider() {
     return undefined;
   };
 
-  const handleCardClick = (route: string, gameId: string) => {
+  const handleCardClick = (route: string, _gameId: string) => {
     // Optional: Mark as started immediately on click if desired,
     // but typically we wait for actual game start.
     router.push(route);
@@ -240,6 +245,7 @@ export default function RecommendedSlider() {
                 delay: 4000,
                 disableOnInteraction: false,
               }}
+              loopAdditionalSlides={5}
               breakpoints={{
                 640: {
                   slidesPerView: 2.1,
