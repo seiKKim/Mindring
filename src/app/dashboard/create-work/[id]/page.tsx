@@ -30,18 +30,21 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 
 // 링크가 포함된 텍스트를 렌더링하는 함수
-const renderTextWithLinks = (content: string, links: { start: number; end: number; url: string; text: string }[] = []) => {
+const renderTextWithLinks = (
+  content: string,
+  links: { start: number; end: number; url: string; text: string }[] = [],
+) => {
   if (!links.length) return content;
-  
+
   const parts = [];
   let lastIndex = 0;
-  
+
   links.forEach((link, index) => {
     // 링크 앞의 텍스트
     if (link.start > lastIndex) {
       parts.push(content.slice(lastIndex, link.start));
     }
-    
+
     // 링크 텍스트
     parts.push(
       <a
@@ -52,17 +55,17 @@ const renderTextWithLinks = (content: string, links: { start: number; end: numbe
         className="text-blue-600 underline hover:text-blue-800"
       >
         {link.text}
-      </a>
+      </a>,
     );
-    
+
     lastIndex = link.end;
   });
-  
+
   // 마지막 링크 뒤의 텍스트
   if (lastIndex < content.length) {
     parts.push(content.slice(lastIndex));
   }
-  
+
   return parts;
 };
 
@@ -225,12 +228,14 @@ function normalizePageType(type: string): PageType {
 async function generateDefaultCover(title: string): Promise<string> {
   // Canvas를 사용해서 기본 표지 이미지 생성
   return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
     if (!ctx) {
       // Canvas를 사용할 수 없는 경우 기본 이미지 반환
-      resolve("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==");
+      resolve(
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==",
+      );
       return;
     }
 
@@ -240,25 +245,25 @@ async function generateDefaultCover(title: string): Promise<string> {
 
     // 배경색 설정 (그라데이션)
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    gradient.addColorStop(0, '#667eea');
-    gradient.addColorStop(1, '#764ba2');
+    gradient.addColorStop(0, "#667eea");
+    gradient.addColorStop(1, "#764ba2");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // 제목 텍스트 그리기
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
     ctx.font = 'bold 24px "Noto Sans KR", sans-serif';
-    
+
     // 텍스트를 여러 줄로 나누기
-    const words = title.split(' ');
+    const words = title.split(" ");
     const lines = [];
-    let currentLine = '';
-    
+    let currentLine = "";
+
     for (const word of words) {
-      const testLine = currentLine + (currentLine ? ' ' : '') + word;
+      const testLine = currentLine + (currentLine ? " " : "") + word;
       const metrics = ctx.measureText(testLine);
-      
+
       if (metrics.width > canvas.width - 40 && currentLine) {
         lines.push(currentLine);
         currentLine = word;
@@ -278,11 +283,11 @@ async function generateDefaultCover(title: string): Promise<string> {
 
     // 하단에 "Digital Library" 텍스트 추가
     ctx.font = '14px "Noto Sans KR", sans-serif';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.fillText('Digital Library', canvas.width / 2, canvas.height - 30);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+    ctx.fillText("Digital Library", canvas.width / 2, canvas.height - 30);
 
     // Canvas를 base64 데이터 URL로 변환
-    resolve(canvas.toDataURL('image/png'));
+    resolve(canvas.toDataURL("image/png"));
   });
 }
 
@@ -329,7 +334,12 @@ const COVER_TEMPLATES: Template[] = [
           id: "title",
           type: "text",
           position: { x: 20, y: 65, width: 260, height: 60 },
-          style: { fontSize: 28, fontWeight: "bold", textAlign: "center", color: "#333333" },
+          style: {
+            fontSize: 28,
+            fontWeight: "bold",
+            textAlign: "center",
+            color: "#333333",
+          },
           content: "나의 이야기",
           placeholder: "제목을 입력하세요",
         } as TextElement,
@@ -365,7 +375,12 @@ const COVER_TEMPLATES: Template[] = [
           id: "title",
           type: "text",
           position: { x: 20, y: 45, width: 260, height: 40 },
-          style: { fontSize: 20, fontWeight: "bold", textAlign: "center", color: "#333333" },
+          style: {
+            fontSize: 20,
+            fontWeight: "bold",
+            textAlign: "center",
+            color: "#333333",
+          },
           content: "제목을 입력해 주세요",
           placeholder: "제목을 입력하세요",
         } as TextElement,
@@ -373,7 +388,11 @@ const COVER_TEMPLATES: Template[] = [
           id: "main-image",
           type: "placeholder",
           position: { x: 20, y: 105, width: 260, height: 200 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드래그하여 여기에 추가해 주세요",
         } as PlaceholderElement,
         {
@@ -431,7 +450,11 @@ const PAGE_TEMPLATES: Template[] = [
           id: "center-image",
           type: "placeholder",
           position: { x: 20, y: 105, width: 255, height: 200 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드래그하여 여기에 추가해 주세요",
         } as PlaceholderElement,
         {
@@ -466,7 +489,11 @@ const PAGE_TEMPLATES: Template[] = [
           id: "image",
           type: "placeholder",
           position: { x: 20, y: 85, width: 260, height: 180 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드래그하여 여기에 추가해 주세요",
         } as PlaceholderElement,
         {
@@ -489,11 +516,58 @@ const PAGE_TEMPLATES: Template[] = [
     description: "여러 사진을 배치할 수 있는 갤러리",
     layout: {
       elements: [
-        { id: "image1", type: "placeholder", position: { x: 20, y: 45, width: 120, height: 90 }, style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 4 }, placeholder: "사진을 드래그하여 여기에 추가해 주세요" } as PlaceholderElement,
-        { id: "image2", type: "placeholder", position: { x: 160, y: 45, width: 100, height: 90 }, style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 4 }, placeholder: "사진을 드래그하여 여기에 추가해 주세요" } as PlaceholderElement,
-        { id: "image3", type: "placeholder", position: { x: 20, y: 155, width: 120, height: 90 }, style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 4 }, placeholder: "사진을 드래그하여 여기에 추가해 주세요" } as PlaceholderElement,
-        { id: "image4", type: "placeholder", position: { x: 160, y: 155, width: 100, height: 90 }, style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 4 }, placeholder: "사진을 드래그하여 여기에 추가해 주세요" } as PlaceholderElement,
-        { id: "caption", type: "text", position: { x: 20, y: 265, width: 260, height: 140 }, style: { fontSize: 12, color: "#555555" }, content: "텍스트를 입력해 주세요", placeholder: "사진에 대한 설명을 입력하세요" } as TextElement,
+        {
+          id: "image1",
+          type: "placeholder",
+          position: { x: 20, y: 45, width: 120, height: 90 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 4,
+          },
+          placeholder: "사진을 드래그하여 여기에 추가해 주세요",
+        } as PlaceholderElement,
+        {
+          id: "image2",
+          type: "placeholder",
+          position: { x: 160, y: 45, width: 100, height: 90 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 4,
+          },
+          placeholder: "사진을 드래그하여 여기에 추가해 주세요",
+        } as PlaceholderElement,
+        {
+          id: "image3",
+          type: "placeholder",
+          position: { x: 20, y: 155, width: 120, height: 90 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 4,
+          },
+          placeholder: "사진을 드래그하여 여기에 추가해 주세요",
+        } as PlaceholderElement,
+        {
+          id: "image4",
+          type: "placeholder",
+          position: { x: 160, y: 155, width: 100, height: 90 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 4,
+          },
+          placeholder: "사진을 드래그하여 여기에 추가해 주세요",
+        } as PlaceholderElement,
+        {
+          id: "caption",
+          type: "text",
+          position: { x: 20, y: 265, width: 260, height: 140 },
+          style: { fontSize: 12, color: "#555555" },
+          content: "텍스트를 입력해 주세요",
+          placeholder: "사진에 대한 설명을 입력하세요",
+        } as TextElement,
       ],
     },
   },
@@ -506,10 +580,44 @@ const PAGE_TEMPLATES: Template[] = [
     description: "다양한 요소가 조합된 자유 레이아웃",
     layout: {
       elements: [
-        { id: "left-image", type: "placeholder", position: { x: 20, y: 45, width: 120, height: 160 }, style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 }, placeholder: "사진을 드래그하여 여기에 추가해 주세요" } as PlaceholderElement,
-        { id: "right-text", type: "text", position: { x: 160, y: 45, width: 100, height: 80 }, style: { fontSize: 12, color: "#555555" }, content: "사진을 드래그하여 여기에 추가해 주세요", placeholder: "텍스트를 입력하세요" } as TextElement,
-        { id: "right-image", type: "placeholder", position: { x: 160, y: 145, width: 100, height: 60 }, style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 4 }, placeholder: "사진을 드래그하여 여기에 추가해 주세요" } as PlaceholderElement,
-        { id: "bottom-text", type: "text", position: { x: 20, y: 475, width: 260, height: 180 }, style: { fontSize: 12, color: "#555555" }, content: "텍스트를 입력해 주세요", placeholder: "상세한 설명을 입력하세요" } as TextElement,
+        {
+          id: "left-image",
+          type: "placeholder",
+          position: { x: 20, y: 45, width: 120, height: 160 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
+          placeholder: "사진을 드래그하여 여기에 추가해 주세요",
+        } as PlaceholderElement,
+        {
+          id: "right-text",
+          type: "text",
+          position: { x: 160, y: 45, width: 100, height: 80 },
+          style: { fontSize: 12, color: "#555555" },
+          content: "사진을 드래그하여 여기에 추가해 주세요",
+          placeholder: "텍스트를 입력하세요",
+        } as TextElement,
+        {
+          id: "right-image",
+          type: "placeholder",
+          position: { x: 160, y: 145, width: 100, height: 60 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 4,
+          },
+          placeholder: "사진을 드래그하여 여기에 추가해 주세요",
+        } as PlaceholderElement,
+        {
+          id: "bottom-text",
+          type: "text",
+          position: { x: 20, y: 475, width: 260, height: 180 },
+          style: { fontSize: 12, color: "#555555" },
+          content: "텍스트를 입력해 주세요",
+          placeholder: "상세한 설명을 입력하세요",
+        } as TextElement,
       ],
     },
   },
@@ -526,21 +634,33 @@ const PAGE_TEMPLATES: Template[] = [
           id: "top-left-image",
           type: "placeholder",
           position: { x: 20, y: 45, width: 130, height: 100 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "top-right-image",
           type: "placeholder",
           position: { x: 170, y: 45, width: 110, height: 100 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "bottom-image",
           type: "placeholder",
           position: { x: 20, y: 165, width: 260, height: 120 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
@@ -567,14 +687,22 @@ const PAGE_TEMPLATES: Template[] = [
           id: "left-image",
           type: "placeholder",
           position: { x: 20, y: 45, width: 130, height: 200 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "right-image",
           type: "placeholder",
           position: { x: 170, y: 45, width: 110, height: 200 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
@@ -601,7 +729,11 @@ const PAGE_TEMPLATES: Template[] = [
           id: "image",
           type: "placeholder",
           position: { x: 20, y: 45, width: 280, height: 180 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
@@ -628,7 +760,12 @@ const PAGE_TEMPLATES: Template[] = [
           id: "title",
           type: "text",
           position: { x: 20, y: 75, width: 280, height: 50 },
-          style: { fontSize: 20, fontWeight: "bold", color: "#333333", textAlign: "center" },
+          style: {
+            fontSize: 20,
+            fontWeight: "bold",
+            color: "#333333",
+            textAlign: "center",
+          },
           content: "제목을 입력해 주세요",
           placeholder: "제목을 입력하세요",
         } as TextElement,
@@ -656,28 +793,44 @@ const PAGE_TEMPLATES: Template[] = [
           id: "image-1",
           type: "placeholder",
           position: { x: 20, y: 45, width: 130, height: 130 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "image-2",
           type: "placeholder",
           position: { x: 170, y: 45, width: 110, height: 130 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "image-3",
           type: "placeholder",
           position: { x: 20, y: 195, width: 130, height: 130 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "image-4",
           type: "placeholder",
           position: { x: 170, y: 195, width: 110, height: 130 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
       ],
@@ -696,14 +849,22 @@ const PAGE_TEMPLATES: Template[] = [
           id: "top-image-1",
           type: "placeholder",
           position: { x: 20, y: 45, width: 280, height: 120 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "top-image-2",
           type: "placeholder",
           position: { x: 20, y: 185, width: 280, height: 120 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
@@ -730,14 +891,22 @@ const PAGE_TEMPLATES: Template[] = [
           id: "left-image",
           type: "placeholder",
           position: { x: 20, y: 45, width: 130, height: 120 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
           id: "right-image",
           type: "placeholder",
           position: { x: 170, y: 45, width: 110, height: 120 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
@@ -764,7 +933,11 @@ const PAGE_TEMPLATES: Template[] = [
           id: "large-image",
           type: "placeholder",
           position: { x: 20, y: 45, width: 280, height: 280 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
@@ -799,7 +972,11 @@ const PAGE_TEMPLATES: Template[] = [
           id: "center-image",
           type: "placeholder",
           position: { x: 20, y: 145, width: 260, height: 180 },
-          style: { backgroundColor: "#f0f0f0", border: "2px dashed #cccccc", borderRadius: 8 },
+          style: {
+            backgroundColor: "#f0f0f0",
+            border: "2px dashed #cccccc",
+            borderRadius: 8,
+          },
           placeholder: "사진을 드롭하여 이미지를 추가 해 주세요.",
         } as PlaceholderElement,
         {
@@ -831,7 +1008,13 @@ interface EditablePageViewProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
 }
 
-function EditablePageView({ page, onUpdateElement: _onUpdateElement, onSelectElement, selectedElementId, fileInputRef }: EditablePageViewProps) {
+function EditablePageView({
+  page,
+  onUpdateElement: _onUpdateElement,
+  onSelectElement,
+  selectedElementId,
+  fileInputRef,
+}: EditablePageViewProps) {
   if (!page.content.elements || page.content.elements.length === 0) {
     return <PagePreview page={page} />;
   }
@@ -849,11 +1032,11 @@ function EditablePageView({ page, onUpdateElement: _onUpdateElement, onSelectEle
           className={`absolute cursor-pointer group ${selectedElementId === element.id ? "ring-2 ring-blue-500 bg-blue-50" : "hover:ring-1 hover:ring-gray-300"}`}
           style={{
             left: `${(element.position.x / 300) * 100}%`,
-              top: `${(element.position.y / 450) * 100}%`,
+            top: `${(element.position.y / 450) * 100}%`,
             width: `${(element.position.width / 300) * 100}%`,
-              height: `${(element.position.height / 450) * 100}%`,
-            minHeight: '20px',
-            minWidth: '20px',
+            height: `${(element.position.height / 450) * 100}%`,
+            minHeight: "20px",
+            minWidth: "20px",
           }}
           onClick={(e) => {
             e.stopPropagation();
@@ -866,12 +1049,16 @@ function EditablePageView({ page, onUpdateElement: _onUpdateElement, onSelectEle
                 <>
                   <textarea
                     value={element.content ?? ""}
-                    onChange={(e) => _onUpdateElement(element.id, e.target.value)}
+                    onChange={(e) =>
+                      _onUpdateElement(element.id, e.target.value)
+                    }
                     placeholder={element.placeholder || "텍스트를 입력하세요"}
                     className="w-full h-full bg-transparent border border-blue-300 outline-none resize-none text-xs leading-tight p-1"
                     style={{
                       fontFamily: element.style.fontFamily || "inherit",
-                      fontSize: element.style.fontSize ? `${Math.min(element.style.fontSize, 14)}px` : "12px",
+                      fontSize: element.style.fontSize
+                        ? `${Math.min(element.style.fontSize, 14)}px`
+                        : "12px",
                       color: element.style.color || "#333",
                       textAlign: element.style.textAlign || "left",
                       fontWeight: element.style.fontWeight || "normal",
@@ -890,7 +1077,9 @@ function EditablePageView({ page, onUpdateElement: _onUpdateElement, onSelectEle
                     className="w-full h-full flex items-start text-gray-800 leading-tight overflow-hidden p-1 bg-white border border-dashed border-gray-300"
                     style={{
                       fontFamily: element.style.fontFamily || "inherit",
-                      fontSize: element.style.fontSize ? `${Math.min(element.style.fontSize, 14)}px` : "12px",
+                      fontSize: element.style.fontSize
+                        ? `${Math.min(element.style.fontSize, 14)}px`
+                        : "12px",
                       color: element.style.color || "#333",
                       textAlign: element.style.textAlign || "left",
                       fontWeight: element.style.fontWeight || "normal",
@@ -899,7 +1088,12 @@ function EditablePageView({ page, onUpdateElement: _onUpdateElement, onSelectEle
                     }}
                   >
                     <span className="block">
-                      {renderTextWithLinks(element.content || element.placeholder || "텍스트를 입력하세요", element.links)}
+                      {renderTextWithLinks(
+                        element.content ||
+                          element.placeholder ||
+                          "텍스트를 입력하세요",
+                        element.links,
+                      )}
                     </span>
                   </div>
                   <div className="absolute -top-6 left-0 bg-gray-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
@@ -918,7 +1112,11 @@ function EditablePageView({ page, onUpdateElement: _onUpdateElement, onSelectEle
             >
               <div className="text-center">
                 <ImageIcon className="w-4 h-4 text-gray-400 mx-auto mb-1" />
-                <p className="text-xs text-gray-500 leading-tight">클릭하여<br />이미지 추가</p>
+                <p className="text-xs text-gray-500 leading-tight">
+                  클릭하여
+                  <br />
+                  이미지 추가
+                </p>
               </div>
               <div className="absolute -top-6 left-0 bg-green-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
                 이미지 추가
@@ -956,10 +1154,15 @@ function EditablePageView({ page, onUpdateElement: _onUpdateElement, onSelectEle
   );
 }
 
-interface TemplatePreviewProps { template: Template }
+interface TemplatePreviewProps {
+  template: Template;
+}
 function TemplatePreview({ template }: TemplatePreviewProps) {
   return (
-    <div className="w-full h-full relative bg-white" style={{ fontSize: "8px" }}>
+    <div
+      className="w-full h-full relative bg-white"
+      style={{ fontSize: "8px" }}
+    >
       {template.layout.elements.map((element) => (
         <div
           key={element.id}
@@ -969,11 +1172,13 @@ function TemplatePreview({ template }: TemplatePreviewProps) {
             top: `${(element.position.y / 450) * 100}%`,
             width: `${(element.position.width / 300) * 100}%`,
             height: `${(element.position.height / 450) * 100}%`,
-            fontSize: element.style.fontSize ? `${(element.style.fontSize ?? 6) / 4}px` : "6px",
+            fontSize: element.style.fontSize
+              ? `${(element.style.fontSize ?? 6) / 4}px`
+              : "6px",
           }}
         >
           {element.type === "text" && (
-            <div 
+            <div
               className="w-full h-full flex items-center leading-tight"
               style={{
                 fontFamily: element.style.fontFamily || "inherit",
@@ -1009,7 +1214,9 @@ function TemplatePreview({ template }: TemplatePreviewProps) {
   );
 }
 
-interface PagePreviewProps { page: Page }
+interface PagePreviewProps {
+  page: Page;
+}
 function PagePreview({ page }: PagePreviewProps) {
   // elements 배열이 있으면 템플릿으로 처리
   if (page.content.elements && page.content.elements.length > 0) {
@@ -1024,9 +1231,11 @@ function PagePreview({ page }: PagePreviewProps) {
               top: `${(element.position.y / 450) * 100}%`,
               width: `${(element.position.width / 300) * 100}%`,
               height: `${(element.position.height / 450) * 100}%`,
-              fontSize: element.style.fontSize ? `${Math.min(element.style.fontSize, 12)}px` : "10px",
-              minHeight: '20px',
-              minWidth: '20px',
+              fontSize: element.style.fontSize
+                ? `${Math.min(element.style.fontSize, 12)}px`
+                : "10px",
+              minHeight: "20px",
+              minWidth: "20px",
             }}
           >
             {element.type === "text" && (
@@ -1042,7 +1251,12 @@ function PagePreview({ page }: PagePreviewProps) {
                 }}
               >
                 <span className="block text-xs">
-                  {renderTextWithLinks(element.content || element.placeholder || "텍스트를 입력하세요", element.links)}
+                  {renderTextWithLinks(
+                    element.content ||
+                      element.placeholder ||
+                      "텍스트를 입력하세요",
+                    element.links,
+                  )}
                 </span>
               </div>
             )}
@@ -1056,9 +1270,9 @@ function PagePreview({ page }: PagePreviewProps) {
             )}
             {element.type === "image" && (
               <div className="relative w-full h-full">
-                <Image 
-                  src={element.content} 
-                  alt="Page element" 
+                <Image
+                  src={element.content}
+                  alt="Page element"
                   fill
                   className="object-contain rounded"
                   sizes="100%"
@@ -1077,7 +1291,9 @@ function PagePreview({ page }: PagePreviewProps) {
   return (
     <div className="w-full h-full flex flex-col relative overflow-hidden">
       {page.content.image && (
-        <div className={`${page.type === "mixed" ? "flex-1" : "w-full h-full"} flex items-center justify-center bg-gray-100`}>
+        <div
+          className={`${page.type === "mixed" ? "flex-1" : "w-full h-full"} flex items-center justify-center bg-gray-100`}
+        >
           <div className="relative w-full h-full max-w-full max-h-full">
             <Image
               src={page.content.image}
@@ -1094,7 +1310,9 @@ function PagePreview({ page }: PagePreviewProps) {
       )}
 
       {page.content.text && (
-        <div className={`${page.type === "mixed" ? "flex-1" : "w-full h-full"} p-3 flex items-center`}>
+        <div
+          className={`${page.type === "mixed" ? "flex-1" : "w-full h-full"} p-3 flex items-center`}
+        >
           <p
             className="w-full line-clamp-6 text-xs leading-relaxed"
             style={{
@@ -1110,17 +1328,35 @@ function PagePreview({ page }: PagePreviewProps) {
         </div>
       )}
 
-      {!page.content.image && !page.content.text && (!page.content.elements || page.content.elements.length === 0) && (
-        <div className="w-full h-full flex items-center justify-center bg-gray-100">
-          <div className="text-center text-gray-400">
-            {page.type === "image" && <ImageIcon className="mx-auto h-8 w-8 mb-2" />}
-            {page.type === "text" && <Plus className="mx-auto h-8 w-8 mb-2" />}
-            {page.type === "mixed" && <Plus className="mx-auto h-8 w-8 mb-2" />}
-            {page.type === "template" && <Layout className="mx-auto h-8 w-8 mb-2" />}
-            <p className="text-xs">{page.type === "image" ? "이미지 없음" : page.type === "text" ? "텍스트 없음" : page.type === "template" ? "템플릿 페이지 (요소 없음)" : "내용 없음"}</p>
+      {!page.content.image &&
+        !page.content.text &&
+        (!page.content.elements || page.content.elements.length === 0) && (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <div className="text-center text-gray-400">
+              {page.type === "image" && (
+                <ImageIcon className="mx-auto h-8 w-8 mb-2" />
+              )}
+              {page.type === "text" && (
+                <Plus className="mx-auto h-8 w-8 mb-2" />
+              )}
+              {page.type === "mixed" && (
+                <Plus className="mx-auto h-8 w-8 mb-2" />
+              )}
+              {page.type === "template" && (
+                <Layout className="mx-auto h-8 w-8 mb-2" />
+              )}
+              <p className="text-xs">
+                {page.type === "image"
+                  ? "이미지 없음"
+                  : page.type === "text"
+                    ? "텍스트 없음"
+                    : page.type === "template"
+                      ? "템플릿 페이지 (요소 없음)"
+                      : "내용 없음"}
+              </p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
@@ -1143,7 +1379,9 @@ export default function CreateWorkPage() {
   });
 
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(
+    null,
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -1155,7 +1393,10 @@ export default function CreateWorkPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const selectedPage = useMemo(() => work.pages.find((p) => p.id === selectedPageId) ?? null, [work.pages, selectedPageId]);
+  const selectedPage = useMemo(
+    () => work.pages.find((p) => p.id === selectedPageId) ?? null,
+    [work.pages, selectedPageId],
+  );
 
   /* ---------- Load Work Data ---------- */
   useEffect(() => {
@@ -1168,50 +1409,59 @@ export default function CreateWorkPage() {
       try {
         setLoading(true);
         const response = await fetch(`/api/works/${routeId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         });
 
         if (!response.ok) {
-          throw new Error('작품을 불러올 수 없습니다');
+          throw new Error("작품을 불러올 수 없습니다");
         }
 
         const workData: WorkApiResponse = await response.json();
-        
-        const processedPages: Page[] = workData.pages ? workData.pages.map((page) => {
-          try {
-            let content = page.content;
-            if (typeof page.content === 'string') {
-              content = JSON.parse(page.content);
-            }
-            
-            let pageType = normalizePageType(page.type);
-            if (content && typeof content === 'object' && 'elements' in content && Array.isArray(content.elements) && content.elements.length > 0) {
-              pageType = "template";
-            }
-            
-            const processedPage = {
-              id: page.id,
-              type: pageType,
-              order: page.order,
-              templateId: page.templateId,
-              content: content as Page["content"]
-            };
-            
-            return processedPage;
-            
-          } catch (parseError) {
-            console.error('페이지 내용 파싱 오류:', parseError, page);
-            return {
-              id: page.id,
-              type: "text" as PageType,
-              order: page.order,
-              content: {} as Page["content"]
-            };
-          }
-        }) : [];
-        
-        processedPages.sort((a: Page, b: Page) => (a.order ?? 0) - (b.order ?? 0));
+
+        const processedPages: Page[] = workData.pages
+          ? workData.pages.map((page) => {
+              try {
+                let content = page.content;
+                if (typeof page.content === "string") {
+                  content = JSON.parse(page.content);
+                }
+
+                let pageType = normalizePageType(page.type);
+                if (
+                  content &&
+                  typeof content === "object" &&
+                  "elements" in content &&
+                  Array.isArray(content.elements) &&
+                  content.elements.length > 0
+                ) {
+                  pageType = "template";
+                }
+
+                const processedPage = {
+                  id: page.id,
+                  type: pageType,
+                  order: page.order,
+                  templateId: page.templateId,
+                  content: content as Page["content"],
+                };
+
+                return processedPage;
+              } catch (parseError) {
+                console.error("페이지 내용 파싱 오류:", parseError, page);
+                return {
+                  id: page.id,
+                  type: "text" as PageType,
+                  order: page.order,
+                  content: {} as Page["content"],
+                };
+              }
+            })
+          : [];
+
+        processedPages.sort(
+          (a: Page, b: Page) => (a.order ?? 0) - (b.order ?? 0),
+        );
 
         setWork({
           id: workData.id,
@@ -1224,33 +1474,36 @@ export default function CreateWorkPage() {
         });
 
         const searchParams = new URLSearchParams(window.location.search);
-        const fromPreview = searchParams.get('from');
-        const selectedPageIndex = searchParams.get('selectedPageIndex');
-        const selectedPageIdFromUrl = searchParams.get('selectedPageId');
-        
-        if (fromPreview === 'preview' && processedPages) {
+        const fromPreview = searchParams.get("from");
+        const selectedPageIndex = searchParams.get("selectedPageIndex");
+        const selectedPageIdFromUrl = searchParams.get("selectedPageId");
+
+        if (fromPreview === "preview" && processedPages) {
           if (selectedPageIdFromUrl) {
-            const pageExists = processedPages.find((page: Page) => page.id === selectedPageIdFromUrl);
+            const pageExists = processedPages.find(
+              (page: Page) => page.id === selectedPageIdFromUrl,
+            );
             if (pageExists) {
               setSelectedPageId(selectedPageIdFromUrl);
             }
-          }
-          else if (selectedPageIndex !== null) {
+          } else if (selectedPageIndex !== null) {
             const pageIndex = parseInt(selectedPageIndex, 10);
             if (pageIndex >= 0 && pageIndex < processedPages.length) {
               setSelectedPageId(processedPages[pageIndex].id);
             }
           }
-        }
-        else if (processedPages && processedPages.length > 0) {
+        } else if (processedPages && processedPages.length > 0) {
           setTimeout(() => {
             setSelectedPageId(processedPages[0].id);
           }, 100);
         }
-
       } catch (error) {
-        console.error('작품 로딩 오류:', error);
-        setSaveError(error instanceof Error ? error.message : '작품을 불러오는 중 오류가 발생했습니다');
+        console.error("작품 로딩 오류:", error);
+        setSaveError(
+          error instanceof Error
+            ? error.message
+            : "작품을 불러오는 중 오류가 발생했습니다",
+        );
       } finally {
         setLoading(false);
       }
@@ -1277,8 +1530,13 @@ export default function CreateWorkPage() {
     setWork((prev) => {
       const isCoverTemplate = template.type === "cover";
       if (isCoverTemplate) {
-        const hasExistingCover = prev.pages.length > 0 && prev.pages[0].type === "template" && prev.pages[0].templateId?.startsWith("cover");
-        const newPages = hasExistingCover ? [newPage, ...prev.pages.slice(1)] : [newPage, ...prev.pages];
+        const hasExistingCover =
+          prev.pages.length > 0 &&
+          prev.pages[0].type === "template" &&
+          prev.pages[0].templateId?.startsWith("cover");
+        const newPages = hasExistingCover
+          ? [newPage, ...prev.pages.slice(1)]
+          : [newPage, ...prev.pages];
         return {
           ...prev,
           coverTemplateId: template.id,
@@ -1291,10 +1549,13 @@ export default function CreateWorkPage() {
     });
 
     // Calculate the new page index after adding
-    const newIndex = template.type === "cover" 
-      ? (work.pages.length > 0 && work.pages[0].templateId?.startsWith("cover") ? 0 : 0)
-      : work.pages.length;
-    
+    const newIndex =
+      template.type === "cover"
+        ? work.pages.length > 0 && work.pages[0].templateId?.startsWith("cover")
+          ? 0
+          : 0
+        : work.pages.length;
+
     setTimeout(() => {
       setSelectedPageId(newPage.id);
       setCurrentPageIndex(newIndex);
@@ -1302,7 +1563,11 @@ export default function CreateWorkPage() {
     setShowTemplateSelector(false);
   };
 
-  const updateElementContent = (pageId: string, elementId: string, content: string) => {
+  const updateElementContent = (
+    pageId: string,
+    elementId: string,
+    content: string,
+  ) => {
     setWork((prev) => ({
       ...prev,
       pages: prev.pages.map((page) =>
@@ -1311,7 +1576,11 @@ export default function CreateWorkPage() {
               ...page,
               content: {
                 ...page.content,
-                elements: page.content.elements?.map((el) => (el.id === elementId && el.type === "text" ? { ...el, content } : el)),
+                elements: page.content.elements?.map((el) =>
+                  el.id === elementId && el.type === "text"
+                    ? { ...el, content }
+                    : el,
+                ),
               },
             }
           : page,
@@ -1320,7 +1589,11 @@ export default function CreateWorkPage() {
     }));
   };
 
-  const updateElementImage = (pageId: string, elementId: string, imageUrl: string) => {
+  const updateElementImage = (
+    pageId: string,
+    elementId: string,
+    imageUrl: string,
+  ) => {
     setWork((prev) => ({
       ...prev,
       pages: prev.pages.map((page) =>
@@ -1329,7 +1602,13 @@ export default function CreateWorkPage() {
               ...page,
               content: {
                 ...page.content,
-                elements: page.content.elements?.map((el) => (el.id === elementId ? (el.type === "image" ? { ...el, content: imageUrl } : { ...el, type: "image", content: imageUrl }) : el)),
+                elements: page.content.elements?.map((el) =>
+                  el.id === elementId
+                    ? el.type === "image"
+                      ? { ...el, content: imageUrl }
+                      : { ...el, type: "image", content: imageUrl }
+                    : el,
+                ),
               },
             }
           : page,
@@ -1337,7 +1616,6 @@ export default function CreateWorkPage() {
       updatedAt: new Date(),
     }));
   };
-
 
   /* ---------- Page Management ---------- */
   const requestDeletePage = (pageId: string) => setPendingDeleteId(pageId);
@@ -1357,11 +1635,9 @@ export default function CreateWorkPage() {
   const cancelDeletePage = () => setPendingDeleteId(null);
 
   useEffect(() => {
-    // 페이지가 바뀔 때만 선택된 요소 초기화 (불필요한 렌더 방지)
-    if (selectedElementId !== null) {
-      setSelectedElementId(null);
-    }
-  }, [selectedPageId, selectedElementId]);
+    // 페이지가 바뀔 때만 선택된 요소 초기화
+    setSelectedElementId(null);
+  }, [selectedPageId]);
 
   /* ---------- Save and Preview ---------- */
   const saveWork = async (): Promise<string | null> => {
@@ -1373,14 +1649,32 @@ export default function CreateWorkPage() {
     try {
       const payload: SaveWorkRequest & {
         workId?: string;
-        printSpec?: { paperSize: string; coverType: string; innerPaper: string; orientation: string };
+        printSpec?: {
+          paperSize: string;
+          coverType: string;
+          innerPaper: string;
+          orientation: string;
+        };
       } = {
-        workId: work.id.startsWith("temp-") || routeId === "editor" ? undefined : work.id,
+        workId:
+          work.id.startsWith("temp-") || routeId === "editor"
+            ? undefined
+            : work.id,
         title: work.title,
         coverImage: work.coverImage,
         coverTemplateId: work.coverTemplateId,
-        pages: work.pages.map((page) => ({ id: page.id, type: page.type, templateId: page.templateId, content: page.content })),
-        printSpec: { paperSize: "A4", coverType: "soft_matte", innerPaper: "plain", orientation: "portrait" },
+        pages: work.pages.map((page) => ({
+          id: page.id,
+          type: page.type,
+          templateId: page.templateId,
+          content: page.content,
+        })),
+        printSpec: {
+          paperSize: "A4",
+          coverType: "soft_matte",
+          innerPaper: "plain",
+          orientation: "portrait",
+        },
       };
 
       const response = await fetch(`/api/works/editor`, {
@@ -1390,7 +1684,9 @@ export default function CreateWorkPage() {
       });
 
       if (!response.ok) {
-        const errorData: ApiErrorResponse | undefined = await response.json().catch(() => undefined);
+        const errorData: ApiErrorResponse | undefined = await response
+          .json()
+          .catch(() => undefined);
         throw new Error(errorData?.details ?? "작품 저장에 실패했습니다.");
       }
 
@@ -1398,7 +1694,8 @@ export default function CreateWorkPage() {
       setSaveMessage("작품이 저장되었습니다.");
       return savedWork.id ?? work.id;
     } catch (err) {
-      const message = err instanceof Error ? err.message : "저장 중 오류가 발생했습니다.";
+      const message =
+        err instanceof Error ? err.message : "저장 중 오류가 발생했습니다.";
       setSaveError(message);
       return null;
     } finally {
@@ -1413,93 +1710,122 @@ export default function CreateWorkPage() {
 
   const saveAndContinue = async () => {
     const savedId = await saveWork();
-    if (savedId) setWork((prev) => ({ ...prev, id: savedId, updatedAt: new Date() }));
+    if (savedId)
+      setWork((prev) => ({ ...prev, id: savedId, updatedAt: new Date() }));
   };
 
-const completeWork = async (): Promise<string | null> => {
-  if (isSaving) return null;
-  setIsSaving(true);
-  setSaveError(null);
+  const completeWork = async (): Promise<string | null> => {
+    if (isSaving) return null;
+    setIsSaving(true);
+    setSaveError(null);
 
-  try {
-    // 1. 먼저 표지 이미지를 준비
-    let coverImageToSave: string = work.coverImage || "";
-    
-    // 표지가 없는 경우 첫 번째 페이지에서 생성
-    if (!coverImageToSave && work.pages.length > 0) {
-      const firstPage = work.pages[0];
-      
-      // 첫 번째 페이지가 표지 템플릿인 경우 - 템플릿 내용을 표지로 사용
-      if (firstPage.templateId?.startsWith('cover') && firstPage.content.elements) {
-        // 첫 번째 텍스트 요소의 내용을 표지 제목으로 사용하거나
-        // 첫 번째 이미지 요소를 표지 이미지로 사용
-        const imageElement = firstPage.content.elements.find(el => el.type === 'image') as ImageElement | undefined;
-        if (imageElement?.content) {
-          coverImageToSave = imageElement.content;
-        } else {
-          // 이미지가 없으면 기본 표지 생성
+    try {
+      // 1. 먼저 표지 이미지를 준비
+      let coverImageToSave: string = work.coverImage || "";
+
+      // 표지가 없는 경우 첫 번째 페이지에서 생성
+      if (!coverImageToSave && work.pages.length > 0) {
+        const firstPage = work.pages[0];
+
+        // 첫 번째 페이지가 표지 템플릿인 경우 - 템플릿 내용을 표지로 사용
+        if (
+          firstPage.templateId?.startsWith("cover") &&
+          firstPage.content.elements
+        ) {
+          // 첫 번째 텍스트 요소의 내용을 표지 제목으로 사용하거나
+          // 첫 번째 이미지 요소를 표지 이미지로 사용
+          const imageElement = firstPage.content.elements.find(
+            (el) => el.type === "image",
+          ) as ImageElement | undefined;
+          if (imageElement?.content) {
+            coverImageToSave = imageElement.content;
+          } else {
+            // 이미지가 없으면 기본 표지 생성
+            coverImageToSave = await generateDefaultCover(work.title);
+          }
+        }
+        // 첫 번째 페이지에 이미지가 있는 경우
+        else if (firstPage.content.image) {
+          coverImageToSave = firstPage.content.image;
+        }
+        // 기본 표지 생성
+        else {
           coverImageToSave = await generateDefaultCover(work.title);
         }
       }
-      // 첫 번째 페이지에 이미지가 있는 경우
-      else if (firstPage.content.image) {
-        coverImageToSave = firstPage.content.image;
-      }
-      // 기본 표지 생성
-      else {
+
+      // 표지 이미지가 여전히 없으면 기본 표지 생성
+      if (!coverImageToSave) {
         coverImageToSave = await generateDefaultCover(work.title);
       }
-    }
 
-    // 표지 이미지가 여전히 없으면 기본 표지 생성
-    if (!coverImageToSave) {
-      coverImageToSave = await generateDefaultCover(work.title);
-    }
+      // 2. 작품 정보를 먼저 업데이트 (표지 이미지 포함)
+      const payload: SaveWorkRequest & {
+        workId?: string;
+        printSpec?: {
+          paperSize: string;
+          coverType: string;
+          innerPaper: string;
+          orientation: string;
+        };
+        status?: string;
+      } = {
+        workId:
+          work.id.startsWith("temp-") || routeId === "editor"
+            ? undefined
+            : work.id,
+        title: work.title,
+        coverImage: coverImageToSave, // 표지 이미지 포함
+        coverTemplateId: work.coverTemplateId,
+        pages: work.pages.map((page) => ({
+          id: page.id,
+          type: page.type,
+          templateId: page.templateId,
+          content: page.content,
+        })),
+        printSpec: {
+          paperSize: "A4",
+          coverType: "soft_matte",
+          innerPaper: "plain",
+          orientation: "portrait",
+        },
+        status: "completed", // 상태도 함께 업데이트
+      };
 
-    // 2. 작품 정보를 먼저 업데이트 (표지 이미지 포함)
-    const payload: SaveWorkRequest & {
-      workId?: string;
-      printSpec?: { paperSize: string; coverType: string; innerPaper: string; orientation: string };
-      status?: string;
-    } = {
-      workId: work.id.startsWith("temp-") || routeId === "editor" ? undefined : work.id,
-      title: work.title,
-      coverImage: coverImageToSave, // 표지 이미지 포함
-      coverTemplateId: work.coverTemplateId,
-      pages: work.pages.map((page) => ({ id: page.id, type: page.type, templateId: page.templateId, content: page.content })),
-      printSpec: { paperSize: "A4", coverType: "soft_matte", innerPaper: "plain", orientation: "portrait" },
-      status: "completed", // 상태도 함께 업데이트
-    };
+      const response = await fetch(`/api/works/editor`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    const response = await fetch(`/api/works/editor`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+      if (!response.ok) {
+        const errorData: ApiErrorResponse | undefined = await response
+          .json()
+          .catch(() => undefined);
+        throw new Error(errorData?.details ?? "작품 완료 처리에 실패했습니다.");
+      }
 
-    if (!response.ok) {
-      const errorData: ApiErrorResponse | undefined = await response.json().catch(() => undefined);
-      throw new Error(errorData?.details ?? "작품 완료 처리에 실패했습니다.");
-    }
+      const savedWork: SavedWork = await response.json();
+      const savedId = savedWork.id ?? work.id;
 
-    const savedWork: SavedWork = await response.json();
-    const savedId = savedWork.id ?? work.id;
+      // 3. 로컬 상태 업데이트
+      setWork((prev) => ({
+        ...prev,
+        id: savedId,
+        coverImage: coverImageToSave,
+        updatedAt: new Date(),
+      }));
 
-    // 3. 로컬 상태 업데이트
-    setWork(prev => ({
-      ...prev,
-      id: savedId,
-      coverImage: coverImageToSave,
-      updatedAt: new Date(),
-    }));
+      alert("작품이 완료되었습니다! 만든 북 보기에서 확인할 수 있습니다.");
+      router.push("/dashboard/books");
 
-    alert("작품이 완료되었습니다! 만든 북 보기에서 확인할 수 있습니다.");
-    router.push('/dashboard/books');
-
-    return savedId;
+      return savedId;
     } catch (error) {
       console.error("Complete work error:", error);
-      const errorMessage = error instanceof Error ? error.message : "작품 완료 처리 중 오류가 발생했습니다.";
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "작품 완료 처리 중 오류가 발생했습니다.";
       setSaveError(errorMessage);
       alert(errorMessage);
       return null;
@@ -1511,7 +1837,7 @@ const completeWork = async (): Promise<string | null> => {
   // Sync currentPageIndex with selectedPageId (only when changed)
   useEffect(() => {
     if (!selectedPageId || work.pages.length === 0) return;
-    const index = work.pages.findIndex(p => p.id === selectedPageId);
+    const index = work.pages.findIndex((p) => p.id === selectedPageId);
     if (index !== -1 && index !== currentPageIndex) {
       setCurrentPageIndex(index);
     }
@@ -1527,7 +1853,8 @@ const completeWork = async (): Promise<string | null> => {
   }, [currentPageIndex, work.pages, selectedPageId]);
 
   const currentPage = work.pages[currentPageIndex] || null;
-  const leftPage = currentPageIndex > 0 ? work.pages[currentPageIndex - 1] : null;
+  const leftPage =
+    currentPageIndex > 0 ? work.pages[currentPageIndex - 1] : null;
   const rightPage = currentPage;
 
   if (loading) {
@@ -1573,7 +1900,9 @@ const completeWork = async (): Promise<string | null> => {
             {/* Center - Page Info */}
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setCurrentPageIndex(Math.max(0, currentPageIndex - 2))}
+                onClick={() =>
+                  setCurrentPageIndex(Math.max(0, currentPageIndex - 2))
+                }
                 disabled={currentPageIndex === 0}
                 className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm font-medium text-gray-700 shadow-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="이전 페이지로"
@@ -1584,11 +1913,17 @@ const completeWork = async (): Promise<string | null> => {
               <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-lg shadow-md">
                 <Plus className="w-5 h-5 text-teal-600" />
                 <span className="text-base font-semibold text-gray-900">
-                  {work.pages.length > 0 ? `${currentPageIndex + 1} / ${work.pages.length}` : "0"}
+                  {work.pages.length > 0
+                    ? `${currentPageIndex + 1} / ${work.pages.length}`
+                    : "0"}
                 </span>
               </div>
               <button
-                onClick={() => setCurrentPageIndex(Math.min(work.pages.length - 1, currentPageIndex + 2))}
+                onClick={() =>
+                  setCurrentPageIndex(
+                    Math.min(work.pages.length - 1, currentPageIndex + 2),
+                  )
+                }
                 disabled={currentPageIndex >= work.pages.length - 1}
                 className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm font-medium text-gray-700 shadow-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 title="다음 페이지로"
@@ -1608,12 +1943,18 @@ const completeWork = async (): Promise<string | null> => {
           </div>
 
           {saveError && (
-            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm shadow-lg" role="alert">
+            <div
+              className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm shadow-lg"
+              role="alert"
+            >
               {saveError}
             </div>
           )}
           {saveMessage && (
-            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm shadow-lg" role="status">
+            <div
+              className="mt-3 p-3 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm shadow-lg"
+              role="status"
+            >
               {saveMessage}
             </div>
           )}
@@ -1648,7 +1989,9 @@ const completeWork = async (): Promise<string | null> => {
                   <div className="w-6 h-6 bg-teal-600 rounded-full flex items-center justify-center">
                     <FileText className="h-3 w-3 text-white" />
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900">표지 템플릿</h3>
+                  <h3 className="text-sm font-bold text-gray-900">
+                    표지 템플릿
+                  </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {COVER_TEMPLATES.map((template) => (
@@ -1662,7 +2005,9 @@ const completeWork = async (): Promise<string | null> => {
                         <TemplatePreview template={template} />
                       </div>
                       <div className="text-center">
-                        <p className="text-xs font-semibold text-gray-900 truncate">{template.name}</p>
+                        <p className="text-xs font-semibold text-gray-900 truncate">
+                          {template.name}
+                        </p>
                       </div>
                     </button>
                   ))}
@@ -1675,24 +2020,30 @@ const completeWork = async (): Promise<string | null> => {
                   <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
                     <Layout className="h-3 w-3 text-white" />
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900">내지 템플릿</h3>
+                  <h3 className="text-sm font-bold text-gray-900">
+                    내지 템플릿
+                  </h3>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  {PAGE_TEMPLATES.filter((t) => t.id !== "page-complex").map((template) => (
-                    <button
-                      key={template.id}
-                      onClick={() => applyTemplate(template)}
-                      className="group relative bg-gray-50 rounded-xl overflow-hidden border-2 border-transparent hover:border-blue-400 transition-all duration-200 hover:shadow-lg p-1"
-                      type="button"
-                    >
-                      <div className="aspect-[3/4] bg-white rounded-lg mb-1 overflow-hidden">
-                        <TemplatePreview template={template} />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs font-semibold text-gray-900 truncate">{template.name}</p>
-                      </div>
-                    </button>
-                  ))}
+                  {PAGE_TEMPLATES.filter((t) => t.id !== "page-complex").map(
+                    (template) => (
+                      <button
+                        key={template.id}
+                        onClick={() => applyTemplate(template)}
+                        className="group relative bg-gray-50 rounded-xl overflow-hidden border-2 border-transparent hover:border-blue-400 transition-all duration-200 hover:shadow-lg p-1"
+                        type="button"
+                      >
+                        <div className="aspect-[3/4] bg-white rounded-lg mb-1 overflow-hidden">
+                          <TemplatePreview template={template} />
+                        </div>
+                        <div className="text-center">
+                          <p className="text-xs font-semibold text-gray-900 truncate">
+                            {template.name}
+                          </p>
+                        </div>
+                      </button>
+                    ),
+                  )}
                 </div>
               </div>
             </div>
@@ -1706,18 +2057,27 @@ const completeWork = async (): Promise<string | null> => {
               {/* Left page (now editable when selected) */}
               <div
                 className="relative w-[420px] h-[630px] bg-white border border-gray-300 rounded-lg shadow cursor-pointer"
-                onClick={() => { if (leftPage) setSelectedPageId(leftPage.id); }}
+                onClick={() => {
+                  if (leftPage) setSelectedPageId(leftPage.id);
+                }}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && leftPage) setSelectedPageId(leftPage.id); }}
-                title={leftPage ? '왼쪽 페이지 선택' : undefined}
+                onKeyDown={(e) => {
+                  if ((e.key === "Enter" || e.key === " ") && leftPage)
+                    setSelectedPageId(leftPage.id);
+                }}
+                title={leftPage ? "왼쪽 페이지 선택" : undefined}
               >
                 {leftPage ? (
                   <div className="absolute inset-0">
-                    {leftPage.content.elements && leftPage.content.elements.length > 0 && selectedPageId === leftPage.id ? (
+                    {leftPage.content.elements &&
+                    leftPage.content.elements.length > 0 &&
+                    selectedPageId === leftPage.id ? (
                       <EditablePageView
                         page={leftPage}
-                        onUpdateElement={(elementId, content) => updateElementContent(leftPage.id, elementId, content)}
+                        onUpdateElement={(elementId, content) =>
+                          updateElementContent(leftPage.id, elementId, content)
+                        }
                         onSelectElement={setSelectedElementId}
                         selectedElementId={selectedElementId}
                         fileInputRef={fileInputRef}
@@ -1727,19 +2087,28 @@ const completeWork = async (): Promise<string | null> => {
                     )}
                   </div>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">왼쪽 페이지 없음</div>
+                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                    왼쪽 페이지 없음
+                  </div>
                 )}
               </div>
 
               {/* Right page (current - editable) or placeholder if none */}
               <div className="relative w-[420px] h-[630px] bg-white border-2 border-gray-400 rounded-lg shadow-xl">
                 {rightPage ? (
-                  rightPage.content.elements && rightPage.content.elements.length > 0 ? (
+                  rightPage.content.elements &&
+                  rightPage.content.elements.length > 0 ? (
                     <div className="absolute inset-0">
                       {selectedPageId === rightPage.id ? (
                         <EditablePageView
                           page={rightPage}
-                          onUpdateElement={(elementId, content) => updateElementContent(rightPage.id, elementId, content)}
+                          onUpdateElement={(elementId, content) =>
+                            updateElementContent(
+                              rightPage.id,
+                              elementId,
+                              content,
+                            )
+                          }
                           onSelectElement={setSelectedElementId}
                           selectedElementId={selectedElementId}
                           fileInputRef={fileInputRef}
@@ -1762,97 +2131,235 @@ const completeWork = async (): Promise<string | null> => {
                       <div className="w-12 h-12 bg-teal-200 rounded-full flex items-center justify-center mx-auto mb-3">
                         <Plus className="h-6 w-6 text-teal-700" />
                       </div>
-                      <p className="text-sm font-semibold">페이지를 추가하세요</p>
-                      <p className="text-xs text-gray-500 mt-1">템플릿을 선택하여 오른쪽 페이지를 채울 수 있습니다</p>
+                      <p className="text-sm font-semibold">
+                        페이지를 추가하세요
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        템플릿을 선택하여 오른쪽 페이지를 채울 수 있습니다
+                      </p>
                     </div>
                   </button>
                 )}
               </div>
 
               {/* Side Edit Panel - visible when a text element is selected */}
-              {selectedPage && selectedElementId && (() => {
-                const selectedElement = selectedPage.content.elements?.find(el => el.id === selectedElementId);
-                const updateElementStyle = (styleUpdates: Partial<BaseTemplateElement['style']>) => {
-                  if (!selectedPage || !selectedPage.content.elements) return;
-                  const updatedElements = selectedPage.content.elements.map(el =>
-                    el.id === selectedElementId ? { ...el, style: { ...el.style, ...styleUpdates } } : el
+              {selectedPage &&
+                selectedElementId &&
+                (() => {
+                  const selectedElement = selectedPage.content.elements?.find(
+                    (el) => el.id === selectedElementId,
                   );
-                  setWork(prev => ({
-                    ...prev,
-                    pages: prev.pages.map(page => page.id === selectedPage.id
-                      ? { ...page, content: { ...page.content, elements: updatedElements } }
-                      : page
-                    ),
-                    updatedAt: new Date(),
-                  }));
-                };
-                if (selectedElement && selectedElement.type === 'text') {
-                  return (
-                    <div className="hidden xl:block w-64 p-3 bg-white border border-gray-200 rounded-xl shadow sticky top-4">
-                      <h4 className="text-sm font-semibold text-gray-900 mb-2">페이지 편집 도구</h4>
-                      <div className="space-y-2">
-                        <div>
-                          <label className="block text-xs text-gray-600 mb-1">글꼴</label>
-                          <select
-                            value={selectedElement.style?.fontFamily || 'Nanum Gothic'}
-                            onChange={e => updateElementStyle({ fontFamily: e.target.value })}
-                            className="w-full appearance-none bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500"
-                          >
-                            {FONT_FAMILIES.map((font) => (
-                              <option key={font.value} value={font.value}>{font.name}</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div>
-                          <label className="block text-xs text-gray-600 mb-1">크기</label>
-                          <select
-                            value={selectedElement.style?.fontSize || 12}
-                            onChange={e => updateElementStyle({ fontSize: parseInt(e.target.value) })}
-                            className="w-full appearance-none bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500"
-                          >
-                            <optgroup label="본문">
-                              {BODY_FONT_SIZES.map(size => (
-                                <option key={size} value={size}>{size}pt</option>
+                  const updateElementStyle = (
+                    styleUpdates: Partial<BaseTemplateElement["style"]>,
+                  ) => {
+                    if (!selectedPage || !selectedPage.content.elements) return;
+                    const updatedElements = selectedPage.content.elements.map(
+                      (el) =>
+                        el.id === selectedElementId
+                          ? { ...el, style: { ...el.style, ...styleUpdates } }
+                          : el,
+                    );
+                    setWork((prev) => ({
+                      ...prev,
+                      pages: prev.pages.map((page) =>
+                        page.id === selectedPage.id
+                          ? {
+                              ...page,
+                              content: {
+                                ...page.content,
+                                elements: updatedElements,
+                              },
+                            }
+                          : page,
+                      ),
+                      updatedAt: new Date(),
+                    }));
+                  };
+                  if (selectedElement && selectedElement.type === "text") {
+                    return (
+                      <div className="hidden xl:block w-64 p-3 bg-white border border-gray-200 rounded-xl shadow sticky top-4">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                          페이지 편집 도구
+                        </h4>
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">
+                              글꼴
+                            </label>
+                            <select
+                              value={
+                                selectedElement.style?.fontFamily ||
+                                "Nanum Gothic"
+                              }
+                              onChange={(e) =>
+                                updateElementStyle({
+                                  fontFamily: e.target.value,
+                                })
+                              }
+                              className="w-full appearance-none bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              title="글꼴 선택"
+                            >
+                              {FONT_FAMILIES.map((font) => (
+                                <option key={font.value} value={font.value}>
+                                  {font.name}
+                                </option>
                               ))}
-                            </optgroup>
-                            <optgroup label="표기">
-                              {TITLE_FONT_SIZES.map(size => (
-                                <option key={size} value={size}>{size}pt</option>
-                              ))}
-                            </optgroup>
-                          </select>
-                        </div>
+                            </select>
+                          </div>
 
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => updateElementStyle({ fontWeight: selectedElement.style?.fontWeight === 'bold' ? 'normal' : 'bold' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.fontWeight === 'bold' ? 'bg-gray-200' : ''}`} title="굵게"><Bold className="h-3 w-3" /></button>
-                          <button onClick={() => updateElementStyle({ fontStyle: selectedElement.style?.fontStyle === 'italic' ? 'normal' : 'italic' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.fontStyle === 'italic' ? 'bg-gray-200' : ''}`} title="기울임"><Italic className="h-3 w-3" /></button>
-                          <button onClick={() => updateElementStyle({ textDecoration: selectedElement.style?.textDecoration === 'underline' ? 'none' : 'underline' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textDecoration === 'underline' ? 'bg-gray-200' : ''}`} title="밑줄"><Underline className="h-3 w-3" /></button>
-                          <button onClick={() => updateElementStyle({ textDecoration: selectedElement.style?.textDecoration === 'line-through' ? 'none' : 'line-through' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textDecoration === 'line-through' ? 'bg-gray-200' : ''}`} title="취소선"><Strikethrough className="h-3 w-3" /></button>
-                        </div>
+                          <div>
+                            <label className="block text-xs text-gray-600 mb-1">
+                              크기
+                            </label>
+                            <select
+                              value={selectedElement.style?.fontSize || 12}
+                              onChange={(e) =>
+                                updateElementStyle({
+                                  fontSize: parseInt(e.target.value),
+                                })
+                              }
+                              className="w-full appearance-none bg-white border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              title="크기 선택"
+                            >
+                              <optgroup label="본문">
+                                {BODY_FONT_SIZES.map((size) => (
+                                  <option key={size} value={size}>
+                                    {size}pt
+                                  </option>
+                                ))}
+                              </optgroup>
+                              <optgroup label="표기">
+                                {TITLE_FONT_SIZES.map((size) => (
+                                  <option key={size} value={size}>
+                                    {size}pt
+                                  </option>
+                                ))}
+                              </optgroup>
+                            </select>
+                          </div>
 
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => updateElementStyle({ textAlign: 'left' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === 'left' ? 'bg-gray-200' : ''}`} title="왼쪽 정렬"><AlignLeft className="h-3 w-3" /></button>
-                          <button onClick={() => updateElementStyle({ textAlign: 'center' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === 'center' ? 'bg-gray-200' : ''}`} title="가운데 정렬"><AlignCenter className="h-3 w-3" /></button>
-                          <button onClick={() => updateElementStyle({ textAlign: 'right' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === 'right' ? 'bg-gray-200' : ''}`} title="오른쪽 정렬"><AlignRight className="h-3 w-3" /></button>
-                          <button onClick={() => updateElementStyle({ textAlign: 'justify' })} className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === 'justify' ? 'bg-gray-200' : ''}`} title="양쪽 정렬"><AlignJustify className="h-3 w-3" /></button>
-                        </div>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() =>
+                                updateElementStyle({
+                                  fontWeight:
+                                    selectedElement.style?.fontWeight === "bold"
+                                      ? "normal"
+                                      : "bold",
+                                })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.fontWeight === "bold" ? "bg-gray-200" : ""}`}
+                              title="굵게"
+                            >
+                              <Bold className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateElementStyle({
+                                  fontStyle:
+                                    selectedElement.style?.fontStyle ===
+                                    "italic"
+                                      ? "normal"
+                                      : "italic",
+                                })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.fontStyle === "italic" ? "bg-gray-200" : ""}`}
+                              title="기울임"
+                            >
+                              <Italic className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateElementStyle({
+                                  textDecoration:
+                                    selectedElement.style?.textDecoration ===
+                                    "underline"
+                                      ? "none"
+                                      : "underline",
+                                })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textDecoration === "underline" ? "bg-gray-200" : ""}`}
+                              title="밑줄"
+                            >
+                              <Underline className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateElementStyle({
+                                  textDecoration:
+                                    selectedElement.style?.textDecoration ===
+                                    "line-through"
+                                      ? "none"
+                                      : "line-through",
+                                })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textDecoration === "line-through" ? "bg-gray-200" : ""}`}
+                              title="취소선"
+                            >
+                              <Strikethrough className="h-3 w-3" />
+                            </button>
+                          </div>
 
-                        <div className="pt-1">
-                          <button className="w-full py-1.5 text-xs bg-gray-100 hover:bg-gray-200 rounded border border-gray-300" title="링크 추가" disabled>링크 추가</button>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() =>
+                                updateElementStyle({ textAlign: "left" })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === "left" ? "bg-gray-200" : ""}`}
+                              title="왼쪽 정렬"
+                            >
+                              <AlignLeft className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateElementStyle({ textAlign: "center" })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === "center" ? "bg-gray-200" : ""}`}
+                              title="가운데 정렬"
+                            >
+                              <AlignCenter className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateElementStyle({ textAlign: "right" })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === "right" ? "bg-gray-200" : ""}`}
+                              title="오른쪽 정렬"
+                            >
+                              <AlignRight className="h-3 w-3" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                updateElementStyle({ textAlign: "justify" })
+                              }
+                              className={`p-1.5 rounded hover:bg-gray-100 ${selectedElement.style?.textAlign === "justify" ? "bg-gray-200" : ""}`}
+                              title="양쪽 정렬"
+                            >
+                              <AlignJustify className="h-3 w-3" />
+                            </button>
+                          </div>
+
+                          <div className="pt-1">
+                            <button
+                              className="w-full py-1.5 text-xs bg-gray-100 hover:bg-gray-200 rounded border border-gray-300"
+                              title="링크 추가"
+                              disabled
+                            >
+                              링크 추가
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
+                    );
+                  }
+                  return null;
+                })()}
             </div>
           </div>
         </main>
 
         {/* Right Tool Sidebars */}
-          <div className="absolute right-4 top-20 flex gap-3 z-10">
+        <div className="absolute right-4 top-20 flex gap-3 z-10">
           {/* Primary Tools - Colored Circles */}
           <div className="flex flex-col gap-3">
             <button
@@ -1867,16 +2374,23 @@ const completeWork = async (): Promise<string | null> => {
               type="file"
               accept="image/*"
               className="hidden"
+              title="이미지 업로드"
               onChange={(e) => {
                 const file = e.target.files && e.target.files[0];
                 if (!file || !selectedPageId || !selectedElementId) return;
                 const reader = new FileReader();
                 reader.onload = () => {
-                  const dataUrl = typeof reader.result === 'string' ? reader.result : '';
-                  if (dataUrl) updateElementImage(selectedPageId, selectedElementId, dataUrl);
+                  const dataUrl =
+                    typeof reader.result === "string" ? reader.result : "";
+                  if (dataUrl)
+                    updateElementImage(
+                      selectedPageId,
+                      selectedElementId,
+                      dataUrl,
+                    );
                 };
                 reader.readAsDataURL(file);
-                e.currentTarget.value = '';
+                e.currentTarget.value = "";
               }}
             />
             <button
@@ -1903,7 +2417,9 @@ const completeWork = async (): Promise<string | null> => {
             <button
               onClick={() => {
                 if (currentPage) {
-                  const pageIndex = work.pages.findIndex(p => p.id === currentPage.id);
+                  const pageIndex = work.pages.findIndex(
+                    (p) => p.id === currentPage.id,
+                  );
                   if (pageIndex >= 0) requestDeletePage(currentPage.id);
                 }
               }}
@@ -1965,23 +2481,31 @@ const completeWork = async (): Promise<string | null> => {
         <div className="mx-auto max-w-[1920px] px-4 py-3">
           <div className="flex items-center justify-between">
             <button
-              onClick={() => setCurrentPageIndex(Math.max(0, currentPageIndex - 1))}
+              onClick={() =>
+                setCurrentPageIndex(Math.max(0, currentPageIndex - 1))
+              }
               disabled={currentPageIndex === 0}
               className="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="이전 페이지"
             >
               <ChevronLeft className="w-5 h-5 text-gray-700" />
             </button>
-            
+
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-teal-500 rounded"></div>
               <span className="text-sm font-semibold text-gray-700">
-                {work.pages.length > 0 ? `${currentPageIndex + 1} / ${work.pages.length}` : "0"}
+                {work.pages.length > 0
+                  ? `${currentPageIndex + 1} / ${work.pages.length}`
+                  : "0"}
               </span>
             </div>
-            
+
             <button
-              onClick={() => setCurrentPageIndex(Math.min(work.pages.length - 1, currentPageIndex + 1))}
+              onClick={() =>
+                setCurrentPageIndex(
+                  Math.min(work.pages.length - 1, currentPageIndex + 1),
+                )
+              }
               disabled={currentPageIndex >= work.pages.length - 1}
               className="w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="다음 페이지"
@@ -1997,7 +2521,7 @@ const completeWork = async (): Promise<string | null> => {
         <button
           onClick={() => {
             saveAndContinue();
-            router.push('/dashboard/workspace');
+            router.push("/dashboard/workspace");
           }}
           className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
         >
@@ -2007,7 +2531,11 @@ const completeWork = async (): Promise<string | null> => {
           onClick={completeWork}
           disabled={isSaving || work.pages.length === 0}
           className="px-6 py-3 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          title={work.pages.length === 0 ? "페이지를 추가한 후 완료할 수 있습니다" : "작품을 완료하고 라이브러리에 추가"}
+          title={
+            work.pages.length === 0
+              ? "페이지를 추가한 후 완료할 수 있습니다"
+              : "작품을 완료하고 라이브러리에 추가"
+          }
         >
           만든 북 보기로 보내기
         </button>
@@ -2023,15 +2551,27 @@ const completeWork = async (): Promise<string | null> => {
                   <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
                     <Layout className="h-5 w-5 text-white" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">{work.pages.length === 0 ? "표지 템플릿 선택" : "페이지 템플릿 선택"}</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {work.pages.length === 0
+                      ? "표지 템플릿 선택"
+                      : "페이지 템플릿 선택"}
+                  </h2>
                 </div>
-                <button onClick={() => setShowTemplateSelector(false)} className="p-3 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors" type="button">
+                <button
+                  onClick={() => setShowTemplateSelector(false)}
+                  className="p-3 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors"
+                  type="button"
+                  title="닫기"
+                >
                   <X className="h-6 w-6" />
                 </button>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {(work.pages.length === 0 ? COVER_TEMPLATES : PAGE_TEMPLATES.filter((t) => t.id !== "page-complex")).map((template) => (
+                {(work.pages.length === 0
+                  ? COVER_TEMPLATES
+                  : PAGE_TEMPLATES.filter((t) => t.id !== "page-complex")
+                ).map((template) => (
                   <button
                     key={template.id}
                     onClick={() => applyTemplate(template)}
@@ -2044,8 +2584,12 @@ const completeWork = async (): Promise<string | null> => {
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
                     <div className="absolute bottom-3 left-3 right-3">
                       <div className="bg-white/95 rounded-xl px-3 py-2 shadow-sm">
-                        <p className="text-sm font-semibold truncate text-gray-900">{template.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{template.description}</p>
+                        <p className="text-sm font-semibold truncate text-gray-900">
+                          {template.name}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">
+                          {template.description}
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -2064,13 +2608,27 @@ const completeWork = async (): Promise<string | null> => {
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center">
                   <Trash2 className="h-5 w-5 text-white" />
-              </div>
+                </div>
                 <h4 className="text-xl font-bold text-gray-900">페이지 삭제</h4>
               </div>
-              <p className="text-gray-600 mb-6">이 페이지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+              <p className="text-gray-600 mb-6">
+                이 페이지를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+              </p>
               <div className="flex justify-end gap-3">
-                <button onClick={cancelDeletePage} className="px-6 py-3 rounded-full border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all font-medium" type="button">취소</button>
-                <button onClick={confirmDeletePage} className="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg hover:shadow-xl font-medium" type="button">삭제</button>
+                <button
+                  onClick={cancelDeletePage}
+                  className="px-6 py-3 rounded-full border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all font-medium"
+                  type="button"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={confirmDeletePage}
+                  className="px-6 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all shadow-lg hover:shadow-xl font-medium"
+                  type="button"
+                >
+                  삭제
+                </button>
               </div>
             </div>
           </div>
