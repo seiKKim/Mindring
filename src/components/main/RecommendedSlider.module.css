@@ -3,13 +3,14 @@
 /* Section Container */
 .recommended-section {
   margin: 30px auto;
-  padding: 50px 0;
+  padding: 50px 0 30px 0;
 }
 
 .recommended-content {
   width: 100%;
   margin: 0 auto;
-  padding: 50px 0;
+  padding: 20px 0;
+  margin-top: 50px;
 }
 
 .recommended-content .top {
@@ -21,7 +22,7 @@
 }
 
 .recommended-content .top .titleT {
-  font-size: 32px;
+  font-size: 24px;
 }
 
 .recommended-content .top .naviBtn {
@@ -78,6 +79,7 @@
 .recommended-content .swiper-container {
   width: 100%;
   margin: 0 auto;
+  width: 100%;
   max-width: 100%;
   overflow: visible;
 }
@@ -85,15 +87,19 @@
 .recommended-content .swiper {
   width: 100%;
   margin: 0 auto;
-  margin-top: 30px;
-  /* Align first slide with the 1380px grid, ensuring 20px min padding */
-  padding-left: 20px;
-  padding-right: 20px; /* Optional right padding */
+  margin-top: 40px;
+  /* Align first slide with the 1380px grid */
+  padding-left: max(20px, calc((100% - 1380px) / 2));
+  padding-right: 0;
   box-sizing: border-box;
   overflow: visible !important;
 }
 
-/* Swiper Slides */
+.recommended-content .swiper :global(.swiper) {
+  overflow: visible !important;
+}
+
+/* Swiper Slides (Card) */
 .recommended-content :global(.swiper-wrapper .swiper-slide) {
   padding: 5px;
   align-items: flex-start;
@@ -135,7 +141,7 @@
   padding: 8px 18px;
   display: inline-block;
   margin-bottom: 20px;
-  font-size: 18px;
+  font-size: 14px;
   position: relative; 
   left: 20px; 
   top: 25px; 
@@ -163,13 +169,14 @@
 
 /* Card Title */
 .recommended-content :global(.swiper-wrapper .swiper-slide .card_title) {
-  font-size: 28px;
+  font-size: 20px;
   position: relative;
   left: 20px;
   top: 15px;
 }
 
 /* Status/Progress */
+/* Status/Progress Badge */
 .recommended-content :global(.swiper-wrapper .swiper-slide .status) {
   position: absolute;
   bottom: 0%;

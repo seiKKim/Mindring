@@ -1,13 +1,13 @@
-'use client'
+"use client";
 
-import { UserProvider } from '@/contexts/UserContext'
-import { ReactNode } from 'react'
+import { UserProvider } from "@/contexts/UserContext";
+import { ReactNode } from "react";
+import { ModalProviderWithContext } from "./ui/modal-provider";
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <UserProvider>
-      {children}
+      <ModalProviderWithContext>{children}</ModalProviderWithContext>
     </UserProvider>
-  )
+  );
 }
-

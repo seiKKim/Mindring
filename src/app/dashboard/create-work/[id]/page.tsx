@@ -22,6 +22,8 @@ import {
   Trash2,
   Underline,
   Undo,
+  Save,
+  CheckCircle,
   Upload,
   X,
 } from "lucide-react";
@@ -1362,6 +1364,46 @@ function PagePreview({ page }: PagePreviewProps) {
 }
 
 /* =========================
+   Helper Components
+   ========================= */
+
+interface SidebarTooltipButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  label: string;
+  children: React.ReactNode;
+}
+
+function SidebarTooltipButton({
+  label,
+  children,
+  className,
+  ...props
+}: SidebarTooltipButtonProps) {
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  return (
+    <div className="relative flex items-center">
+      {/* Tooltip - Absolute positioned to the left */}
+      {showTooltip && (
+        <div className="absolute right-full mr-4 px-5 py-3 bg-gray-800 text-white text-xl font-bold rounded-2xl shadow-2xl whitespace-nowrap z-50 animate-in fade-in slide-in-from-right-4 duration-200 pointer-events-none border border-white/10">
+          {label}
+          {/* Arrow */}
+          <div className="absolute top-1/2 -right-2 w-4 h-4 bg-gray-800 transform -translate-y-1/2 rotate-45 border-r border-t border-white/10"></div>
+        </div>
+      )}
+
+      <button
+        {...props}
+        className={className}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+      >
+        {children}
+      </button>
+    </div>
+  );
+}
+
+/* =========================
    Main Component
    ========================= */
 
@@ -2428,10 +2470,34 @@ export default function CreateWorkPage() {
             >
               <Trash2 className="w-6 h-6 text-white" />
             </button>
+
+            {/* New Buttons Moved to Sidebar */}
+            <button
+              onClick={() => {
+                saveAndContinue();
+                router.push("/dashboard/workspace");
+              }}
+              className="w-14 h-14 bg-teal-600 hover:bg-teal-700 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all"
+              title="내 작업실로 보내기"
+            >
+              <Save className="w-6 h-6 text-white" />
+            </button>
+            <button
+              onClick={completeWork}
+              disabled={isSaving || work.pages.length === 0}
+              className="w-14 h-14 bg-gray-700 hover:bg-gray-800 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              title={
+                work.pages.length === 0
+                  ? "페이지를 추가한 후 완료할 수 있습니다"
+                  : "만든 북 보기로 보내기"
+              }
+            >
+              <CheckCircle className="w-6 h-6 text-white" />
+            </button>
           </div>
 
-          {/* Secondary Tools - White Circles */}
-          <div className="flex flex-col gap-3">
+          {/* Secondary Tools - White Circles (Not implemented yet) */}
+          {/* <div className="flex flex-col gap-3">
             <button
               className="w-14 h-14 bg-white hover:bg-gray-50 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all border-2 border-gray-200"
               title="채팅"
@@ -2472,7 +2538,7 @@ export default function CreateWorkPage() {
                 <span className="text-white text-xs font-bold">AI</span>
               </div>
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -2514,31 +2580,6 @@ export default function CreateWorkPage() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Bottom Right Action Buttons */}
-      <div className="fixed bottom-20 right-6 z-30 flex flex-col gap-3">
-        <button
-          onClick={() => {
-            saveAndContinue();
-            router.push("/dashboard/workspace");
-          }}
-          className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
-        >
-          내 작업실로 보내기
-        </button>
-        <button
-          onClick={completeWork}
-          disabled={isSaving || work.pages.length === 0}
-          className="px-6 py-3 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          title={
-            work.pages.length === 0
-              ? "페이지를 추가한 후 완료할 수 있습니다"
-              : "작품을 완료하고 라이브러리에 추가"
-          }
-        >
-          만든 북 보기로 보내기
-        </button>
       </div>
 
       {/* Template Selector Modal */}

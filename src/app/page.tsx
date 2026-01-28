@@ -15,7 +15,7 @@ export default async function RootPage() {
   return (
     <>
       <RecommendedSlider isLoggedIn={!!user} />
-      <ServicesGrid />
+      <ServicesGrid isLoggedIn={!!user} />
     </>
   );
 }

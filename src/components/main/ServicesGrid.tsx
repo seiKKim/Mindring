@@ -76,7 +76,29 @@ const SERVICES: ServiceBox[] = [
   },
 ];
 
-export default function ServicesGrid() {
+import { useRouter } from "next/navigation";
+import { useModalContext } from "../ui/modal-provider";
+
+interface ServicesGridProps {
+  isLoggedIn?: boolean;
+}
+
+export default function ServicesGrid({ isLoggedIn }: ServicesGridProps) {
+  const router = useRouter();
+  const { confirm } = useModalContext();
+
+  const handleServiceClick = (e: React.MouseEvent) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      confirm.warning(
+        "로그인 필요",
+        "로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?",
+        () => router.push("/login"),
+        { confirmText: "이동", cancelText: "취소" },
+      );
+    }
+  };
+
   return (
     <section className="sec02">
       <div className={styles.sec02Content}>
@@ -84,6 +106,7 @@ export default function ServicesGrid() {
           <Link
             key={service.id}
             href={service.href}
+            onClick={(e) => handleServiceClick(e)}
             className={`${styles.box} col_f ${service.big ? styles.big : ""} ${
               service.variant === "yellow" ? styles.yellow : ""
             }`}

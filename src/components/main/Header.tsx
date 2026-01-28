@@ -4,8 +4,10 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Minus, Plus } from "lucide-react";
 import styles from "./Header.module.css";
+import { useModalContext } from "../ui/modal-provider";
 
 interface HeaderProps {
   user?: {
@@ -19,6 +21,8 @@ export default function Header({ user: initialUser }: HeaderProps) {
   const [user, setUser] = React.useState(initialUser);
   const [imgSrc, setImgSrc] = React.useState("/img/icon_user_default.png");
   const [zoomLevel, setZoomLevel] = React.useState(100);
+  const router = useRouter();
+  const { confirm } = useModalContext();
 
   React.useEffect(() => {
     // 표준 transform 사용 (Safari 호환)
@@ -33,6 +37,18 @@ export default function Header({ user: initialUser }: HeaderProps) {
 
   const handleZoomOut = () => {
     setZoomLevel((prev) => Math.max(prev - 10, 80));
+  };
+
+  const handleRestrictedClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      confirm.warning(
+        "로그인 필요",
+        "로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?",
+        () => router.push("/login"),
+        { confirmText: "이동", cancelText: "취소" },
+      );
+    }
   };
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -126,54 +142,66 @@ export default function Header({ user: initialUser }: HeaderProps) {
         <nav>
           <ul className={`${styles.depth01} row_f font-clipart`}>
             <li>
-              <Link href="/puzzle-home">
+              <Link href="/puzzle-home" onClick={handleRestrictedClick}>
                 <p>AI기억퍼즐</p>
               </Link>
             </li>
             <li>
-              <Link href="/services/lifebook">
+              <Link href="/services/lifebook" onClick={handleRestrictedClick}>
                 <p>AI자서전</p>
               </Link>
             </li>
             <li>
-              <Link href="/services/cognitive">
+              <Link href="/services/cognitive" onClick={handleRestrictedClick}>
                 <p>인지콘텐츠</p>
               </Link>
             </li>
             <li>
-              <Link href="/services/workbook">
+              <Link href="/services/workbook" onClick={handleRestrictedClick}>
                 <p>스마트워크북</p>
               </Link>
             </li>
             <li>
-              <Link href="/services/coloring">
+              <Link href="/services/coloring" onClick={handleRestrictedClick}>
                 <p>마음색칠</p>
               </Link>
             </li>
             <li>
-              <Link href="/services/academy">
+              <Link href="/services/academy" onClick={handleRestrictedClick}>
                 <p>스마트교육</p>
               </Link>
               <ul className={`${styles.depth02} font-clipart`}>
                 <li>
-                  <Link href="/services/academy?tab=curriculum">
+                  <Link
+                    href="/services/academy?tab=curriculum"
+                    onClick={handleRestrictedClick}
+                  >
                     <p>인지 커리큘럼</p>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/services/academy?tab=video">
+                  <Link
+                    href="/services/academy?tab=video"
+                    onClick={handleRestrictedClick}
+                  >
                     <p>인지교육 영상</p>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/services/academy?tab=field">
+                  <Link
+                    href="/services/academy?tab=field"
+                    onClick={handleRestrictedClick}
+                  >
                     <p>교육현장</p>
                   </Link>
                 </li>
               </ul>
             </li>
             <li>
-              <Link href="/services/smart-cognitive">
+              <Link
+                href="/services/smart-cognitive"
+                onClick={handleRestrictedClick}
+              >
                 <p>스마트인지관리</p>
               </Link>
             </li>

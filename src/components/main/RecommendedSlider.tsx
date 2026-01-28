@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import { useRouter } from "next/navigation";
+import { useModalContext } from "../ui/modal-provider";
 
 // Import Swiper styles
 import "swiper/css";
@@ -60,6 +61,88 @@ const RECOMMENDED_CONTENT: ContentCard[] = [
   {
     id: "5",
     gameId: "orientation-1",
+    keyword: "지남력",
+    title: "인물 맞추기",
+    color: "c_teal",
+    route: "/services/cognitive/person-quiz",
+  },
+  // Duplicated for Loop
+  {
+    id: "6",
+    gameId: "attention-4-dup",
+    keyword: "주의력",
+    title: "낱말 연결 게임",
+    color: "c_yellow",
+    route: "/services/cognitive/connect-words",
+  },
+  {
+    id: "7",
+    gameId: "language-1-dup",
+    keyword: "언어능력",
+    title: "속담 완성하기",
+    color: "c_violet",
+    route: "/services/cognitive/proverb",
+  },
+  {
+    id: "8",
+    gameId: "attention-1-dup",
+    keyword: "시공간능력",
+    title: "다른 그림 찾기",
+    color: "c_purple",
+    route: "/services/cognitive/find-difference",
+  },
+  {
+    id: "9",
+    gameId: "memory-pair-dup",
+    keyword: "기억력",
+    title: "단어 짝 맞추기",
+    color: "c_blue",
+    route: "/services/cognitive/word-match",
+  },
+  {
+    id: "10",
+    gameId: "orientation-1-dup",
+    keyword: "지남력",
+    title: "인물 맞추기",
+    color: "c_teal",
+    route: "/services/cognitive/person-quiz",
+  },
+  // Duplicated for Loop (2nd set)
+  {
+    id: "11",
+    gameId: "attention-4-dup2",
+    keyword: "주의력",
+    title: "낱말 연결 게임",
+    color: "c_yellow",
+    route: "/services/cognitive/connect-words",
+  },
+  {
+    id: "12",
+    gameId: "language-1-dup2",
+    keyword: "언어능력",
+    title: "속담 완성하기",
+    color: "c_violet",
+    route: "/services/cognitive/proverb",
+  },
+  {
+    id: "13",
+    gameId: "attention-1-dup2",
+    keyword: "시공간능력",
+    title: "다른 그림 찾기",
+    color: "c_purple",
+    route: "/services/cognitive/find-difference",
+  },
+  {
+    id: "14",
+    gameId: "memory-pair-dup2",
+    keyword: "기억력",
+    title: "단어 짝 맞추기",
+    color: "c_blue",
+    route: "/services/cognitive/word-match",
+  },
+  {
+    id: "15",
+    gameId: "orientation-1-dup2",
     keyword: "지남력",
     title: "인물 맞추기",
     color: "c_teal",
@@ -127,7 +210,18 @@ export default function RecommendedSlider({
     return undefined;
   };
 
-  const handleCardClick = (route: string, _gameId: string) => {
+  const { confirm } = useModalContext();
+
+  const handleCardClick = (route: string) => {
+    if (!isLoggedIn) {
+      confirm.warning(
+        "로그인 필요",
+        "로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?",
+        () => router.push("/login"),
+        { confirmText: "이동", cancelText: "취소" },
+      );
+      return;
+    }
     // Optional: Mark as started immediately on click if desired,
     // but typically we wait for actual game start.
     router.push(route);
@@ -242,16 +336,19 @@ export default function RecommendedSlider({
               slidesPerView={1.5}
               loop={true}
               autoplay={{
-                delay: 4000,
+                delay: 3000,
                 disableOnInteraction: false,
               }}
               loopAdditionalSlides={5}
               breakpoints={{
                 640: {
-                  slidesPerView: 2.1,
+                  slidesPerView: 2.5,
                 },
                 1024: {
-                  slidesPerView: 3.1,
+                  slidesPerView: 3.2,
+                },
+                1400: {
+                  slidesPerView: 4.0,
                 },
               }}
               onSwiper={(swiper) => {
@@ -259,12 +356,13 @@ export default function RecommendedSlider({
               }}
             >
               {RECOMMENDED_CONTENT.map((card) => {
-                const progress = getProgress(card.gameId);
+                const originalGameId = card.gameId.replace(/-dup2?$/, "");
+                const progress = getProgress(originalGameId);
                 return (
                   <SwiperSlide key={card.id}>
                     <div
                       className={`swiper-slide col_f ${card.color}`}
-                      onClick={() => handleCardClick(card.route, card.gameId)}
+                      onClick={() => handleCardClick(card.route)}
                     >
                       <span className={`card_keyword font_goormsans`}>
                         {card.keyword}
